@@ -13,7 +13,7 @@
     --text: #f5f5f5; --text-2: #aaa; --text-3: #666;
     --accent: #f59e0b; --accent-2: #fbbf24;
     --green: #22c55e; --yellow: #eab308; --red: #ef4444;
-    --blue: #60a5fa; --purple: #a78bfa;
+    --blue: #60a5fa; --purple: #a78bfa; --pink: #ec4899;
   }
   html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body {
@@ -34,9 +34,9 @@
 
   /* HERO */
   .hero {
-    min-height: 100vh; min-height: 100svh;
+    min-height: 92vh; min-height: 92svh;
     display: flex; flex-direction: column; justify-content: center;
-    padding: 80px 0 60px;
+    padding: 80px 0 40px;
     background:
       radial-gradient(ellipse at top, rgba(245,158,11,0.18), transparent 60%),
       radial-gradient(ellipse at bottom, rgba(168,85,247,0.08), transparent 60%),
@@ -47,7 +47,7 @@
     background: linear-gradient(180deg, #fff 0%, #888 120%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .hero .sub { font-size: 15px; color: var(--text-2); margin-bottom: 36px; max-width: 420px; }
+  .hero .sub { font-size: 15px; color: var(--text-2); margin-bottom: 32px; max-width: 420px; }
 
   .run-btn {
     width: 100%; padding: 22px 28px; border-radius: 20px; border: none;
@@ -64,23 +64,13 @@
   .run-btn .icon { font-size: 22px; }
   .run-btn .label-sub { font-size: 12px; font-weight: 500; opacity: 0.7; display: block; margin-top: 2px; }
 
-  .run-tips { margin-top: 16px; font-size: 12px; color: var(--text-3); text-align: center; }
+  .run-tips { margin-top: 14px; font-size: 12px; color: var(--text-3); text-align: center; }
 
-  /* LIVE COUNTER */
-  .counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 32px; }
-  .counter {
-    background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px;
-    padding: 14px 12px; text-align: center;
-  }
-  .counter .n { font-size: 24px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
-  .counter .l { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600; }
-  .counter.active .n { color: var(--accent); transition: color 0.3s; }
-
-  /* PIPELINE */
-  .pipeline { padding: 40px 0 80px; }
+  /* STAGES */
+  .pipeline { padding: 40px 0 60px; }
   .stage {
-    background: var(--bg-2); border: 1px solid var(--border); border-radius: 18px;
-    padding: 20px; margin-bottom: 12px; position: relative; overflow: hidden;
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 20px; margin-bottom: 14px; position: relative;
     transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
   }
@@ -90,7 +80,7 @@
   .stage.done { border-color: rgba(34,197,94,0.5); opacity: 1; }
   .stage.human { border-color: rgba(239,68,68,0.3); }
 
-  .stage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .stage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .stage-num { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 1.5px; }
   .stage-state {
     font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 12px;
@@ -102,26 +92,17 @@
   .stage.human .stage-state { background: rgba(239,68,68,0.15); color: var(--red); }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  .stage-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-  .stage-desc { font-size: 13px; color: var(--text-2); margin-bottom: 12px; }
+  .stage-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .stage-desc { font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
 
-  .stage-output {
-    background: #050505; border: 1px solid var(--border); border-radius: 12px;
-    padding: 12px; font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
-    font-size: 11px; color: var(--green); white-space: pre-wrap;
-    min-height: 0; max-height: 0; overflow: hidden; opacity: 0;
-    transition: all 0.4s ease;
+  /* OUTPUT CONTAINER */
+  .output-wrap {
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.3s ease;
   }
-  .stage.active .stage-output, .stage.done .stage-output {
-    max-height: 400px; opacity: 1; padding: 12px; margin-bottom: 12px;
+  .stage.active .output-wrap, .stage.done .output-wrap {
+    max-height: 2000px; opacity: 1; margin-bottom: 14px;
   }
-  .stage-output .line { display: block; min-height: 1.4em; }
-  .stage-output .warn { color: var(--yellow); }
-  .stage-output .err { color: var(--red); }
-  .stage-output .ok { color: var(--green); }
-  .stage-output .dim { color: var(--text-3); }
-  .caret::after { content: '▊'; animation: blink 1s step-end infinite; color: var(--green); }
-  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip {
@@ -137,6 +118,226 @@
     background: var(--accent); color: #0a0a0a; border-color: var(--accent);
     transform: scale(1.06); box-shadow: 0 0 16px rgba(245,158,11,0.6);
   }
+
+  /* ARTIFACT: Idea Card */
+  .idea-list { display: flex; flex-direction: column; gap: 8px; }
+  .idea {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px; display: flex; gap: 10px; align-items: center;
+    transform: translateX(-12px); opacity: 0;
+    transition: all 0.4s cubic-bezier(.2,.7,.2,1.1);
+  }
+  .idea.in { transform: none; opacity: 1; }
+  .idea-thumb {
+    width: 56px; height: 40px; border-radius: 6px; flex-shrink: 0;
+    background: linear-gradient(135deg, #ef4444, #f59e0b);
+    position: relative; overflow: hidden;
+  }
+  .idea-thumb::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%);
+  }
+  .idea-thumb.v2 { background: linear-gradient(135deg, #3b82f6, #a78bfa); }
+  .idea-thumb.v3 { background: linear-gradient(135deg, #10b981, #06b6d4); }
+  .idea-thumb.v4 { background: linear-gradient(135deg, #ec4899, #f97316); }
+  .idea-thumb.v5 { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+  .idea-thumb.v6 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .idea-body { flex: 1; min-width: 0; }
+  .idea-title { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .idea-meta { font-size: 11px; color: var(--text-3); }
+  .idea-meta .views { color: var(--green); font-weight: 600; }
+  .idea-badge {
+    font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 10px;
+    background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3);
+    flex-shrink: 0; letter-spacing: 0.5px;
+  }
+
+  /* ARTIFACT: Script Card */
+  .script-card {
+    background: #0c0c0c; border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; font-family: 'Iowan Old Style', Georgia, serif;
+    opacity: 0; transform: translateY(8px);
+    transition: all 0.3s;
+  }
+  .script-card.in { opacity: 1; transform: none; }
+  .script-format {
+    font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 12px;
+    font-family: -apple-system, sans-serif;
+  }
+  .script-line { margin-bottom: 10px; line-height: 1.5; font-size: 14px; color: var(--text); }
+  .script-line:last-child { margin-bottom: 0; }
+  .script-line .label { font-weight: 800; color: var(--accent-2); margin-right: 6px; font-family: -apple-system, sans-serif; font-size: 13px; }
+  .script-footer {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: -apple-system, sans-serif; font-size: 12px;
+  }
+  .script-footer .count { color: var(--text-3); }
+  .script-footer .pass { color: var(--green); font-weight: 700; }
+  .typing::after { content: "▊"; animation: blink 1s step-end infinite; color: var(--accent); }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  /* ARTIFACT: Product Cards */
+  .product-list { display: flex; flex-direction: column; gap: 6px; }
+  .product {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+    opacity: 0; transform: translateX(-10px);
+    transition: all 0.35s cubic-bezier(.2,.7,.2,1.1);
+  }
+  .product.in { opacity: 1; transform: none; }
+  .product-icon {
+    width: 34px; height: 34px; border-radius: 6px; flex-shrink: 0;
+    background: var(--bg-2); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--text-3); font-weight: 700;
+    border: 1px solid var(--border);
+  }
+  .product-body { flex: 1; min-width: 0; }
+  .product-name { font-size: 12px; color: #fff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .product-meta { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+  .product-meta .prime { color: var(--blue); font-weight: 600; }
+  .product-price { font-size: 13px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+  .budget-total {
+    margin-top: 8px; padding: 10px 12px; background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.25); border-radius: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; opacity: 0; transition: opacity 0.3s;
+  }
+  .budget-total.in { opacity: 1; }
+  .budget-total .l { color: var(--text-2); }
+  .budget-total .v { font-weight: 800; color: var(--green); font-size: 16px; }
+
+  /* ARTIFACT: Filming */
+  .filming-card {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; display: flex; gap: 14px; align-items: center;
+  }
+  .film-dot {
+    width: 14px; height: 14px; border-radius: 50%; background: var(--red);
+    box-shadow: 0 0 12px var(--red); flex-shrink: 0;
+    animation: recblink 1.2s ease-in-out infinite;
+  }
+  @keyframes recblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .film-body { flex: 1; }
+  .film-title { font-size: 13px; font-weight: 700; color: #fff; }
+  .film-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .film-runtime { font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  /* ARTIFACT: Dub Progress */
+  .dub-list { display: flex; flex-direction: column; gap: 8px; }
+  .dub {
+    display: grid; grid-template-columns: 48px 1fr 22px; gap: 10px; align-items: center;
+  }
+  .dub-lang {
+    font-size: 11px; font-weight: 700; color: var(--text);
+    background: var(--bg-3); padding: 4px 0; text-align: center; border-radius: 6px;
+    border: 1px solid var(--border); letter-spacing: 0.5px;
+  }
+  .dub-bar {
+    height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden;
+  }
+  .dub-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--blue), var(--green));
+    transition: width 0.8s ease;
+  }
+  .dub-check {
+    color: var(--text-3); font-size: 14px; text-align: center;
+    transition: color 0.3s;
+  }
+  .dub.done .dub-check { color: var(--green); }
+
+  /* ARTIFACT: Rule Checklist */
+  .review-grid { display: grid; grid-template-columns: 88px 1fr; gap: 14px; align-items: flex-start; }
+  .review-ring { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+  .review-ring svg { transform: rotate(-90deg); }
+  .review-ring circle { fill: none; stroke-width: 8; }
+  .review-ring .track { stroke: var(--bg-3); }
+  .review-ring .fill { stroke: var(--green); stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+  .review-ring .val {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 800; color: #fff;
+  }
+  .review-ring .val-lbl {
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    font-size: 9px; color: var(--green); font-weight: 700; margin-top: 4px;
+    text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;
+  }
+  .rules { display: flex; flex-direction: column; gap: 4px; }
+  .rule {
+    display: flex; align-items: center; gap: 8px; font-size: 12px;
+    padding: 4px 0; opacity: 0; transform: translateX(-6px);
+    transition: all 0.3s;
+  }
+  .rule.in { opacity: 1; transform: none; }
+  .rule-ic {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; color: #fff;
+  }
+  .rule.pass .rule-ic { background: var(--green); }
+  .rule.warn .rule-ic { background: var(--yellow); }
+  .rule.fail .rule-ic { background: var(--red); }
+  .rule-name { color: var(--text); font-weight: 500; }
+  .rule.warn .rule-name { color: var(--yellow); }
+  .frameio-note {
+    margin-top: 10px; padding: 8px 12px; background: rgba(96,165,250,0.08);
+    border: 1px solid rgba(96,165,250,0.2); border-radius: 8px;
+    font-size: 12px; color: var(--blue); opacity: 0; transition: opacity 0.3s;
+  }
+  .frameio-note.in { opacity: 1; }
+
+  /* ARTIFACT: Platform Grid */
+  .plat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .plat {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px; opacity: 0; transform: scale(0.96);
+    transition: all 0.35s cubic-bezier(.2,.7,.2,1.1);
+  }
+  .plat.in { opacity: 1; transform: none; }
+  .plat-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .plat-logo {
+    width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; color: #fff;
+  }
+  .plat.yt .plat-logo { background: #ff0033; }
+  .plat.tt .plat-logo { background: #000; border: 1px solid #333; color: #fff; }
+  .plat.ig .plat-logo { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+  .plat.sc .plat-logo { background: #fffc00; color: #000; }
+  .plat-name { font-size: 12px; font-weight: 700; color: #fff; }
+  .plat-count { font-size: 20px; font-weight: 800; color: var(--accent-2); line-height: 1; margin-bottom: 6px; }
+  .plat-times { font-size: 10px; color: var(--text-3); line-height: 1.5; font-variant-numeric: tabular-nums; }
+  .plat-status {
+    margin-top: 8px; font-size: 9px; font-weight: 700; color: var(--green);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+
+  /* ARTIFACT: Stats Panel */
+  .stats-panel { display: flex; flex-direction: column; gap: 10px; }
+  .stat-row {
+    display: grid; grid-template-columns: 100px 1fr 60px; gap: 10px; align-items: center;
+    font-size: 12px;
+  }
+  .stat-row .lbl { color: var(--text-2); font-weight: 500; }
+  .stat-row .bar { height: 8px; background: var(--bg-3); border-radius: 4px; overflow: hidden; }
+  .stat-row .bar-fill {
+    height: 100%; width: 0%; border-radius: 4px;
+    transition: width 1s cubic-bezier(.2,.7,.2,1);
+  }
+  .stat-row .bar-fill.a { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  .stat-row .bar-fill.b { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+  .stat-row .bar-fill.c { background: linear-gradient(90deg, var(--green), var(--blue)); }
+  .stat-row .val { font-weight: 800; color: #fff; text-align: right; font-variant-numeric: tabular-nums; }
+  .learned {
+    margin-top: 10px; padding: 10px; background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.2); border-radius: 10px;
+    font-size: 12px; color: var(--purple); opacity: 0; transition: opacity 0.3s;
+  }
+  .learned.in { opacity: 1; }
+  .learned strong { color: #fff; font-weight: 700; }
 
   /* TRY-IT */
   .tryit { padding: 60px 0; background: linear-gradient(180deg, var(--bg) 0%, #0e0e0e 100%); }
@@ -155,13 +356,8 @@
     border: none; padding: 14px; border-radius: 14px; font-weight: 700;
     font-size: 14px;
   }
-  .tryit-output {
-    margin-top: 14px; background: #050505; border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px; font-family: 'SF Mono', monospace;
-    font-size: 11px; color: var(--green); min-height: 0; max-height: 0;
-    overflow: hidden; transition: all 0.4s ease; opacity: 0; white-space: pre-wrap;
-  }
-  .tryit-output.open { max-height: 500px; opacity: 1; padding: 14px; margin-top: 14px; }
+  .tryit-output { margin-top: 14px; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease; }
+  .tryit-output.open { max-height: 2000px; opacity: 1; margin-top: 14px; }
 
   /* MODAL */
   .modal-bg {
@@ -179,39 +375,16 @@
   .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
   .modal-sub { font-size: 13px; color: var(--text-3); margin-bottom: 16px; }
   .modal-body { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px; }
-  .modal-demo {
-    background: #050505; border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px; font-family: 'SF Mono', monospace; font-size: 11px;
-    color: var(--green); white-space: pre-wrap; margin-bottom: 14px;
-    min-height: 100px;
-  }
-  .modal-btn {
-    width: 100%; background: var(--accent); color: #0a0a0a;
-    border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 14px;
-  }
+  .modal-demo { margin-bottom: 14px; min-height: 40px; }
   .modal-close {
     background: none; border: 1px solid var(--border-2); color: var(--text-2);
     padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 10px; width: 100%;
   }
 
-  /* Progress ring */
-  .ring-wrap { display: flex; align-items: center; gap: 16px; margin: 16px 0; }
-  .ring { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
-  .ring svg { transform: rotate(-90deg); }
-  .ring circle { fill: none; stroke-width: 8; }
-  .ring .track { stroke: var(--bg-3); }
-  .ring .fill { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
-  .ring .val {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 800; color: #fff;
-  }
-
-  /* FOOTER */
   footer { padding: 40px 0 32px; text-align: center; border-top: 1px solid var(--border); }
   footer .fname { font-size: 13px; color: var(--text); font-weight: 600; }
   footer .fsub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 
-  /* scroll-snap prompt */
   .scroll-cue {
     position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
     font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 2px;
@@ -221,62 +394,56 @@
 
   @media (min-width: 768px) {
     .container { max-width: 640px; }
-    .counters { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
 <section class="hero">
   <div class="container">
     <div class="eyebrow">Pipeline</div>
     <h1>How a video gets made.</h1>
-    <p class="sub">8 stages from idea to analytics. Tap a stage to see what runs there. Tap a tool to see what it does.</p>
+    <p class="sub">8 stages from idea to analytics. Tap the button to watch each stage build its own output in real time.</p>
 
     <button class="run-btn" id="runBtn" onclick="runPipeline()">
-      <span class="icon">▶</span>
+      <span class="icon">&#9654;</span>
       <span>
-        Walk through all 8 stages
-        <span class="label-sub">auto-plays each stage in order</span>
+        Watch the pipeline run
+        <span class="label-sub">~40 seconds, 8 live stages</span>
       </span>
     </button>
-    <div class="run-tips">Or scroll down and tap stages individually.</div>
+    <div class="run-tips">Each stage builds something visible. Tap any tool chip for a closer look.</div>
   </div>
-  <div class="scroll-cue">Scroll ↓</div>
+  <div class="scroll-cue">Scroll &darr;</div>
 </section>
 
-<!-- PIPELINE -->
 <section class="pipeline">
   <div class="container">
     <div id="stages"></div>
   </div>
 </section>
 
-<!-- TRY IT -->
 <section class="tryit">
   <div class="container">
     <div class="eyebrow">Try the ideation stage</div>
     <h2>Type a topic.</h2>
-    <p style="margin-bottom: 20px;">See what the ideation agent would output. (Demo — doesn't hit the real API.)</p>
+    <p style="margin-bottom: 20px;">The ideation agent would scrape viral videos on that topic and return the best ones. Here's what that looks like.</p>
 
     <div class="tryit-box">
       <input class="tryit-input" id="tryitInput" placeholder="e.g. cardboard experiments" autocomplete="off">
-      <button class="tryit-btn" onclick="runTryIt()">Generate</button>
+      <button class="tryit-btn" onclick="runTryIt()">Generate ideas</button>
       <div class="tryit-output" id="tryitOut"></div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="fname">48 tools across 8 stages</div>
-    <div class="fsub">Demo — simulated outputs, not live execution</div>
+    <div class="fsub">Interactive demo. Simulated outputs, real pipeline structure.</div>
   </div>
 </footer>
 
-<!-- MODAL -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-grip"></div>
@@ -284,19 +451,16 @@
     <div class="modal-sub" id="modalSub">Category</div>
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-demo" id="modalDemo"></div>
-    <button class="modal-btn" id="modalBtn" onclick="runToolDemo()">Run demo</button>
     <button class="modal-close" onclick="closeModal()">Close</button>
   </div>
 </div>
 
 <script>
-// ===== STAGE DATA =====
+// ============ STAGE DATA ============
 const STAGES = [
   {
-    id: 'ideation',
-    num: '01',
-    name: 'Ideation',
-    desc: 'Find the ideas that already went viral and reshape them.',
+    id: 'ideation', num: '01', name: 'Ideation',
+    desc: 'Find the ideas that already went viral. Filter them for fit.',
     chips: [
       { t: 'tubelab-research', c: '' },
       { t: 'ig-saved-reels', c: '' },
@@ -304,401 +468,185 @@ const STAGES = [
       { t: 'NeuroBits Scanner', c: 'notion' },
       { t: 'Idea Reviewer', c: 'notion' }
     ],
-    duration: 3600,
-    output: [
-      { d: 100, t: 'Querying TubeLab API for "cardboard experiments"...' },
-      { d: 600, t: '> 247 outlier videos returned', c: 'ok' },
-      { d: 400, t: 'Filtering for relevance via Claude Vision...' },
-      { d: 700, t: '> 42 qualified ideas (83% rejection rate)', c: 'ok' },
-      { d: 400, t: 'Checking channel caps and topic overlap...' },
-      { d: 500, t: 'Writing to Notion Video Ideas DB...' },
-      { d: 400, t: '✓ 12 new ideas added. Auto-assigned format tags.', c: 'ok' },
-      { d: 200, t: '' }
+    render: 'ideas',
+    data: [
+      { thumb: 1, title: 'Cardboard vs 500 lb bowling ball', views: '48M', src: 'YouTube · 3 weeks ago' },
+      { thumb: 2, title: 'I built an unbreakable $1 fort', views: '31M', src: 'YouTube · 1 month ago' },
+      { thumb: 3, title: 'Testing cardboard against 10,000 psi', views: '22M', src: 'YouTube · 2 weeks ago' },
+      { thumb: 4, title: 'How much weight can cardboard hold?', views: '18M', src: 'YouTube · 5 days ago' },
+      { thumb: 5, title: 'Cardboard survives nuclear reactor', views: '14M', src: 'YouTube · 6 weeks ago' },
+      { thumb: 6, title: 'I stood on a cardboard bridge', views: '11M', src: 'YouTube · 2 months ago' }
     ]
   },
   {
-    id: 'scripting',
-    num: '02',
-    name: 'Scripting',
-    desc: 'Write the shorts script word-for-word in HafuGo voice.',
+    id: 'scripting', num: '02', name: 'Scripting',
+    desc: 'Word-for-word short script in HafuGo voice. QA gate runs after.',
     chips: [
       { t: 'shorts-scriptwriter', c: '' },
       { t: 'scripts-qa', c: '' },
       { t: 'Shorts Scripter', c: 'notion' },
       { t: 'Voice Analyst', c: 'notion' }
     ],
-    duration: 5200,
-    output: [
-      { d: 100, t: 'Loading voice guide + format architecture...' },
-      { d: 500, t: '> Format: Escalation Ladder', c: 'ok' },
-      { d: 300, t: 'Drafting script...' },
-      { d: 400, t: '' },
-      { d: 300, t: '  HOOK: "I dropped a bowling ball on cardboard."', c: 'dim' },
-      { d: 300, t: '  REVEAL: "It survived. So I got a bigger one."', c: 'dim' },
-      { d: 300, t: '  ESCALATION: "Still alive after 500 lbs."', c: 'dim' },
-      { d: 300, t: '  PAYOFF: "Cardboard beat physics today."', c: 'dim' },
-      { d: 400, t: '' },
-      { d: 400, t: 'Running QA gate (10 rubric checks)...' },
-      { d: 700, t: '  word count: 87 / target 80-100 ✓', c: 'ok' },
-      { d: 200, t: '  hook check: no warm-up ✓', c: 'ok' },
-      { d: 200, t: '  joke density: 4 comedy beats ✓', c: 'ok' },
-      { d: 200, t: '  CTA placement: 78% mark ✓', c: 'ok' },
-      { d: 300, t: '✓ QA: PASS. Handed to editor.', c: 'ok' }
-    ]
+    render: 'script',
+    data: {
+      format: 'Escalation Ladder',
+      lines: [
+        { label: 'HOOK', text: 'I dropped a bowling ball on cardboard.' },
+        { label: 'TWIST', text: 'It survived. So I went heavier.' },
+        { label: 'ESCALATION', text: '100 pounds. Still fine.' },
+        { label: 'PEAK', text: 'Five hundred pounds. Still fine.' },
+        { label: 'PAYOFF', text: 'Today, cardboard beat physics.' }
+      ],
+      words: 87, target: '80-100', qaResult: 'PASS'
+    }
   },
   {
-    id: 'logistics',
-    num: '03',
-    name: 'Logistics',
-    desc: 'Source every item with Amazon links, prices, and validation videos.',
+    id: 'logistics', num: '03', name: 'Logistics',
+    desc: 'Amazon links, prices, Prime eligibility, validation videos.',
     chips: [
       { t: 'shot-list-generator', c: '' },
       { t: 'Logistics Researcher', c: 'notion' }
     ],
-    duration: 3200,
-    output: [
-      { d: 100, t: 'Extracting props from script...' },
-      { d: 400, t: '> 7 items needed', c: 'ok' },
-      { d: 300, t: 'Searching Amazon.ca (Prime eligible, 4+ stars)...' },
-      { d: 500, t: '  • Heavy cardboard sheets (pack of 10) — $18.99' },
-      { d: 300, t: '  • Bowling ball, 10 lb — $42.50' },
-      { d: 300, t: '  • Bowling ball, 16 lb — $58.00' },
-      { d: 300, t: '  • Cinder blocks (qty 4) — $27.96' },
-      { d: 300, t: '  • Safety glasses — $9.99' },
-      { d: 300, t: 'Validating experiment via YouTube proof videos...' },
-      { d: 400, t: '> 3 reference videos found (500lb threshold)', c: 'ok' },
-      { d: 300, t: '✓ Total: $167.44. Shoot-ready.', c: 'ok' }
-    ]
+    render: 'products',
+    data: {
+      items: [
+        { abbr: 'CB', name: 'Heavy cardboard sheets (pack of 10)', price: '$18.99', rating: 4.6 },
+        { abbr: 'BB', name: 'Bowling ball, 10 lb', price: '$42.50', rating: 4.8 },
+        { abbr: 'BB', name: 'Bowling ball, 16 lb', price: '$58.00', rating: 4.9 },
+        { abbr: 'CN', name: 'Cinder blocks (qty 4)', price: '$27.96', rating: 4.4 },
+        { abbr: 'SG', name: 'Safety glasses', price: '$9.99', rating: 4.7 },
+        { abbr: 'TP', name: 'Tripod mount adapter', price: '$10.00', rating: 4.5 }
+      ],
+      total: '$167.44'
+    }
   },
   {
-    id: 'filming',
-    num: '04',
-    name: 'Filming',
-    desc: "The one part AI can't do — yet.",
+    id: 'filming', num: '04', name: 'Filming',
+    desc: "The one part AI can't do yet. Me on camera.",
     isHuman: true,
-    chips: [
-      { t: 'Hafu on camera', c: 'human' }
-    ],
-    duration: 2600,
-    output: [
-      { d: 100, t: 'Setting up studio...' },
-      { d: 500, t: '> 2 cameras, 3-point lighting, lav mic', c: 'ok' },
-      { d: 300, t: 'Running shot list...' },
-      { d: 600, t: '  ~ Hafu on set. Can\'t automate this part yet.', c: 'warn' },
-      { d: 600, t: '  ~ (But I tried.)', c: 'dim' },
-      { d: 500, t: '✓ Footage backed up to SSD → Mega cloud', c: 'ok' }
-    ]
+    chips: [ { t: 'Hafu on camera', c: 'human' } ],
+    render: 'filming',
+    data: { status: 'Recording segment 3 of 7', runtime: '00:14:22' }
   },
   {
-    id: 'editing',
-    num: '05',
-    name: 'Editing',
-    desc: 'Human editor cuts the main video. AI handles dubs + subs.',
+    id: 'editing', num: '05', name: 'Editing',
+    desc: 'Human cuts the main video. AI handles dubs, subs, and timing.',
     chips: [
       { t: 'Human editor', c: 'human' },
       { t: 'dittodub-download', c: '' },
       { t: 'dittodub-transcript', c: '' }
     ],
-    duration: 3400,
-    output: [
-      { d: 100, t: 'Editor uploading cut to Frame.io...' },
-      { d: 400, t: '> Main edit complete', c: 'ok' },
-      { d: 300, t: 'Generating dubbed audio for 6 languages...' },
-      { d: 500, t: '  • Spanish  ✓' },
-      { d: 300, t: '  • Portuguese  ✓' },
-      { d: 300, t: '  • French  ✓' },
-      { d: 300, t: '  • Arabic  ✓' },
-      { d: 300, t: '  • Hindi  ✓' },
-      { d: 300, t: '  • English (original)  ✓' },
-      { d: 300, t: 'Whisper transcribing subtitles...' },
-      { d: 400, t: '> 97.8% match. Timing fine-tuned.', c: 'ok' },
-      { d: 300, t: '✓ All language tracks ready.', c: 'ok' }
+    render: 'dubs',
+    data: [
+      { lang: 'EN', name: 'English' },
+      { lang: 'ES', name: 'Spanish' },
+      { lang: 'PT', name: 'Portuguese' },
+      { lang: 'FR', name: 'French' },
+      { lang: 'AR', name: 'Arabic' },
+      { lang: 'HI', name: 'Hindi' }
     ]
   },
   {
-    id: 'review',
-    num: '06',
-    name: 'Review',
-    desc: 'AI watches every video. 27 rules for long-form, 32 for shorts.',
+    id: 'review', num: '06', name: 'Review',
+    desc: '32 rules for shorts. 27 for long-form. Every cut gets AI QC.',
     chips: [
       { t: 'review-video', c: '' },
       { t: 'review-video-shortform', c: '' },
       { t: 'thumbnail-eval', c: '' },
       { t: 'frameio-pull', c: '' }
     ],
-    duration: 4200,
-    output: [
-      { d: 100, t: 'Running 32 short-form rules via FFmpeg + Claude Vision...' },
-      { d: 400, t: '  audio silence < 0.8s ✓', c: 'ok' },
-      { d: 300, t: '  loudness -14 LUFS ✓', c: 'ok' },
-      { d: 300, t: '  aspect ratio 9:16 ✓', c: 'ok' },
-      { d: 300, t: '  subject centered ✓', c: 'ok' },
-      { d: 300, t: '  platform safe zone ✓', c: 'ok' },
-      { d: 300, t: '  hook in first 1.5s ✓', c: 'ok' },
-      { d: 400, t: '  ~ frame 00:14 — slight camera shake', c: 'warn' },
-      { d: 400, t: 'Evaluating thumbnail (28 criteria)...' },
-      { d: 500, t: '> Score: 87% — PASS threshold', c: 'ok' },
-      { d: 400, t: '✓ 2 comments posted to Frame.io', c: 'ok' },
-      { d: 300, t: '' }
-    ]
+    render: 'rules',
+    data: {
+      score: 87,
+      rules: [
+        { status: 'pass', name: 'Audio silence' },
+        { status: 'pass', name: 'Loudness (-14 LUFS)' },
+        { status: 'pass', name: 'Aspect ratio 9:16' },
+        { status: 'pass', name: 'Subject centered' },
+        { status: 'pass', name: 'Platform safe zone' },
+        { status: 'pass', name: 'Hook energy (first 1.5s)' },
+        { status: 'warn', name: 'Camera shake at 0:14' },
+        { status: 'pass', name: 'Caption coverage' }
+      ],
+      note: '2 notes posted to Frame.io'
+    }
   },
   {
-    id: 'distribution',
-    num: '07',
-    name: 'Distribution',
-    desc: 'Schedule across every platform in one pass.',
+    id: 'distribution', num: '07', name: 'Distribution',
+    desc: 'Schedule across every platform in one pass. Optimized times.',
     chips: [
       { t: 'yt-scheduler', c: '' },
       { t: 'yt-dubs-posting', c: '' },
       { t: 'snapchat-optimizer', c: '' }
     ],
-    duration: 3600,
-    output: [
-      { d: 100, t: 'Opening YouTube Studio (Playwright)...' },
-      { d: 500, t: '> 5 shorts scheduled: 7am / 8am / 9am / 11am / 9pm', c: 'ok' },
-      { d: 400, t: 'Uploading 6 language dubs...' },
-      { d: 500, t: '> All tracks live on main video', c: 'ok' },
-      { d: 400, t: 'Snapchat: picking highest-performing thumbnail...' },
-      { d: 500, t: '> A/B winner selected (4x over baseline)', c: 'ok' },
-      { d: 400, t: 'Writing VistaSocial CSV...' },
-      { d: 500, t: '✓ 12 posts scheduled across YT / TikTok / IG / Snap', c: 'ok' },
-      { d: 300, t: '' }
+    render: 'platforms',
+    data: [
+      { id: 'yt', name: 'YouTube', count: 5, times: '7a · 8a · 9a · 11a · 9p', logo: 'YT' },
+      { id: 'tt', name: 'TikTok', count: 3, times: '10a · 3p · 7p', logo: 'TT' },
+      { id: 'ig', name: 'Instagram', count: 3, times: '9a · 2p · 8p', logo: 'IG' },
+      { id: 'sc', name: 'Snapchat', count: 7, times: 'A/B tested thumbs', logo: 'SC' }
     ]
   },
   {
-    id: 'analytics',
-    num: '08',
-    name: 'Analytics',
-    desc: 'Learn from yesterday. Update the taste profile automatically.',
+    id: 'analytics', num: '08', name: 'Analytics',
+    desc: 'Sync yesterday. Update the taste profile. Ready for tomorrow.',
     chips: [
       { t: 'snapchat-story-scraper', c: '' },
       { t: 'youtube-stats-sync', c: '' },
       { t: 'Learning Analyst', c: 'notion' },
       { t: 'The Delta', c: 'notion' }
     ],
-    duration: 2800,
-    output: [
-      { d: 100, t: 'Scraping Snapchat story performance...' },
-      { d: 500, t: '> 14 stories, 6,956 snaps indexed', c: 'ok' },
-      { d: 400, t: 'Syncing YouTube stats to Notion...' },
-      { d: 500, t: '> 47 videos updated: views, likes, retention', c: 'ok' },
-      { d: 400, t: 'Learning Analyst updating Taste Profile...' },
-      { d: 500, t: '> 3 new preferences learned from yesterday\'s decisions', c: 'ok' },
-      { d: 400, t: '✓ Pipeline complete. Ready for tomorrow.', c: 'ok' }
-    ]
+    render: 'stats',
+    data: {
+      rows: [
+        { lbl: 'YT views (24h)', pct: 92, val: '2.4M', cls: 'a' },
+        { lbl: 'Snapchat', pct: 78, val: '6,956', cls: 'b' },
+        { lbl: 'Stats synced', pct: 100, val: '47 vids', cls: 'c' },
+        { lbl: 'New ideas', pct: 66, val: '12 fed', cls: 'a' }
+      ],
+      learned: '3 new taste preferences learned from yesterday\'s approvals.'
+    }
   }
 ];
 
-// ===== TOOL DEMOS (for tapping chips) =====
+// ============ TOOL MODAL DATA ============
 const TOOL_DEMOS = {
-  'tubelab-research': {
-    sub: 'Agent · Ideation',
-    body: 'Finds outlier videos via the TubeLab API, filters them through Claude Vision for relevance, and writes the qualified ones straight into Notion.',
-    demo: ['Scanning TubeLab for outliers...', '> 247 videos returned', 'Filtering for Hafu fit...', '✓ 42 ideas added to Notion'],
-    kind: 'term'
-  },
-  'ig-saved-reels': {
-    sub: 'Tool · Ideation',
-    body: '630 saved Instagram reels categorized by production format (not topic). Searchable board for finding "how was that made" patterns.',
-    demo: ['Querying saved reels DB...', '> Tap-test: 87 matches', '> Tempo-cut: 54 matches', '> Fake-camera-glitch: 31 matches', '✓ SQLite + interactive board'],
-    kind: 'term'
-  },
-  'lf-niche-research': {
-    sub: 'Tool · Ideation',
-    body: '28 TubeLab queries across candidate niches. Ranked by LF 10M+ count, shorts virality, channel diversity, and Hafu fit.',
-    demo: ['Top niches by 10M+ count:', '  1. Science Experiments  312', '  2. Lego Machine          354', '  3. Coca-Cola Mentos     336', '  4. Liquid Nitrogen      307', '  ...'],
-    kind: 'term'
-  },
-  'shorts-scriptwriter': {
-    sub: 'Skill · Scripting',
-    body: 'Word-for-word HafuGo shorts scripts (30-60s). Auto-runs QA gate + comedy pass after every draft.',
-    demo: ['HOOK: "This $1 product destroys everything."', 'REVEAL: "It\'s literally just duct tape."', 'PAYOFF: "My landlord\'s lawyer disagrees."', '✓ QA: PASS. 94 words.'],
-    kind: 'term'
-  },
-  'scripts-qa': {
-    sub: 'Tool · Scripting',
-    body: '10-check rubric that any script must pass before going to the editor. Runs in under a second.',
-    demo: ['format compliance  ✓', 'word count         ✓', 'hook check         ✓', 'CTA placement      ✓', 'joke density       ✓', 'voice drift        ✓', '✓ PASS'],
-    kind: 'term'
-  },
-  'review-video': {
-    sub: 'Skill · Review',
-    body: 'Detects long-form vs shorts, runs the right rule set, then posts flagged timestamps as comments on Frame.io.',
-    demo: ['Detecting orientation...', '> 9:16, 42s duration → shortform', 'Running 32 rules...', '> 30 pass, 2 flagged', '✓ Comments posted'],
-    kind: 'term'
-  },
-  'review-video-shortform': {
-    sub: 'Skill · Review',
-    body: '32 rules. Phase 1 = FFmpeg audio/visual. Phase 2 = Claude Vision on sampled frames.',
-    demo: ['pacing                ✓', 'loudness              ✓', 'subject centered      ✓', 'safe zone             ✓', 'caption coverage      ✓', '~ frame 00:14 shake'],
-    kind: 'term'
-  },
-  'review-video-longform': {
-    sub: 'Skill · Review',
-    body: '27 rules tuned for 10-20 minute videos. Phase 2 includes B-roll/VO alignment verified by Vision.',
-    demo: ['audio pacing          ✓', 'scene transitions     ✓', 'broll alignment       ✓', 'cta timing            ✓', 'thumbnail match       ✓', '✓ Passed to editor'],
-    kind: 'term'
-  },
-  'thumbnail-eval': {
-    sub: 'Tool · Review',
-    body: '28 binary criteria across composition, realism, color, simplicity, face, and image quality. Claude Vision scores each one.',
-    demo: null,
-    kind: 'ring'
-  },
-  'yt-scheduler': {
-    sub: 'Tool · Distribution',
-    body: 'Playwright opens Chrome, navigates YouTube Studio, schedules every draft short one after another. Default times: 7/8/9/11am + 9pm.',
-    demo: ['Opening YT Studio...', '> 5 drafts found', 'Scheduling #1 — 7:00 AM  ✓', 'Scheduling #2 — 8:00 AM  ✓', 'Scheduling #3 — 9:00 AM  ✓', '✓ All 5 scheduled'],
-    kind: 'term'
-  },
-  'yt-dubs-posting': {
-    sub: 'Tool · Distribution',
-    body: 'Uploads dubbed audio + subtitles + translated metadata to YouTube Studio. 6 languages in one run.',
-    demo: ['Upload ES.mp3 + ES.srt  ✓', 'Upload PT.mp3 + PT.srt  ✓', 'Upload FR.mp3 + FR.srt  ✓', 'Upload AR.mp3 + AR.srt  ✓', 'Upload HI.mp3 + HI.srt  ✓', '✓ All 6 languages live'],
-    kind: 'term'
-  },
-  'schedule-youtube-shorts': {
-    sub: 'Skill · Distribution',
-    body: 'Skill wrapper for yt-scheduler. Natural language trigger, same outcome.',
-    demo: ['> /schedule-youtube-shorts 2026-04-21', 'Opening browser...', 'Scheduling 5 drafts...', '✓ Done in 38s'],
-    kind: 'term'
-  },
-  'snapchat-optimizer': {
-    sub: 'Automation · Distribution',
-    body: 'Revenue brain for Snapchat Stories. A/B tests thumbnails, picks winners, generates VistaSocial CSV.',
-    demo: ['Loading yesterday\'s story performance...', 'Testing thumb A vs B...', '> B wins 4.1x over baseline', 'Generating VistaSocial CSV...', '✓ 7 stories queued'],
-    kind: 'term'
-  },
-  'dittodub-download': {
-    sub: 'Skill · Editing',
-    body: 'Downloads every SRT + MP3 from a DittoDub project in one command. Handles all languages.',
-    demo: ['Connecting to DittoDub...', 'Downloading ES  ✓', 'Downloading PT  ✓', 'Downloading FR  ✓', 'Downloading AR  ✓', '✓ All files in /audio'],
-    kind: 'term'
-  },
-  'dittodub-transcript': {
-    sub: 'Skill · Editing',
-    body: 'Spell-check, sentence split, and Whisper-tuned timing for every DittoDub transcript.',
-    demo: ['Running Whisper on audio...', '> 97.8% match', 'Fine-tuning timing (diffs > 0.3s)...', 'Splitting long sentences...', '✓ All lines corrected'],
-    kind: 'term'
-  },
-  'snapchat-story-scraper': {
-    sub: 'Skill · Analytics',
-    body: 'Scrapes story + snap analytics from Snapchat Creator via Apollo cache. Multi-tab parallel.',
-    demo: ['Loading Snapchat Creator...', '> 14 new stories found', 'Parsing Apollo cache...', '> 6,956 snaps indexed', '✓ SQLite updated'],
-    kind: 'term'
-  },
-  'snapchat-revenue-scrape': {
-    sub: 'Skill · Analytics',
-    body: 'Daily Creator Rewards earnings (Stories vs Spotlight) scraped via iPhone Mirroring.',
-    demo: ['Opening iPhone Mirroring...', 'Tapping Creator Rewards...', '> Stories vs Spotlight split parsed', '> Reward / content dates extracted', '✓ Appended to log'],
-    kind: 'term'
-  },
-  'frameio-pull': {
-    sub: 'Tool · Review',
-    body: 'Pulls every review comment from every Frame.io project via the v2 API. Read-only, rate-limited.',
-    demo: ['Fetching projects...', '> 47 projects', 'Pulling comments...', '> 312 new comments', '✓ JSON saved per project'],
-    kind: 'term'
-  },
-  'shot-list-generator': {
-    sub: 'Tool · Logistics',
-    body: 'Reads the script, generates cinematic shot cards with AI preview images via Freepik Mystic, uploads to Notion.',
-    demo: ['Parsing script segments...', '> 19 shots needed', 'Generating Freepik previews...', '> 19 images, $1.31 total', '✓ Uploaded to Notion'],
-    kind: 'term'
-  },
-  'personal-themes': {
-    sub: 'Tool · Scripting',
-    body: 'Clusters NeuroBits + voice into emotional themes, then generates themed long-form story spines.',
-    demo: ['Extracting NeuroBits from Notion...', 'Clustering into 8 themes...', 'Generating spines for topic...', '✓ 5 themed spines pushed'],
-    kind: 'term'
-  },
-  'guest-research': {
-    sub: 'Tool · Ideation',
-    body: 'Per-guest markdown briefs for the future podcast. Angles, gift ideas, context.',
-    demo: ['Loading guest brief...', '> magnus-carlsen.md', '> topic: chess psychology', '> 3 angle hooks', '> gift ideas: 5'],
-    kind: 'term'
-  },
-  'youtube-playlist-grid': {
-    sub: 'Tool · Ideation',
-    body: 'Paste a YouTube playlist URL, browse all videos as a thumbnail grid with filter / sort / tag.',
-    demo: ['Fetching playlist...', '> 48 videos loaded', 'Rendering grid...', '✓ Filter / sort / tag ready'],
-    kind: 'term'
-  },
-  'youtube-stats-sync': {
-    sub: 'Tool · Analytics',
-    body: 'Syncs YouTube Data API + Analytics API stats into Notion. Fuzzy-matches video titles to DB pages.',
-    demo: ['Fetching channel stats...', '> 47 recent videos', 'Fuzzy-matching to Notion...', '> 45 matched (0.95+ score)', '✓ Views / likes / retention synced'],
-    kind: 'term'
-  },
-  'staleness-checker': {
-    sub: 'Tool · Meta',
-    body: 'Detects playbooks and skills that are outdated or have broken path references. Wired into /recap.',
-    demo: ['Scanning 23 playbooks...', '> 3 older than 30 days', 'Checking paths...', '> 2 broken references', '✓ Flagged for review'],
-    kind: 'term'
-  },
-  'ig-saved-reels-2': { sub: 'dupe', body: '', demo: [], kind: 'term' },
-  'Hafu on camera': {
-    sub: 'Still manual',
-    body: 'The part AI can\'t do yet. Me, a camera, and whatever we\'re breaking this week.',
-    demo: null,
-    kind: 'text'
-  },
-  'Human editor': {
-    sub: 'Still partially human',
-    body: 'Main edit is still cut by Blendi / Hotnoob. AI handles dubs, subs, and review only.',
-    demo: null,
-    kind: 'text'
-  },
-  'NeuroBits Scanner': {
-    sub: 'Notion Agent · Ideation',
-    body: 'Daily scan of my notes database for implementation ideas and content signals. Feeds into Voice Analyst.',
-    demo: ['Scanning NeuroBits...', '> 17 new entries', 'Extracting signals...', '✓ 4 fed to Voice Analyst'],
-    kind: 'term'
-  },
-  'Idea Reviewer': {
-    sub: 'Notion Agent · Ideation',
-    body: 'Batch-scores new ideas on quality and viability, attaches critique.',
-    demo: ['Loading 42 new ideas...', 'Scoring each...', '> 12 pass threshold', '> 30 revised', '✓ Taste Profile updated'],
-    kind: 'term'
-  },
-  'Shorts Scripter': {
-    sub: 'Notion Agent · Scripting',
-    body: 'Auto-triggers on idea approval. Generates full script using HafuGo voice profile.',
-    demo: ['Idea approved in Notion...', 'Loading voice profile...', 'Generating 2-column script...', '✓ Draft ready for review'],
-    kind: 'term'
-  },
-  'Voice Analyst': {
-    sub: 'Notion Agent · Scripting',
-    body: 'Daily: maintains the voice identity layer that Shorts Scripter reads from.',
-    demo: ['Reading NeuroBits outputs...', 'Updating voice traits...', '✓ Profile synced'],
-    kind: 'term'
-  },
-  'Logistics Researcher': {
-    sub: 'Notion Agent · Logistics',
-    body: 'Triggered when a script hits "Ready to Film". Sources props with Amazon links + validation videos.',
-    demo: ['Script → Ready to Film', 'Extracting 7 props...', 'Searching Amazon.ca...', '✓ Shopping list + budget attached'],
-    kind: 'term'
-  },
-  'Learning Analyst': {
-    sub: 'Notion Agent · Analytics',
-    body: 'Daily: reads my approve/reject decisions, updates the Taste Profile DB with learned preferences.',
-    demo: ['Reading yesterday\'s decisions...', '> 12 approvals, 8 rejections', 'Updating Taste Profile...', '✓ 3 new preferences learned'],
-    kind: 'term'
-  },
-  'The Delta': {
-    sub: 'Notion Agent · Analytics',
-    body: 'Records every change across content items with attribution. History log for the whole pipeline.',
-    demo: ['Monitoring Video DB...', '> 14 changes today', 'Recording diffs...', '✓ Change log updated'],
-    kind: 'term'
-  },
-  'Human editor': {
-    sub: 'Still partially human',
-    body: 'Main edit is still cut by the human editor. AI handles dubs, subs, and review only.',
-    demo: null,
-    kind: 'text'
-  }
+  'tubelab-research': { sub: 'Agent · Ideation', body: 'Finds outlier videos via the TubeLab API, filters via Claude Vision, writes qualified ideas to Notion.', kind: 'ideas' },
+  'ig-saved-reels': { sub: 'Tool · Ideation', body: '630 saved IG reels categorized by production format. Interactive board for finding "how was that made" patterns.', kind: 'stats', data: { rows: [{ lbl: 'Tap-test', pct: 60, val: '87', cls: 'a' }, { lbl: 'Tempo-cut', pct: 38, val: '54', cls: 'b' }, { lbl: 'Fake-glitch', pct: 22, val: '31', cls: 'c' }] } },
+  'lf-niche-research': { sub: 'Tool · Ideation', body: '28 TubeLab queries ranked by 10M+ count, shorts virality, and Hafu fit.', kind: 'none' },
+  'shorts-scriptwriter': { sub: 'Skill · Scripting', body: 'Word-for-word HafuGo shorts. Auto-runs QA gate and comedy pass after every draft.', kind: 'script' },
+  'scripts-qa': { sub: 'Tool · Scripting', body: '10-check rubric that every script passes before reaching the editor.', kind: 'rules-mini' },
+  'review-video': { sub: 'Skill · Review', body: 'Detects long-form vs shorts, runs the right rule set, posts flagged timestamps to Frame.io.', kind: 'ring' },
+  'review-video-shortform': { sub: 'Skill · Review', body: '32 rules. FFmpeg for audio/visual, Claude Vision for frames.', kind: 'ring' },
+  'review-video-longform': { sub: 'Skill · Review', body: '27 rules tuned for 10-20 minute videos. Includes B-roll alignment.', kind: 'ring' },
+  'thumbnail-eval': { sub: 'Tool · Review', body: '28 binary criteria scored by Claude Vision.', kind: 'ring' },
+  'yt-scheduler': { sub: 'Tool · Distribution', body: 'Playwright opens Chrome and schedules every draft short sequentially.', kind: 'platforms-mini' },
+  'yt-dubs-posting': { sub: 'Tool · Distribution', body: 'Uploads dubbed audio, subtitles, translated metadata for 6 languages.', kind: 'dubs-mini' },
+  'schedule-youtube-shorts': { sub: 'Skill · Distribution', body: 'Natural-language wrapper around yt-scheduler.', kind: 'platforms-mini' },
+  'snapchat-optimizer': { sub: 'Automation · Distribution', body: 'Revenue brain. A/B tests thumbnails, picks winners, generates CSV.', kind: 'stats', data: { rows: [{ lbl: 'Thumb A', pct: 24, val: 'lose', cls: 'a' }, { lbl: 'Thumb B', pct: 96, val: 'win', cls: 'c' }] } },
+  'dittodub-download': { sub: 'Skill · Editing', body: 'Downloads every SRT and MP3 from a DittoDub project in one command.', kind: 'dubs-mini' },
+  'dittodub-transcript': { sub: 'Skill · Editing', body: 'Spell-check, sentence split, Whisper-tuned timing.', kind: 'none' },
+  'snapchat-story-scraper': { sub: 'Skill · Analytics', body: 'Scrapes story and snap analytics from Snapchat Creator via Apollo cache.', kind: 'stats', data: { rows: [{ lbl: 'Stories', pct: 80, val: '14', cls: 'a' }, { lbl: 'Snaps', pct: 90, val: '6956', cls: 'b' }] } },
+  'snapchat-revenue-scrape': { sub: 'Skill · Analytics', body: 'Daily Creator Rewards scraped via iPhone Mirroring.', kind: 'none' },
+  'frameio-pull': { sub: 'Tool · Review', body: 'Pulls every review comment from every Frame.io project via v2 API.', kind: 'none' },
+  'shot-list-generator': { sub: 'Tool · Logistics', body: 'Generates cinematic shot cards with AI preview images via Freepik.', kind: 'none' },
+  'personal-themes': { sub: 'Tool · Scripting', body: 'Clusters NeuroBits and voice into themes, generates long-form story spines.', kind: 'none' },
+  'guest-research': { sub: 'Tool · Ideation', body: 'Per-guest markdown dossiers for the future podcast.', kind: 'none' },
+  'youtube-playlist-grid': { sub: 'Tool · Ideation', body: 'Paste a playlist URL, browse all videos as a sortable thumbnail grid.', kind: 'none' },
+  'youtube-stats-sync': { sub: 'Tool · Analytics', body: 'Syncs Data API + Analytics API stats into Notion via fuzzy title matching.', kind: 'stats', data: { rows: [{ lbl: 'Matched', pct: 95, val: '45/47', cls: 'c' }] } },
+  'staleness-checker': { sub: 'Tool · Meta', body: 'Detects playbooks and skills that are stale or have broken paths.', kind: 'none' },
+  'Hafu on camera': { sub: 'Still manual', body: 'Me, a camera, and whatever is being broken today.', kind: 'none' },
+  'Human editor': { sub: 'Still partially human', body: 'Main edit is cut by the editor. AI handles the rest.', kind: 'none' },
+  'NeuroBits Scanner': { sub: 'Notion Agent · Ideation', body: 'Daily scan of the notes database for implementation ideas and content signals.', kind: 'none' },
+  'Idea Reviewer': { sub: 'Notion Agent · Ideation', body: 'Batch-scores ideas on quality and viability, attaches critique.', kind: 'none' },
+  'Shorts Scripter': { sub: 'Notion Agent · Scripting', body: 'Auto-triggers on idea approval. Generates full script using voice profile.', kind: 'script' },
+  'Voice Analyst': { sub: 'Notion Agent · Scripting', body: 'Maintains the voice identity layer the scripter reads from.', kind: 'none' },
+  'Logistics Researcher': { sub: 'Notion Agent · Logistics', body: 'Triggered when a script goes "Ready to Film". Sources props + validation videos.', kind: 'none' },
+  'Learning Analyst': { sub: 'Notion Agent · Analytics', body: 'Reads approve/reject decisions, updates the Taste Profile DB.', kind: 'none' },
+  'The Delta': { sub: 'Notion Agent · Analytics', body: 'Records every change across content items with attribution.', kind: 'none' }
 };
 
-// ===== RENDER STAGES =====
+// ============ RENDER STAGE SHELLS ============
 function renderStages() {
   const root = document.getElementById('stages');
   STAGES.forEach(s => {
@@ -713,9 +661,9 @@ function renderStages() {
       </div>
       <div class="stage-name">${s.name}</div>
       <div class="stage-desc">${s.desc}</div>
-      <div class="stage-output" id="out-${s.id}"></div>
-      <div class="chips" id="chips-${s.id}">
-        ${s.chips.map(c => `<button class="chip ${c.c}" onclick="event.stopPropagation(); openToolModal('${c.t}')">${c.t}</button>`).join('')}
+      <div class="output-wrap" id="out-${s.id}"></div>
+      <div class="chips">
+        ${s.chips.map(c => `<button class="chip ${c.c}" onclick="event.stopPropagation(); openToolModal('${c.t.replace(/'/g, "\\'")}')">${c.t}</button>`).join('')}
       </div>
     `;
     root.appendChild(el);
@@ -723,7 +671,7 @@ function renderStages() {
 }
 renderStages();
 
-// ===== PIPELINE RUNNER =====
+// ============ PIPELINE RUNNER ============
 let pipelineRunning = false;
 
 async function runPipeline() {
@@ -731,15 +679,20 @@ async function runPipeline() {
   pipelineRunning = true;
   const btn = document.getElementById('runBtn');
   btn.classList.add('running');
-  btn.innerHTML = '<span class="icon">⏳</span><span>Running...<span class="label-sub">do not touch</span></span>';
+  btn.innerHTML = '<span class="icon">&#9203;</span><span>Running now<span class="label-sub">scroll down to watch</span></span>';
 
-  // reset stages
+  // scroll to first stage right away so output is visible
+  const first = document.getElementById('stage-ideation');
+  first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   document.querySelectorAll('.stage').forEach(st => {
     st.classList.remove('active', 'done');
     if (!st.classList.contains('human')) st.classList.add('idle');
-    const out = st.querySelector('.stage-output');
+    const out = st.querySelector('.output-wrap');
     if (out) out.innerHTML = '';
   });
+
+  await wait(500);
 
   for (const s of STAGES) {
     await playStage(s.id, true);
@@ -747,12 +700,12 @@ async function runPipeline() {
 
   btn.classList.remove('running');
   btn.classList.add('done');
-  btn.innerHTML = '<span class="icon">✓</span><span>Pipeline complete<span class="label-sub">tap a stage to replay</span></span>';
+  btn.innerHTML = '<span class="icon">&#10003;</span><span>Complete<span class="label-sub">tap any stage to replay</span></span>';
   setTimeout(() => {
     btn.classList.remove('done');
-    btn.innerHTML = '<span class="icon">▶</span><span>Run it again<span class="label-sub">~30 seconds, 8 stages</span></span>';
+    btn.innerHTML = '<span class="icon">&#9654;</span><span>Run it again<span class="label-sub">~40 seconds, 8 live stages</span></span>';
     pipelineRunning = false;
-  }, 4000);
+  }, 5000);
 }
 
 async function playStage(stageId, fromPipeline = false) {
@@ -762,7 +715,6 @@ async function playStage(stageId, fromPipeline = false) {
   const out = document.getElementById('out-' + s.id);
   if (!fromPipeline && pipelineRunning) return;
 
-  // mark active
   document.querySelectorAll('.stage').forEach(st => {
     if (st.id !== 'stage-' + s.id && !fromPipeline) st.classList.remove('active');
   });
@@ -770,42 +722,284 @@ async function playStage(stageId, fromPipeline = false) {
   el.classList.add('active');
   el.querySelector('.stage-state').textContent = s.isHuman ? 'Human · Running' : 'Running';
 
-  // scroll into view if not already
   if (fromPipeline) {
     const rect = el.getBoundingClientRect();
-    if (rect.top < 100 || rect.bottom > window.innerHeight - 100) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (rect.top < 60 || rect.bottom > window.innerHeight - 60) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      await wait(300);
     }
   }
 
-  // fire chips sequentially
-  const chips = document.querySelectorAll('#chips-' + s.id + ' .chip');
+  // fire chips
+  const chips = el.querySelectorAll('.chip');
   chips.forEach((chip, i) => {
     setTimeout(() => {
       chip.classList.add('firing');
       setTimeout(() => chip.classList.remove('firing'), 400);
-    }, i * 250);
+    }, i * 200);
   });
 
-  // write output lines
+  // render visual artifact
   out.innerHTML = '';
-  for (const line of s.output) {
-    await wait(line.d);
-    const span = document.createElement('span');
-    span.className = 'line' + (line.c ? ' ' + line.c : '');
-    span.textContent = line.t;
-    out.appendChild(span);
-    out.scrollTop = out.scrollHeight;
-  }
+  await RENDERERS[s.render](out, s.data);
 
   el.classList.remove('active');
   el.classList.add('done');
   el.querySelector('.stage-state').textContent = s.isHuman ? 'Human' : 'Done';
+  await wait(400);
 }
+
+// ============ RENDERERS ============
+const RENDERERS = {
+  async ideas(root, items) {
+    const list = document.createElement('div');
+    list.className = 'idea-list';
+    root.appendChild(list);
+    for (const item of items) {
+      await wait(220);
+      const el = document.createElement('div');
+      el.className = 'idea';
+      el.innerHTML = `
+        <div class="idea-thumb v${item.thumb}"></div>
+        <div class="idea-body">
+          <div class="idea-title">${item.title}</div>
+          <div class="idea-meta"><span class="views">${item.views} views</span> · ${item.src}</div>
+        </div>
+        <div class="idea-badge">QUALIFIED</div>
+      `;
+      list.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('in'));
+    }
+  },
+
+  async script(root, data) {
+    const card = document.createElement('div');
+    card.className = 'script-card';
+    card.innerHTML = `<div class="script-format">Format &middot; ${data.format}</div><div class="script-lines"></div>`;
+    root.appendChild(card);
+    requestAnimationFrame(() => card.classList.add('in'));
+    await wait(200);
+    const linesWrap = card.querySelector('.script-lines');
+    for (const line of data.lines) {
+      await wait(260);
+      const lineEl = document.createElement('div');
+      lineEl.className = 'script-line';
+      lineEl.innerHTML = `<span class="label">${line.label}:</span><span class="txt typing"></span>`;
+      linesWrap.appendChild(lineEl);
+      const txt = lineEl.querySelector('.txt');
+      for (let i = 0; i <= line.text.length; i++) {
+        txt.textContent = line.text.slice(0, i);
+        await wait(18 + Math.random() * 12);
+      }
+      txt.classList.remove('typing');
+    }
+    await wait(300);
+    const footer = document.createElement('div');
+    footer.className = 'script-footer';
+    footer.innerHTML = `
+      <span class="count">${data.words} words &middot; target ${data.target}</span>
+      <span class="pass">&check; QA: ${data.qaResult}</span>
+    `;
+    card.appendChild(footer);
+  },
+
+  async products(root, data) {
+    const list = document.createElement('div');
+    list.className = 'product-list';
+    root.appendChild(list);
+    for (const p of data.items) {
+      await wait(180);
+      const el = document.createElement('div');
+      el.className = 'product';
+      const stars = '&#9733;'.repeat(Math.round(p.rating)) + '&#9734;'.repeat(5 - Math.round(p.rating));
+      el.innerHTML = `
+        <div class="product-icon">${p.abbr}</div>
+        <div class="product-body">
+          <div class="product-name">${p.name}</div>
+          <div class="product-meta"><span class="prime">Prime</span> &middot; ${stars} ${p.rating.toFixed(1)}</div>
+        </div>
+        <div class="product-price">${p.price}</div>
+      `;
+      list.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('in'));
+    }
+    await wait(300);
+    const total = document.createElement('div');
+    total.className = 'budget-total';
+    total.innerHTML = `<span class="l">Shoot budget</span><span class="v">${data.total}</span>`;
+    root.appendChild(total);
+    requestAnimationFrame(() => total.classList.add('in'));
+  },
+
+  async filming(root, data) {
+    const card = document.createElement('div');
+    card.className = 'filming-card';
+    card.innerHTML = `
+      <div class="film-dot"></div>
+      <div class="film-body">
+        <div class="film-title">${data.status}</div>
+        <div class="film-sub">The part AI cannot automate yet</div>
+      </div>
+      <div class="film-runtime" id="film-rt">00:00:00</div>
+    `;
+    root.appendChild(card);
+    const rt = card.querySelector('#film-rt');
+    const total = 14 * 60 + 22;
+    for (let s = 0; s <= total; s += 60) {
+      const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      rt.textContent = `${hh}:${mm}:${ss}`;
+      await wait(50);
+    }
+    rt.textContent = data.runtime;
+  },
+
+  async dubs(root, items) {
+    const list = document.createElement('div');
+    list.className = 'dub-list';
+    root.appendChild(list);
+    const rows = [];
+    for (const d of items) {
+      const row = document.createElement('div');
+      row.className = 'dub';
+      row.innerHTML = `
+        <div class="dub-lang">${d.lang}</div>
+        <div class="dub-bar"><div class="dub-fill"></div></div>
+        <div class="dub-check">&middot;</div>
+      `;
+      list.appendChild(row);
+      rows.push(row);
+    }
+    await wait(200);
+    for (const row of rows) {
+      row.querySelector('.dub-fill').style.width = '100%';
+      await wait(280);
+      row.classList.add('done');
+      row.querySelector('.dub-check').innerHTML = '&check;';
+    }
+  },
+
+  async rules(root, data) {
+    const wrap = document.createElement('div');
+    wrap.className = 'review-grid';
+    wrap.innerHTML = `
+      <div class="review-ring">
+        <svg width="88" height="88">
+          <circle class="track" cx="44" cy="44" r="36"></circle>
+          <circle class="fill" cx="44" cy="44" r="36" stroke-dasharray="226" stroke-dashoffset="226"></circle>
+        </svg>
+        <div class="val">0%</div>
+        <div class="val-lbl">Thumbnail</div>
+      </div>
+      <div class="rules"></div>
+    `;
+    root.appendChild(wrap);
+    const rulesEl = wrap.querySelector('.rules');
+    for (const r of data.rules) {
+      await wait(160);
+      const el = document.createElement('div');
+      el.className = 'rule ' + r.status;
+      el.innerHTML = `
+        <div class="rule-ic">${r.status === 'pass' ? '&check;' : r.status === 'warn' ? '!' : '&times;'}</div>
+        <div class="rule-name">${r.name}</div>
+      `;
+      rulesEl.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('in'));
+    }
+    // ring fill
+    const fill = wrap.querySelector('.fill');
+    const val = wrap.querySelector('.val');
+    const offset = 226 - (226 * data.score / 100);
+    fill.style.strokeDashoffset = offset;
+    let cur = 0;
+    const int = setInterval(() => {
+      cur = Math.min(cur + 2, data.score);
+      val.textContent = cur + '%';
+      if (cur >= data.score) clearInterval(int);
+    }, 22);
+    await wait(500);
+    const note = document.createElement('div');
+    note.className = 'frameio-note';
+    note.textContent = data.note;
+    root.appendChild(note);
+    requestAnimationFrame(() => note.classList.add('in'));
+  },
+
+  async platforms(root, items) {
+    const grid = document.createElement('div');
+    grid.className = 'plat-grid';
+    root.appendChild(grid);
+    for (const p of items) {
+      await wait(240);
+      const el = document.createElement('div');
+      el.className = 'plat ' + p.id;
+      el.innerHTML = `
+        <div class="plat-head">
+          <div class="plat-logo">${p.logo}</div>
+          <div class="plat-name">${p.name}</div>
+        </div>
+        <div class="plat-count">${p.count}</div>
+        <div class="plat-times">${p.times}</div>
+        <div class="plat-status">&check; Scheduled</div>
+      `;
+      grid.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('in'));
+    }
+  },
+
+  async stats(root, data) {
+    const panel = document.createElement('div');
+    panel.className = 'stats-panel';
+    root.appendChild(panel);
+    const rows = [];
+    for (const r of data.rows) {
+      const row = document.createElement('div');
+      row.className = 'stat-row';
+      row.innerHTML = `
+        <div class="lbl">${r.lbl}</div>
+        <div class="bar"><div class="bar-fill ${r.cls}"></div></div>
+        <div class="val">${r.val}</div>
+      `;
+      panel.appendChild(row);
+      rows.push({ el: row, pct: r.pct });
+    }
+    await wait(200);
+    for (const r of rows) {
+      r.el.querySelector('.bar-fill').style.width = r.pct + '%';
+      await wait(200);
+    }
+    if (data.learned) {
+      await wait(300);
+      const l = document.createElement('div');
+      l.className = 'learned';
+      l.innerHTML = `<strong>Learned:</strong> ${data.learned}`;
+      root.appendChild(l);
+      requestAnimationFrame(() => l.classList.add('in'));
+    }
+  }
+};
 
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ===== TOOL MODAL =====
+// ============ TRY IT ============
+async function runTryIt() {
+  const input = document.getElementById('tryitInput');
+  const topic = (input.value.trim() || 'cardboard experiments');
+  const out = document.getElementById('tryitOut');
+  out.classList.add('open');
+  out.innerHTML = '';
+  const topicTitle = topic.charAt(0).toUpperCase() + topic.slice(1);
+  const items = [
+    { thumb: 1, title: `The $1 ${topic} hack that shouldn't work`, views: '42M', src: 'YouTube · outlier' },
+    { thumb: 4, title: `I tested 100 ${topic} until one broke physics`, views: '28M', src: 'YouTube · outlier' },
+    { thumb: 3, title: `Level 1 to 100: ${topicTitle}`, views: '19M', src: 'YouTube · outlier' },
+    { thumb: 2, title: `${topicTitle}, but the hardest possible way`, views: '14M', src: 'YouTube · outlier' }
+  ];
+  await RENDERERS.ideas(out, items);
+}
+
+// ============ MODAL ============
 let currentTool = null;
 
 function openToolModal(toolName) {
@@ -815,16 +1009,67 @@ function openToolModal(toolName) {
   document.getElementById('modalTitle').textContent = toolName;
   document.getElementById('modalSub').textContent = data.sub;
   document.getElementById('modalBody').textContent = data.body;
-  document.getElementById('modalDemo').textContent = '';
-  document.getElementById('modalDemo').style.display = data.demo === null && data.kind !== 'ring' ? 'none' : 'block';
-  const btn = document.getElementById('modalBtn');
-  if (data.demo === null && data.kind !== 'ring') {
-    btn.style.display = 'none';
-  } else {
-    btn.style.display = 'block';
-    btn.textContent = data.kind === 'ring' ? 'Score this thumbnail' : 'Run demo';
-  }
+  const demoEl = document.getElementById('modalDemo');
+  demoEl.innerHTML = '';
+  renderToolDemo(demoEl, data);
   document.getElementById('modalBg').classList.add('open');
+}
+
+async function renderToolDemo(root, data) {
+  if (!data.kind || data.kind === 'none') return;
+  if (data.kind === 'ideas') {
+    await RENDERERS.ideas(root, [
+      { thumb: 1, title: 'Querying TubeLab for outliers...', views: '247', src: 'videos returned' },
+      { thumb: 3, title: 'Filtering via Claude Vision...', views: '42', src: 'qualified' },
+      { thumb: 5, title: 'Writing to Notion Video Ideas DB', views: '12', src: 'new entries' }
+    ]);
+  } else if (data.kind === 'script') {
+    await RENDERERS.script(root, {
+      format: 'Escalation Ladder',
+      lines: [
+        { label: 'HOOK', text: 'This $1 product destroys everything.' },
+        { label: 'REVEAL', text: "It's literally just duct tape." },
+        { label: 'PAYOFF', text: "My landlord's lawyer disagrees." }
+      ],
+      words: 74, target: '60-80', qaResult: 'PASS'
+    });
+  } else if (data.kind === 'ring') {
+    await RENDERERS.rules(root, {
+      score: 87,
+      rules: [
+        { status: 'pass', name: 'Composition' },
+        { status: 'pass', name: 'Realism' },
+        { status: 'pass', name: 'Color + contrast' },
+        { status: 'pass', name: 'Simplicity' },
+        { status: 'pass', name: 'Face + expression' },
+        { status: 'warn', name: 'Background detail' }
+      ],
+      note: 'Pass threshold (85%+)'
+    });
+  } else if (data.kind === 'rules-mini') {
+    await RENDERERS.rules(root, {
+      score: 100,
+      rules: [
+        { status: 'pass', name: 'Format compliance' },
+        { status: 'pass', name: 'Word count' },
+        { status: 'pass', name: 'Hook check' },
+        { status: 'pass', name: 'CTA placement' },
+        { status: 'pass', name: 'Joke density' }
+      ],
+      note: 'Script cleared for editor'
+    });
+  } else if (data.kind === 'dubs-mini') {
+    await RENDERERS.dubs(root, [
+      { lang: 'EN' }, { lang: 'ES' }, { lang: 'PT' }, { lang: 'FR' }
+    ]);
+  } else if (data.kind === 'platforms-mini') {
+    await RENDERERS.platforms(root, [
+      { id: 'yt', name: 'YouTube', count: 5, times: '7a · 8a · 9a · 11a · 9p', logo: 'YT' },
+      { id: 'tt', name: 'TikTok', count: 3, times: '10a · 3p · 7p', logo: 'TT' }
+    ]);
+  } else if (data.kind === 'stats') {
+    await RENDERERS.stats(root, data.data || { rows: [] });
+  }
 }
 
 function closeModal() {
@@ -832,100 +1077,7 @@ function closeModal() {
   currentTool = null;
 }
 
-async function runToolDemo() {
-  if (!currentTool) return;
-  const data = TOOL_DEMOS[currentTool];
-  const demo = document.getElementById('modalDemo');
-  const btn = document.getElementById('modalBtn');
-  btn.textContent = 'Running...';
-  btn.disabled = true;
-  demo.innerHTML = '';
-  if (data.kind === 'ring') {
-    demo.innerHTML = `
-      <div class="ring-wrap">
-        <div class="ring">
-          <svg width="88" height="88">
-            <circle class="track" cx="44" cy="44" r="36"></circle>
-            <circle class="fill" cx="44" cy="44" r="36"
-              stroke-dasharray="226" stroke-dashoffset="226" id="ringFill"></circle>
-          </svg>
-          <div class="val" id="ringVal">0%</div>
-        </div>
-        <div style="flex:1;">
-          <div id="ringStatus" style="font-size: 12px; color: var(--text-2); line-height: 1.6;">Loading thumbnail...</div>
-        </div>
-      </div>
-    `;
-    await wait(400);
-    document.getElementById('ringStatus').innerHTML = 'Running 28 criteria across 6 categories...';
-    const score = 87;
-    const fill = document.getElementById('ringFill');
-    const val = document.getElementById('ringVal');
-    const offset = 226 - (226 * score / 100);
-    fill.style.strokeDashoffset = offset;
-    let cur = 0;
-    const int = setInterval(() => {
-      cur = Math.min(cur + 2, score);
-      val.textContent = cur + '%';
-      if (cur >= score) {
-        clearInterval(int);
-        document.getElementById('ringStatus').innerHTML = '<strong style="color:#22c55e">PASS</strong><br>Composition 6/6, Realism 5/6, Color 5/6, Simplicity 3/3, Face 4/4, Quality 1/3';
-        btn.textContent = 'Run again';
-        btn.disabled = false;
-      }
-    }, 40);
-    return;
-  }
-  for (const line of data.demo) {
-    await wait(300);
-    const span = document.createElement('div');
-    span.textContent = line;
-    if (line.startsWith('✓')) span.style.color = 'var(--green)';
-    else if (line.startsWith('~')) span.style.color = 'var(--yellow)';
-    else if (line.startsWith('>')) span.style.color = 'var(--text-2)';
-    demo.appendChild(span);
-  }
-  btn.textContent = 'Run again';
-  btn.disabled = false;
-}
-
-// ===== TRY IT =====
-async function runTryIt() {
-  const input = document.getElementById('tryitInput');
-  const topic = input.value.trim() || 'cardboard experiments';
-  const out = document.getElementById('tryitOut');
-  out.classList.add('open');
-  out.innerHTML = '';
-  const seed = topic.toLowerCase();
-  const lines = [
-    'Querying TubeLab for "' + topic + '"...',
-    '> 247 outlier videos found',
-    'Filtering for HafuGo fit...',
-    '> 42 ideas qualified',
-    '',
-    'Top 3 generated ideas:',
-    '',
-    '  1. The $1 ' + topic + ' hack that shouldn\'t work',
-    '  2. I tested 100 ' + topic + ' until one broke physics',
-    '  3. Level 1 to 100: ' + topic + ' edition',
-    '',
-    '✓ Written to Notion Video Ideas DB'
-  ];
-  for (const line of lines) {
-    await wait(180);
-    const div = document.createElement('div');
-    div.textContent = line;
-    if (line.startsWith('✓')) div.style.color = 'var(--green)';
-    else if (line.startsWith('>')) div.style.color = 'var(--text-2)';
-    else if (line.match(/^\s+\d\./)) div.style.color = 'var(--accent-2)';
-    out.appendChild(div);
-  }
-}
-
-// keyboard close
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 
 </body>
