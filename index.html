@@ -563,6 +563,9 @@
     position: relative; overflow: hidden; border-radius: 4px;
   }
   .yt-tb.vert { aspect-ratio: 9/16; }
+  .yt-tb.real { background: #000; }
+  .yt-tb.real img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .yt-tb.real.vert img { object-position: center; }
   .yt-tb-shape {
     position: absolute; border-radius: 50%; opacity: 0.35; filter: blur(1px);
   }
@@ -700,14 +703,39 @@ function appBar(title) {
 }
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// ============ REAL HAFUGO THUMBNAILS ============
+// These are real YouTube video IDs from the "More Hafu" channel.
+// Thumbnails load from https://i.ytimg.com/vi/{id}/hqdefault.jpg (public CDN, no auth).
+const HAFU_VIDEOS = [
+  { id: 'ZKcEms6vSiQ', title: 'I Made a Giant Butane Rocket' },
+  { id: '3UYl0aWKURM', title: 'I Made a Giant Paper Popper' },
+  { id: 'Jv__M5Dv3jU', title: "I Made the World's Loudest Paper Popper" },
+  { id: '5DIlDscH0Fo', title: 'I Mixed Every Sour Candy' },
+  { id: '03Yb8hzVkIU', title: 'I Tested Edible Metal' },
+  { id: 'oci2H07_4FQ', title: 'I Tested Invisible Paint' },
+  { id: 'X5Fy03KI4Xk', title: 'I Tested Waterproof Sand' },
+  { id: 'WPoEoMNsHw8', title: 'I Tested a Color Changing Jacket' },
+  { id: 'iGU13_t8XSM', title: 'I Tested a Mosquito Snapper' },
+  { id: 'K0r15SBM91o', title: 'I Tested Supercooled Water' },
+  { id: 'BycXdJa3wQI', title: 'I Tested the Forever Candle' },
+  { id: 'XKJ7qB2CmDs', title: 'I Tested Genius Japanese Stationary' },
+  { id: 'HvCJbjql5WU', title: 'I Tested the Perfect Snowball Maker' },
+  { id: '7pmF0AVxL1I', title: 'I Tested Hollywood Fake Tears' },
+  { id: 'a3LXtNtSDY4', title: 'I Tested the Unbreakable Ball' }
+];
+function ytThumbUrl(id) { return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; }
+
 // ============ THUMBNAIL BUILDER ============
-// Generates a YouTube-style thumbnail (bold text, face silhouette, gradient, shape overlay).
-// Uses only CSS + inline HTML. Works offline.
+// If `videoId` is given, uses the real YouTube thumbnail from ytimg CDN.
+// Otherwise falls back to CSS-drawn bold-text-over-gradient style.
 function renderThumb(opts) {
-  const { title = '', tc1 = '#ef4444', tc2 = '#991b1b', size = 'md', vertical = false, face = true, duration = '' } = opts;
+  const { title = '', tc1 = '#ef4444', tc2 = '#991b1b', size = 'md', vertical = false, face = true, duration = '', videoId = null } = opts;
+  if (videoId) {
+    const dur = duration ? `<div class="yt-tb-dur">${duration}</div>` : '';
+    return `<div class="yt-tb real${vertical ? ' vert' : ''}"><img src="${ytThumbUrl(videoId)}" alt="${title}" loading="lazy" />${dur}</div>`;
+  }
   const face_ = face ? '<div class="yt-tb-face"></div>' : '';
   const dur = duration ? `<div class="yt-tb-dur">${duration}</div>` : '';
-  // Auto-highlight ONE bold word in the title (first all-caps word or first number-containing word)
   const titleHtml = String(title).replace(/(\b\d[\d,.$%+x]*\b|\b[A-Z]{2,}\b)/, '<span class="hl">$1</span>');
   return `<div class="yt-tb${vertical ? ' vert' : ''}" style="--tc1:${tc1};--tc2:${tc2}">
     <div class="yt-tb-shape a"></div>
@@ -1017,7 +1045,7 @@ R.ytStudio = async (root, data) => {
     const row = document.createElement('div');
     row.className = 'yt-row';
     row.innerHTML = `
-      <div class="yt-thumb" style="background:none;padding:0">${renderThumb({title: u.title.slice(0,18), tc1: u.c1, tc2: u.c2, size: 'sm', vertical: true, face: true, duration: u.dur})}</div>
+      <div class="yt-thumb" style="background:none;padding:0">${renderThumb({title: u.title, videoId: u.videoId, tc1: u.c1, tc2: u.c2, size: 'sm', vertical: true, face: true, duration: u.dur})}</div>
       <div>
         <div class="yt-title">${u.title}</div>
         <div class="yt-sub">Scheduled &middot; ${u.time}</div>
@@ -1066,7 +1094,7 @@ R.thumbnailEval = async (root, data) => {
   frame.innerHTML = `
     ${macBar('Thumbnail Evaluator', 'tev')}
     <div class="tev-body">
-      <div class="tev-thumb">${renderThumb({title: data.thumbnailTitle.toUpperCase(), tc1: '#ef4444', tc2: '#991b1b', size: 'lg', face: true, vertical: false})}</div>
+      <div class="tev-thumb">${renderThumb({videoId: data.videoId || 'a3LXtNtSDY4', title: data.thumbnailTitle})}</div>
       <div class="tev-score">
         <div class="tev-ring">
           <svg width="84" height="84">
@@ -1130,7 +1158,7 @@ R.igSavedReels = async (root, data) => {
     const el = document.createElement('div');
     el.className = 'ig-reel';
     el.innerHTML = `
-      ${renderThumb({title: r.title || 'TAP TO TEST', tc1: r.c1, tc2: r.c2, size: 'sm', vertical: true, face: true})}
+      ${renderThumb({videoId: r.videoId, title: r.title || '', size: 'sm', vertical: true, face: true})}
       <div class="ig-reel-overlay">
         <div class="ig-reel-fmt">${r.format}</div>
         <div class="ig-reel-creator">${r.creator}</div>
@@ -1307,7 +1335,7 @@ R.snapchatOptimizer = async (root, data) => {
   frame.className = 'snap-frame';
   const rows = data.stories.map(s => `
     <tr>
-      <td><div class="snap-tbl-cell"><div class="snap-tbl-thumb">${renderThumb({title: s.title.split(' ').slice(0,2).join(' '), tc1: s.c1, tc2: s.c2, size: 'sm', vertical: true, face: true})}</div><div class="ttl">${s.title}</div></div></td>
+      <td><div class="snap-tbl-cell"><div class="snap-tbl-thumb">${renderThumb({videoId: s.videoId, title: s.title, size: 'sm', vertical: true, face: true})}</div><div class="ttl">${s.title}</div></div></td>
       <td class="snap-time">${s.scheduledTime}</td>
       <td><span class="snap-badge">Snap</span></td>
     </tr>`).join('');
@@ -1362,7 +1390,7 @@ R.snapchatStoryScraper = async (root, data) => {
     card.className = 'snscr-card' + (i === 0 ? ' exp' : '');
     card.innerHTML = `
       <div class="snscr-top">
-        <div class="snscr-thumb">${renderThumb({title: s.title.split(' ').slice(0,2).join(' '), tc1: s.c1, tc2: s.c2, size: 'sm', vertical: true, face: true})}</div>
+        <div class="snscr-thumb">${renderThumb({videoId: s.videoId, title: s.title, size: 'sm', vertical: true, face: true})}</div>
         <div class="snscr-meta">
           <div class="snscr-title">${s.title}</div>
           <div class="snscr-stats">
@@ -1490,7 +1518,7 @@ R.thumbGen = async (root, data) => {
     card.dataset.idx = i + 1;
     card.innerHTML = `
       <div class="tg-winner-badge">WINNER</div>
-      ${renderThumb({ title: v.title, tc1: v.tc1, tc2: v.tc2, size: 'sm', face: v.face })}
+      ${renderThumb({ videoId: v.videoId, title: v.title, tc1: v.tc1, tc2: v.tc2, size: 'sm', face: v.face })}
       <div class="tg-card-status">
         <div style="text-align:center;">
           <div class="tg-spinner"></div>
@@ -1577,15 +1605,15 @@ const TOOLS = [
     totalReels: 630, totalFormats: 82, activeFilter: 'Tap-test',
     formats: [{ name: 'Tap-test', active: true }, { name: 'Tempo-cut' }, { name: 'Hook-flip' }, { name: 'Before/After' }, { name: 'Voiceover-reveal' }, { name: 'Text-first' }],
     reels: [
-      { title: 'TAP IF IT WORKS', creator: '@marco.edits', views: '2.4M', format: 'Tap-test', c1: '#ff6b6b', c2: '#991b1b' },
-      { title: 'WAIT FOR IT', creator: '@aisha.tech', views: '1.8M', format: 'Tap-test', c1: '#4ecdc4', c2: '#0d4f47' },
-      { title: 'ONLY 1 IS REAL', creator: '@creativepov', views: '3.2M', format: 'Tap-test', c1: '#a78bfa', c2: '#4c1d95' },
-      { title: 'WILL IT BREAK?', creator: '@djmixpro', views: '892K', format: 'Tap-test', c1: '#fbbf24', c2: '#78350f' },
-      { title: 'DOES $1 BEAT $100', creator: '@studio.visual', views: '1.5M', format: 'Tap-test', c1: '#ec4899', c2: '#6b1740' },
-      { title: 'I TESTED 10', creator: '@videowizard', views: '2.1M', format: 'Tap-test', c1: '#14b8a6', c2: '#064e3b' },
-      { title: 'TAP TO REVEAL', creator: '@content.lab', views: '945K', format: 'Tap-test', c1: '#06b6d4', c2: '#0c4a6e' },
-      { title: '5 OF 5 PASSED', creator: '@motion.frames', views: '2.7M', format: 'Tap-test', c1: '#f97316', c2: '#7c2d12' },
-      { title: 'WHICH ONE?', creator: '@impulse.edit', views: '1.3M', format: 'Tap-test', c1: '#8b5cf6', c2: '#3b0764' }
+      { videoId: 'ZKcEms6vSiQ', creator: '@hafugo', views: '2.4M', format: 'Tap-test' },
+      { videoId: '5DIlDscH0Fo', creator: '@hafugo', views: '1.8M', format: 'Tap-test' },
+      { videoId: 'oci2H07_4FQ', creator: '@hafugo', views: '3.2M', format: 'Tap-test' },
+      { videoId: 'X5Fy03KI4Xk', creator: '@hafugo', views: '892K', format: 'Tap-test' },
+      { videoId: 'WPoEoMNsHw8', creator: '@hafugo', views: '1.5M', format: 'Tap-test' },
+      { videoId: 'iGU13_t8XSM', creator: '@hafugo', views: '2.1M', format: 'Tap-test' },
+      { videoId: 'K0r15SBM91o', creator: '@hafugo', views: '945K', format: 'Tap-test' },
+      { videoId: 'BycXdJa3wQI', creator: '@hafugo', views: '2.7M', format: 'Tap-test' },
+      { videoId: 'a3LXtNtSDY4', creator: '@hafugo', views: '1.3M', format: 'Tap-test' }
     ]
   }},
   { stage: 'ideation', id: 'lf-niche-research', name: 'lf-niche-research', cat: 'Research', desc: '28 candidate niches analyzed by LF 10M+ count, Shorts 100M+ count, channel diversity, and Hafu fit grade.', renderer: 'lfNicheResearch', data: {
@@ -1870,7 +1898,7 @@ const TOOLS = [
     ]
   }},
   { stage: 'review', id: 'thumbnail-eval', name: 'thumbnail-eval', cat: 'Tool', desc: '28 binary criteria across 6 categories scored by Claude Vision. Pass threshold 85% (24/28).', renderer: 'thumbnailEval', data: {
-    thumbnailTitle: 'Cardboard vs 500 lb Bowling Ball', score: 87, verdict: 'PASS',
+    thumbnailTitle: 'I Tested the Unbreakable Ball', videoId: 'a3LXtNtSDY4', score: 87, verdict: 'PASS',
     categories: [
       { name: 'Composition', score: 6, maxScore: 6, criteria: [
         { name: 'Rule of thirds applied', pass: true }, { name: 'Subject positioned correctly', pass: true },
@@ -1900,12 +1928,12 @@ const TOOLS = [
     ]
   }},
   { stage: 'review', id: 'thumbnail-generator', name: 'thumbnail-generator', cat: 'Tool', desc: 'Sends script + style directive to Freepik Mystic. Generates 4 thumbnail variants, scores each with thumbnail-eval, picks the winner and uploads to Notion.', renderer: 'thumbGen', data: {
-    prompt: 'Hafu holding a bowling ball above a cardboard sheet, studio lighting, bold YouTube thumbnail style, high contrast, shocked expression, red and yellow color grading, 1280x720',
+    prompt: 'Hafu holding the "Unbreakable Ball", studio lighting, bold YouTube thumbnail style, high contrast, shocked expression, red and yellow color grading, 1280x720',
     variants: [
-      { title: 'CARDBOARD VS 500 LB', tc1: '#ef4444', tc2: '#991b1b', face: true, score: 76 },
-      { title: 'CAN IT SURVIVE?', tc1: '#f59e0b', tc2: '#b45309', face: true, score: 91 },
-      { title: '500 LB TEST', tc1: '#3b82f6', tc2: '#1e40af', face: true, score: 68 },
-      { title: 'WILL IT BREAK', tc1: '#dc2626', tc2: '#7f1d1d', face: true, score: 84 }
+      { videoId: 'a3LXtNtSDY4', title: 'I Tested the Unbreakable Ball', score: 76 },
+      { videoId: 'BycXdJa3wQI', title: 'I Tested the Forever Candle', score: 91 },
+      { videoId: 'oci2H07_4FQ', title: 'I Tested Invisible Paint', score: 68 },
+      { videoId: 'K0r15SBM91o', title: 'I Tested Supercooled Water', score: 84 }
     ],
     winner: 2
   }},
@@ -1930,18 +1958,18 @@ const TOOLS = [
   // ===== DISTRIBUTION =====
   { stage: 'distribution', id: 'yt-scheduler', name: 'yt-scheduler', cat: 'Tool', desc: 'Node.js + Playwright. Batch-schedules draft YouTube Shorts in YT Studio. Configurable dates, times, channels.', renderer: 'ytStudio', data: {
     uploads: [
-      { title: 'I Tested the LifeStraw', time: 'Tomorrow 7:00 AM', c1: '#ef4444', c2: '#f59e0b', dur: '0:45' },
-      { title: 'At What Height Does a Bowling Ball Break?', time: 'Tomorrow 8:00 AM', c1: '#3b82f6', c2: '#a78bfa', dur: '0:52' },
-      { title: 'How Many Pumps to POP a Basketball?', time: 'Tomorrow 9:00 AM', c1: '#10b981', c2: '#06b6d4', dur: '0:48' },
-      { title: 'Why Is This Balloon Unpoppable?', time: 'Tomorrow 11:00 AM', c1: '#ec4899', c2: '#f97316', dur: '0:55' },
-      { title: 'World\'s Most Dangerous Pencil', time: 'Tomorrow 9:00 PM', c1: '#8b5cf6', c2: '#ec4899', dur: '0:50' }
+      { title: 'I Tested the Forever Candle', videoId: 'BycXdJa3wQI', time: 'Tomorrow 7:00 AM', dur: '0:45' },
+      { title: 'I Tested the Unbreakable Ball', videoId: 'a3LXtNtSDY4', time: 'Tomorrow 8:00 AM', dur: '0:52' },
+      { title: 'I Tested Hollywood Fake Tears', videoId: '7pmF0AVxL1I', time: 'Tomorrow 9:00 AM', dur: '0:48' },
+      { title: 'I Tested Invisible Paint', videoId: 'oci2H07_4FQ', time: 'Tomorrow 11:00 AM', dur: '0:55' },
+      { title: 'I Tested Supercooled Water', videoId: 'K0r15SBM91o', time: 'Tomorrow 9:00 PM', dur: '0:50' }
     ]
   }},
   { stage: 'distribution', id: 'schedule-youtube-shorts', name: 'schedule-youtube-shorts', cat: 'Skill', desc: 'Skill wrapper around yt-scheduler. Natural language trigger, same Playwright automation.', renderer: 'ytStudio', data: {
     uploads: [
-      { title: 'Which Magnet is the Strongest?', time: 'Tomorrow 7:00 AM', c1: '#f59e0b', c2: '#d97706', dur: '0:42' },
-      { title: 'Can Cardboard Beat Physics?', time: 'Tomorrow 8:00 AM', c1: '#ef4444', c2: '#f59e0b', dur: '0:51' },
-      { title: 'Testing the Strongest Glue', time: 'Tomorrow 9:00 AM', c1: '#06b6d4', c2: '#0e7490', dur: '0:38' }
+      { title: 'I Made a Giant Butane Rocket', videoId: 'ZKcEms6vSiQ', time: 'Tomorrow 7:00 AM', dur: '0:42' },
+      { title: 'I Mixed Every Sour Candy', videoId: '5DIlDscH0Fo', time: 'Tomorrow 8:00 AM', dur: '0:51' },
+      { title: 'I Tested Waterproof Sand', videoId: 'WPoEoMNsHw8', time: 'Tomorrow 9:00 AM', dur: '0:38' }
     ]
   }},
   { stage: 'distribution', id: 'yt-dubs-posting', name: 'yt-dubs-posting', cat: 'Tool', desc: 'Uploads dubbed audio + subtitles + translated metadata to YouTube Studio for 6 languages.', renderer: 'dittodub', data: {
@@ -1950,13 +1978,13 @@ const TOOLS = [
   }},
   { stage: 'distribution', id: 'snapchat-optimizer', name: 'snapchat-optimizer', cat: 'Automation', desc: 'Revenue brain. A/B tests thumbnails, optimizes snap ordering, generates VistaSocial CSV with 90+ clips.', renderer: 'snapchatOptimizer', data: {
     stories: [
-      { title: 'Cardboard vs Bowling Ball', scheduledTime: '9:30 am', c1: '#ff6b35', c2: '#f7931e' },
-      { title: 'Which Lighter is the Strongest', scheduledTime: '10:00 am', c1: '#f59e0b', c2: '#fbbf24' },
-      { title: 'Who Can Cut the Fastest', scheduledTime: '10:30 am', c1: '#ec4899', c2: '#f43f5e' },
-      { title: 'I Tested the LifeStraw', scheduledTime: '11:00 am', c1: '#3b82f6', c2: '#0ea5e9' },
-      { title: 'At What Height Does a Brick Break', scheduledTime: '11:30 am', c1: '#8b5cf6', c2: '#a855f7' },
-      { title: 'How Many Pumps to POP a Basketball', scheduledTime: '12:00 pm', c1: '#14b8a6', c2: '#06b6d4' },
-      { title: 'World\'s Most Dangerous Pencil', scheduledTime: '12:30 pm', c1: '#ef4444', c2: '#f87171' }
+      { title: 'I Tested the Forever Candle', videoId: 'BycXdJa3wQI', scheduledTime: '9:30 am' },
+      { title: 'I Made a Giant Paper Popper', videoId: '3UYl0aWKURM', scheduledTime: '10:00 am' },
+      { title: 'I Tested Invisible Paint', videoId: 'oci2H07_4FQ', scheduledTime: '10:30 am' },
+      { title: 'I Tested Supercooled Water', videoId: 'K0r15SBM91o', scheduledTime: '11:00 am' },
+      { title: 'I Tested Genius Japanese Stationary', videoId: 'XKJ7qB2CmDs', scheduledTime: '11:30 am' },
+      { title: 'I Tested Waterproof Sand', videoId: 'WPoEoMNsHw8', scheduledTime: '12:00 pm' },
+      { title: 'I Tested Hollywood Fake Tears', videoId: '7pmF0AVxL1I', scheduledTime: '12:30 pm' }
     ],
     abTest: { thumbA: { score: 2.1 }, thumbB: { score: 8.7 } }
   }},
@@ -1964,10 +1992,10 @@ const TOOLS = [
   // ===== ANALYTICS =====
   { stage: 'analytics', id: 'snapchat-story-scraper', name: 'snapchat-story-scraper', cat: 'Skill', desc: 'Scrapes Snapchat Creator story + per-snap analytics via Apollo cache. Multi-tab parallel. SQLite DB.', renderer: 'snapchatStoryScraper', data: {
     stories: [
-      { title: 'Cardboard Tests Pt 3', snaps: 28, viewers: '42k', avgViewTime: '12.3s', c1: '#f59e0b', c2: '#d97706' },
-      { title: 'Studio Setup Tour', snaps: 15, viewers: '38k', avgViewTime: '10.8s', c1: '#ec4899', c2: '#be185d' },
-      { title: 'Shorts Brainstorm Sesh', snaps: 42, viewers: '51k', avgViewTime: '14.2s', c1: '#06b6d4', c2: '#0e7490' },
-      { title: 'Audio Gear Unboxing', snaps: 22, viewers: '35k', avgViewTime: '9.5s', c1: '#8b5cf6', c2: '#6d28d9' }
+      { title: 'I Tested the Forever Candle', videoId: 'BycXdJa3wQI', snaps: 28, viewers: '42k', avgViewTime: '12.3s' },
+      { title: 'I Made a Giant Paper Popper', videoId: '3UYl0aWKURM', snaps: 15, viewers: '38k', avgViewTime: '10.8s' },
+      { title: 'I Tested a Color Changing Jacket', videoId: 'iGU13_t8XSM', snaps: 42, viewers: '51k', avgViewTime: '14.2s' },
+      { title: 'I Mixed Every Sour Candy', videoId: '5DIlDscH0Fo', snaps: 22, viewers: '35k', avgViewTime: '9.5s' }
     ],
     dropoff: [100, 94, 89, 82, 76, 71, 65, 58, 52, 47, 41, 36, 32, 28, 25]
   }},
