@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>HafuGo Pipeline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0a0a0a; --bg-2: #141414; --bg-3: #1a1a1a;
+    --border: #222; --border-2: #333;
+    --text: #f5f5f5; --text-2: #aaa; --text-3: #666;
+    --accent: #f59e0b; --accent-2: #fbbf24;
+    --green: #22c55e; --yellow: #eab308; --red: #ef4444;
+    --blue: #60a5fa; --purple: #a78bfa;
+  }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.5; overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  .container { width: 100%; max-width: 540px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 56px 0; position: relative; }
+  .eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 12px; }
+  h1, h2 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 { font-size: clamp(32px, 9vw, 48px); }
+  h2 { font-size: clamp(24px, 6vw, 32px); margin-bottom: 12px; }
+  p { color: var(--text-2); font-size: 15px; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 0 60px;
+    background:
+      radial-gradient(ellipse at top, rgba(245,158,11,0.18), transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(168,85,247,0.08), transparent 60%),
+      var(--bg);
+  }
+  .hero h1 {
+    margin-bottom: 16px;
+    background: linear-gradient(180deg, #fff 0%, #888 120%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero .sub { font-size: 15px; color: var(--text-2); margin-bottom: 36px; max-width: 420px; }
+
+  .run-btn {
+    width: 100%; padding: 22px 28px; border-radius: 20px; border: none;
+    background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 60%, #b45309 120%);
+    color: #0a0a0a; font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    box-shadow: 0 10px 40px rgba(245,158,11,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative; overflow: hidden;
+  }
+  .run-btn:active { transform: scale(0.98); box-shadow: 0 6px 24px rgba(245,158,11,0.25); }
+  .run-btn.running { background: var(--bg-2); color: var(--text-2); box-shadow: none; border: 1px solid var(--border-2); }
+  .run-btn.done { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); color: #fff; }
+  .run-btn .icon { font-size: 22px; }
+  .run-btn .label-sub { font-size: 12px; font-weight: 500; opacity: 0.7; display: block; margin-top: 2px; }
+
+  .run-tips { margin-top: 16px; font-size: 12px; color: var(--text-3); text-align: center; }
+
+  /* LIVE COUNTER */
+  .counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 32px; }
+  .counter {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 12px; text-align: center;
+  }
+  .counter .n { font-size: 24px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+  .counter .l { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600; }
+  .counter.active .n { color: var(--accent); transition: color 0.3s; }
+
+  /* PIPELINE */
+  .pipeline { padding: 40px 0 80px; }
+  .stage {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 18px;
+    padding: 20px; margin-bottom: 12px; position: relative; overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .stage:active { transform: scale(0.995); }
+  .stage.idle { opacity: 0.55; }
+  .stage.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(245,158,11,0.15), 0 20px 40px rgba(245,158,11,0.1); opacity: 1; }
+  .stage.done { border-color: rgba(34,197,94,0.5); opacity: 1; }
+  .stage.human { border-color: rgba(239,68,68,0.3); }
+
+  .stage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .stage-num { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 1.5px; }
+  .stage-state {
+    font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 12px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    background: var(--bg-3); color: var(--text-3);
+  }
+  .stage.active .stage-state { background: rgba(245,158,11,0.2); color: var(--accent-2); animation: pulse 1.2s ease-in-out infinite; }
+  .stage.done .stage-state { background: rgba(34,197,94,0.15); color: var(--green); }
+  .stage.human .stage-state { background: rgba(239,68,68,0.15); color: var(--red); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  .stage-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .stage-desc { font-size: 13px; color: var(--text-2); margin-bottom: 12px; }
+
+  .stage-output {
+    background: #050505; border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px; font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
+    font-size: 11px; color: var(--green); white-space: pre-wrap;
+    min-height: 0; max-height: 0; overflow: hidden; opacity: 0;
+    transition: all 0.4s ease;
+  }
+  .stage.active .stage-output, .stage.done .stage-output {
+    max-height: 400px; opacity: 1; padding: 12px; margin-bottom: 12px;
+  }
+  .stage-output .line { display: block; min-height: 1.4em; }
+  .stage-output .warn { color: var(--yellow); }
+  .stage-output .err { color: var(--red); }
+  .stage-output .ok { color: var(--green); }
+  .stage-output .dim { color: var(--text-3); }
+  .caret::after { content: '▊'; animation: blink 1s step-end infinite; color: var(--green); }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 11px; padding: 5px 10px; border-radius: 14px;
+    background: rgba(96,165,250,0.08); color: var(--blue);
+    border: 1px solid rgba(96,165,250,0.2); font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .chip.notion { background: rgba(168,85,247,0.08); color: var(--purple); border-color: rgba(168,85,247,0.2); }
+  .chip.human { background: rgba(239,68,68,0.08); color: var(--red); border-color: rgba(239,68,68,0.2); }
+  .chip:active { transform: scale(0.96); }
+  .chip.firing {
+    background: var(--accent); color: #0a0a0a; border-color: var(--accent);
+    transform: scale(1.06); box-shadow: 0 0 16px rgba(245,158,11,0.6);
+  }
+
+  /* TRY-IT */
+  .tryit { padding: 60px 0; background: linear-gradient(180deg, var(--bg) 0%, #0e0e0e 100%); }
+  .tryit-box {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 20px; padding: 20px;
+  }
+  .tryit-input {
+    width: 100%; background: var(--bg-3); border: 1px solid var(--border-2);
+    border-radius: 14px; padding: 14px 16px; color: var(--text);
+    font-size: 15px; font-family: inherit; outline: none; margin-bottom: 10px;
+  }
+  .tryit-input:focus { border-color: var(--accent); }
+  .tryit-input::placeholder { color: var(--text-3); }
+  .tryit-btn {
+    width: 100%; background: var(--accent); color: #0a0a0a;
+    border: none; padding: 14px; border-radius: 14px; font-weight: 700;
+    font-size: 14px;
+  }
+  .tryit-output {
+    margin-top: 14px; background: #050505; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; font-family: 'SF Mono', monospace;
+    font-size: 11px; color: var(--green); min-height: 0; max-height: 0;
+    overflow: hidden; transition: all 0.4s ease; opacity: 0; white-space: pre-wrap;
+  }
+  .tryit-output.open { max-height: 500px; opacity: 1; padding: 14px; margin-top: 14px; }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+    display: none; align-items: flex-end; justify-content: center; z-index: 100;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--bg-2); border: 1px solid var(--border); border-top-left-radius: 24px; border-top-right-radius: 24px;
+    width: 100%; max-width: 540px; max-height: 80vh; overflow-y: auto;
+    padding: 24px 20px 32px; transform: translateY(100%); transition: transform 0.3s ease;
+  }
+  .modal-bg.open .modal { transform: translateY(0); }
+  .modal-grip { width: 40px; height: 4px; background: var(--border-2); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--text-3); margin-bottom: 16px; }
+  .modal-body { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px; }
+  .modal-demo {
+    background: #050505; border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; font-family: 'SF Mono', monospace; font-size: 11px;
+    color: var(--green); white-space: pre-wrap; margin-bottom: 14px;
+    min-height: 100px;
+  }
+  .modal-btn {
+    width: 100%; background: var(--accent); color: #0a0a0a;
+    border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 14px;
+  }
+  .modal-close {
+    background: none; border: 1px solid var(--border-2); color: var(--text-2);
+    padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 10px; width: 100%;
+  }
+
+  /* Progress ring */
+  .ring-wrap { display: flex; align-items: center; gap: 16px; margin: 16px 0; }
+  .ring { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 8; }
+  .ring .track { stroke: var(--bg-3); }
+  .ring .fill { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .ring .val {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: #fff;
+  }
+
+  /* FOOTER */
+  footer { padding: 40px 0 32px; text-align: center; border-top: 1px solid var(--border); }
+  footer .fname { font-size: 13px; color: var(--text); font-weight: 600; }
+  footer .fsub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+  /* scroll-snap prompt */
+  .scroll-cue {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 2px;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 6px); } }
+
+  @media (min-width: 768px) {
+    .container { max-width: 640px; }
+    .counters { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Pipeline</div>
+    <h1>How a video gets made.</h1>
+    <p class="sub">8 stages from idea to analytics. Tap a stage to see what runs there. Tap a tool to see what it does.</p>
+
+    <button class="run-btn" id="runBtn" onclick="runPipeline()">
+      <span class="icon">▶</span>
+      <span>
+        Walk through all 8 stages
+        <span class="label-sub">auto-plays each stage in order</span>
+      </span>
+    </button>
+    <div class="run-tips">Or scroll down and tap stages individually.</div>
+  </div>
+  <div class="scroll-cue">Scroll ↓</div>
+</section>
+
+<!-- PIPELINE -->
+<section class="pipeline">
+  <div class="container">
+    <div id="stages"></div>
+  </div>
+</section>
+
+<!-- TRY IT -->
+<section class="tryit">
+  <div class="container">
+    <div class="eyebrow">Try the ideation stage</div>
+    <h2>Type a topic.</h2>
+    <p style="margin-bottom: 20px;">See what the ideation agent would output. (Demo — doesn't hit the real API.)</p>
+
+    <div class="tryit-box">
+      <input class="tryit-input" id="tryitInput" placeholder="e.g. cardboard experiments" autocomplete="off">
+      <button class="tryit-btn" onclick="runTryIt()">Generate</button>
+      <div class="tryit-output" id="tryitOut"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="fname">48 tools across 8 stages</div>
+    <div class="fsub">Demo — simulated outputs, not live execution</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-grip"></div>
+    <div class="modal-title" id="modalTitle">Tool</div>
+    <div class="modal-sub" id="modalSub">Category</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-demo" id="modalDemo"></div>
+    <button class="modal-btn" id="modalBtn" onclick="runToolDemo()">Run demo</button>
+    <button class="modal-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+// ===== STAGE DATA =====
+const STAGES = [
+  {
+    id: 'ideation',
+    num: '01',
+    name: 'Ideation',
+    desc: 'Find the ideas that already went viral and reshape them.',
+    chips: [
+      { t: 'tubelab-research', c: '' },
+      { t: 'ig-saved-reels', c: '' },
+      { t: 'lf-niche-research', c: '' },
+      { t: 'NeuroBits Scanner', c: 'notion' },
+      { t: 'Idea Reviewer', c: 'notion' }
+    ],
+    duration: 3600,
+    output: [
+      { d: 100, t: 'Querying TubeLab API for "cardboard experiments"...' },
+      { d: 600, t: '> 247 outlier videos returned', c: 'ok' },
+      { d: 400, t: 'Filtering for relevance via Claude Vision...' },
+      { d: 700, t: '> 42 qualified ideas (83% rejection rate)', c: 'ok' },
+      { d: 400, t: 'Checking channel caps and topic overlap...' },
+      { d: 500, t: 'Writing to Notion Video Ideas DB...' },
+      { d: 400, t: '✓ 12 new ideas added. Auto-assigned format tags.', c: 'ok' },
+      { d: 200, t: '' }
+    ]
+  },
+  {
+    id: 'scripting',
+    num: '02',
+    name: 'Scripting',
+    desc: 'Write the shorts script word-for-word in HafuGo voice.',
+    chips: [
+      { t: 'shorts-scriptwriter', c: '' },
+      { t: 'scripts-qa', c: '' },
+      { t: 'Shorts Scripter', c: 'notion' },
+      { t: 'Voice Analyst', c: 'notion' }
+    ],
+    duration: 5200,
+    output: [
+      { d: 100, t: 'Loading voice guide + format architecture...' },
+      { d: 500, t: '> Format: Escalation Ladder', c: 'ok' },
+      { d: 300, t: 'Drafting script...' },
+      { d: 400, t: '' },
+      { d: 300, t: '  HOOK: "I dropped a bowling ball on cardboard."', c: 'dim' },
+      { d: 300, t: '  REVEAL: "It survived. So I got a bigger one."', c: 'dim' },
+      { d: 300, t: '  ESCALATION: "Still alive after 500 lbs."', c: 'dim' },
+      { d: 300, t: '  PAYOFF: "Cardboard beat physics today."', c: 'dim' },
+      { d: 400, t: '' },
+      { d: 400, t: 'Running QA gate (10 rubric checks)...' },
+      { d: 700, t: '  word count: 87 / target 80-100 ✓', c: 'ok' },
+      { d: 200, t: '  hook check: no warm-up ✓', c: 'ok' },
+      { d: 200, t: '  joke density: 4 comedy beats ✓', c: 'ok' },
+      { d: 200, t: '  CTA placement: 78% mark ✓', c: 'ok' },
+      { d: 300, t: '✓ QA: PASS. Handed to editor.', c: 'ok' }
+    ]
+  },
+  {
+    id: 'logistics',
+    num: '03',
+    name: 'Logistics',
+    desc: 'Source every item with Amazon links, prices, and validation videos.',
+    chips: [
+      { t: 'shot-list-generator', c: '' },
+      { t: 'Logistics Researcher', c: 'notion' }
+    ],
+    duration: 3200,
+    output: [
+      { d: 100, t: 'Extracting props from script...' },
+      { d: 400, t: '> 7 items needed', c: 'ok' },
+      { d: 300, t: 'Searching Amazon.ca (Prime eligible, 4+ stars)...' },
+      { d: 500, t: '  • Heavy cardboard sheets (pack of 10) — $18.99' },
+      { d: 300, t: '  • Bowling ball, 10 lb — $42.50' },
+      { d: 300, t: '  • Bowling ball, 16 lb — $58.00' },
+      { d: 300, t: '  • Cinder blocks (qty 4) — $27.96' },
+      { d: 300, t: '  • Safety glasses — $9.99' },
+      { d: 300, t: 'Validating experiment via YouTube proof videos...' },
+      { d: 400, t: '> 3 reference videos found (500lb threshold)', c: 'ok' },
+      { d: 300, t: '✓ Total: $167.44. Shoot-ready.', c: 'ok' }
+    ]
+  },
+  {
+    id: 'filming',
+    num: '04',
+    name: 'Filming',
+    desc: "The one part AI can't do — yet.",
+    isHuman: true,
+    chips: [
+      { t: 'Hafu on camera', c: 'human' }
+    ],
+    duration: 2600,
+    output: [
+      { d: 100, t: 'Setting up studio...' },
+      { d: 500, t: '> 2 cameras, 3-point lighting, lav mic', c: 'ok' },
+      { d: 300, t: 'Running shot list...' },
+      { d: 600, t: '  ~ Hafu on set. Can\'t automate this part yet.', c: 'warn' },
+      { d: 600, t: '  ~ (But I tried.)', c: 'dim' },
+      { d: 500, t: '✓ Footage backed up to SSD → Mega cloud', c: 'ok' }
+    ]
+  },
+  {
+    id: 'editing',
+    num: '05',
+    name: 'Editing',
+    desc: 'Human editor cuts the main video. AI handles dubs + subs.',
+    chips: [
+      { t: 'Human editor', c: 'human' },
+      { t: 'dittodub-download', c: '' },
+      { t: 'dittodub-transcript', c: '' }
+    ],
+    duration: 3400,
+    output: [
+      { d: 100, t: 'Editor uploading cut to Frame.io...' },
+      { d: 400, t: '> Main edit complete', c: 'ok' },
+      { d: 300, t: 'Generating dubbed audio for 6 languages...' },
+      { d: 500, t: '  • Spanish  ✓' },
+      { d: 300, t: '  • Portuguese  ✓' },
+      { d: 300, t: '  • French  ✓' },
+      { d: 300, t: '  • Arabic  ✓' },
+      { d: 300, t: '  • Hindi  ✓' },
+      { d: 300, t: '  • English (original)  ✓' },
+      { d: 300, t: 'Whisper transcribing subtitles...' },
+      { d: 400, t: '> 97.8% match. Timing fine-tuned.', c: 'ok' },
+      { d: 300, t: '✓ All language tracks ready.', c: 'ok' }
+    ]
+  },
+  {
+    id: 'review',
+    num: '06',
+    name: 'Review',
+    desc: 'AI watches every video. 27 rules for long-form, 32 for shorts.',
+    chips: [
+      { t: 'review-video', c: '' },
+      { t: 'review-video-shortform', c: '' },
+      { t: 'thumbnail-eval', c: '' },
+      { t: 'frameio-pull', c: '' }
+    ],
+    duration: 4200,
+    output: [
+      { d: 100, t: 'Running 32 short-form rules via FFmpeg + Claude Vision...' },
+      { d: 400, t: '  audio silence < 0.8s ✓', c: 'ok' },
+      { d: 300, t: '  loudness -14 LUFS ✓', c: 'ok' },
+      { d: 300, t: '  aspect ratio 9:16 ✓', c: 'ok' },
+      { d: 300, t: '  subject centered ✓', c: 'ok' },
+      { d: 300, t: '  platform safe zone ✓', c: 'ok' },
+      { d: 300, t: '  hook in first 1.5s ✓', c: 'ok' },
+      { d: 400, t: '  ~ frame 00:14 — slight camera shake', c: 'warn' },
+      { d: 400, t: 'Evaluating thumbnail (28 criteria)...' },
+      { d: 500, t: '> Score: 87% — PASS threshold', c: 'ok' },
+      { d: 400, t: '✓ 2 comments posted to Frame.io', c: 'ok' },
+      { d: 300, t: '' }
+    ]
+  },
+  {
+    id: 'distribution',
+    num: '07',
+    name: 'Distribution',
+    desc: 'Schedule across every platform in one pass.',
+    chips: [
+      { t: 'yt-scheduler', c: '' },
+      { t: 'yt-dubs-posting', c: '' },
+      { t: 'snapchat-optimizer', c: '' }
+    ],
+    duration: 3600,
+    output: [
+      { d: 100, t: 'Opening YouTube Studio (Playwright)...' },
+      { d: 500, t: '> 5 shorts scheduled: 7am / 8am / 9am / 11am / 9pm', c: 'ok' },
+      { d: 400, t: 'Uploading 6 language dubs...' },
+      { d: 500, t: '> All tracks live on main video', c: 'ok' },
+      { d: 400, t: 'Snapchat: picking highest-performing thumbnail...' },
+      { d: 500, t: '> A/B winner selected (4x over baseline)', c: 'ok' },
+      { d: 400, t: 'Writing VistaSocial CSV...' },
+      { d: 500, t: '✓ 12 posts scheduled across YT / TikTok / IG / Snap', c: 'ok' },
+      { d: 300, t: '' }
+    ]
+  },
+  {
+    id: 'analytics',
+    num: '08',
+    name: 'Analytics',
+    desc: 'Learn from yesterday. Update the taste profile automatically.',
+    chips: [
+      { t: 'snapchat-story-scraper', c: '' },
+      { t: 'youtube-stats-sync', c: '' },
+      { t: 'Learning Analyst', c: 'notion' },
+      { t: 'The Delta', c: 'notion' }
+    ],
+    duration: 2800,
+    output: [
+      { d: 100, t: 'Scraping Snapchat story performance...' },
+      { d: 500, t: '> 14 stories, 6,956 snaps indexed', c: 'ok' },
+      { d: 400, t: 'Syncing YouTube stats to Notion...' },
+      { d: 500, t: '> 47 videos updated: views, likes, retention', c: 'ok' },
+      { d: 400, t: 'Learning Analyst updating Taste Profile...' },
+      { d: 500, t: '> 3 new preferences learned from yesterday\'s decisions', c: 'ok' },
+      { d: 400, t: '✓ Pipeline complete. Ready for tomorrow.', c: 'ok' }
+    ]
+  }
+];
+
+// ===== TOOL DEMOS (for tapping chips) =====
+const TOOL_DEMOS = {
+  'tubelab-research': {
+    sub: 'Agent · Ideation',
+    body: 'Finds outlier videos via the TubeLab API, filters them through Claude Vision for relevance, and writes the qualified ones straight into Notion.',
+    demo: ['Scanning TubeLab for outliers...', '> 247 videos returned', 'Filtering for Hafu fit...', '✓ 42 ideas added to Notion'],
+    kind: 'term'
+  },
+  'ig-saved-reels': {
+    sub: 'Tool · Ideation',
+    body: '630 saved Instagram reels categorized by production format (not topic). Searchable board for finding "how was that made" patterns.',
+    demo: ['Querying saved reels DB...', '> Tap-test: 87 matches', '> Tempo-cut: 54 matches', '> Fake-camera-glitch: 31 matches', '✓ SQLite + interactive board'],
+    kind: 'term'
+  },
+  'lf-niche-research': {
+    sub: 'Tool · Ideation',
+    body: '28 TubeLab queries across candidate niches. Ranked by LF 10M+ count, shorts virality, channel diversity, and Hafu fit.',
+    demo: ['Top niches by 10M+ count:', '  1. Science Experiments  312', '  2. Lego Machine          354', '  3. Coca-Cola Mentos     336', '  4. Liquid Nitrogen      307', '  ...'],
+    kind: 'term'
+  },
+  'shorts-scriptwriter': {
+    sub: 'Skill · Scripting',
+    body: 'Word-for-word HafuGo shorts scripts (30-60s). Auto-runs QA gate + comedy pass after every draft.',
+    demo: ['HOOK: "This $1 product destroys everything."', 'REVEAL: "It\'s literally just duct tape."', 'PAYOFF: "My landlord\'s lawyer disagrees."', '✓ QA: PASS. 94 words.'],
+    kind: 'term'
+  },
+  'scripts-qa': {
+    sub: 'Tool · Scripting',
+    body: '10-check rubric that any script must pass before going to the editor. Runs in under a second.',
+    demo: ['format compliance  ✓', 'word count         ✓', 'hook check         ✓', 'CTA placement      ✓', 'joke density       ✓', 'voice drift        ✓', '✓ PASS'],
+    kind: 'term'
+  },
+  'review-video': {
+    sub: 'Skill · Review',
+    body: 'Detects long-form vs shorts, runs the right rule set, then posts flagged timestamps as comments on Frame.io.',
+    demo: ['Detecting orientation...', '> 9:16, 42s duration → shortform', 'Running 32 rules...', '> 30 pass, 2 flagged', '✓ Comments posted'],
+    kind: 'term'
+  },
+  'review-video-shortform': {
+    sub: 'Skill · Review',
+    body: '32 rules. Phase 1 = FFmpeg audio/visual. Phase 2 = Claude Vision on sampled frames.',
+    demo: ['pacing                ✓', 'loudness              ✓', 'subject centered      ✓', 'safe zone             ✓', 'caption coverage      ✓', '~ frame 00:14 shake'],
+    kind: 'term'
+  },
+  'review-video-longform': {
+    sub: 'Skill · Review',
+    body: '27 rules tuned for 10-20 minute videos. Phase 2 includes B-roll/VO alignment verified by Vision.',
+    demo: ['audio pacing          ✓', 'scene transitions     ✓', 'broll alignment       ✓', 'cta timing            ✓', 'thumbnail match       ✓', '✓ Passed to editor'],
+    kind: 'term'
+  },
+  'thumbnail-eval': {
+    sub: 'Tool · Review',
+    body: '28 binary criteria across composition, realism, color, simplicity, face, and image quality. Claude Vision scores each one.',
+    demo: null,
+    kind: 'ring'
+  },
+  'yt-scheduler': {
+    sub: 'Tool · Distribution',
+    body: 'Playwright opens Chrome, navigates YouTube Studio, schedules every draft short one after another. Default times: 7/8/9/11am + 9pm.',
+    demo: ['Opening YT Studio...', '> 5 drafts found', 'Scheduling #1 — 7:00 AM  ✓', 'Scheduling #2 — 8:00 AM  ✓', 'Scheduling #3 — 9:00 AM  ✓', '✓ All 5 scheduled'],
+    kind: 'term'
+  },
+  'yt-dubs-posting': {
+    sub: 'Tool · Distribution',
+    body: 'Uploads dubbed audio + subtitles + translated metadata to YouTube Studio. 6 languages in one run.',
+    demo: ['Upload ES.mp3 + ES.srt  ✓', 'Upload PT.mp3 + PT.srt  ✓', 'Upload FR.mp3 + FR.srt  ✓', 'Upload AR.mp3 + AR.srt  ✓', 'Upload HI.mp3 + HI.srt  ✓', '✓ All 6 languages live'],
+    kind: 'term'
+  },
+  'schedule-youtube-shorts': {
+    sub: 'Skill · Distribution',
+    body: 'Skill wrapper for yt-scheduler. Natural language trigger, same outcome.',
+    demo: ['> /schedule-youtube-shorts 2026-04-21', 'Opening browser...', 'Scheduling 5 drafts...', '✓ Done in 38s'],
+    kind: 'term'
+  },
+  'snapchat-optimizer': {
+    sub: 'Automation · Distribution',
+    body: 'Revenue brain for Snapchat Stories. A/B tests thumbnails, picks winners, generates VistaSocial CSV.',
+    demo: ['Loading yesterday\'s story performance...', 'Testing thumb A vs B...', '> B wins 4.1x over baseline', 'Generating VistaSocial CSV...', '✓ 7 stories queued'],
+    kind: 'term'
+  },
+  'dittodub-download': {
+    sub: 'Skill · Editing',
+    body: 'Downloads every SRT + MP3 from a DittoDub project in one command. Handles all languages.',
+    demo: ['Connecting to DittoDub...', 'Downloading ES  ✓', 'Downloading PT  ✓', 'Downloading FR  ✓', 'Downloading AR  ✓', '✓ All files in /audio'],
+    kind: 'term'
+  },
+  'dittodub-transcript': {
+    sub: 'Skill · Editing',
+    body: 'Spell-check, sentence split, and Whisper-tuned timing for every DittoDub transcript.',
+    demo: ['Running Whisper on audio...', '> 97.8% match', 'Fine-tuning timing (diffs > 0.3s)...', 'Splitting long sentences...', '✓ All lines corrected'],
+    kind: 'term'
+  },
+  'snapchat-story-scraper': {
+    sub: 'Skill · Analytics',
+    body: 'Scrapes story + snap analytics from Snapchat Creator via Apollo cache. Multi-tab parallel.',
+    demo: ['Loading Snapchat Creator...', '> 14 new stories found', 'Parsing Apollo cache...', '> 6,956 snaps indexed', '✓ SQLite updated'],
+    kind: 'term'
+  },
+  'snapchat-revenue-scrape': {
+    sub: 'Skill · Analytics',
+    body: 'Daily Creator Rewards earnings (Stories vs Spotlight) scraped via iPhone Mirroring.',
+    demo: ['Opening iPhone Mirroring...', 'Tapping Creator Rewards...', '> Stories vs Spotlight split parsed', '> Reward / content dates extracted', '✓ Appended to log'],
+    kind: 'term'
+  },
+  'frameio-pull': {
+    sub: 'Tool · Review',
+    body: 'Pulls every review comment from every Frame.io project via the v2 API. Read-only, rate-limited.',
+    demo: ['Fetching projects...', '> 47 projects', 'Pulling comments...', '> 312 new comments', '✓ JSON saved per project'],
+    kind: 'term'
+  },
+  'shot-list-generator': {
+    sub: 'Tool · Logistics',
+    body: 'Reads the script, generates cinematic shot cards with AI preview images via Freepik Mystic, uploads to Notion.',
+    demo: ['Parsing script segments...', '> 19 shots needed', 'Generating Freepik previews...', '> 19 images, $1.31 total', '✓ Uploaded to Notion'],
+    kind: 'term'
+  },
+  'personal-themes': {
+    sub: 'Tool · Scripting',
+    body: 'Clusters NeuroBits + voice into emotional themes, then generates themed long-form story spines.',
+    demo: ['Extracting NeuroBits from Notion...', 'Clustering into 8 themes...', 'Generating spines for topic...', '✓ 5 themed spines pushed'],
+    kind: 'term'
+  },
+  'guest-research': {
+    sub: 'Tool · Ideation',
+    body: 'Per-guest markdown briefs for the future podcast. Angles, gift ideas, context.',
+    demo: ['Loading guest brief...', '> magnus-carlsen.md', '> topic: chess psychology', '> 3 angle hooks', '> gift ideas: 5'],
+    kind: 'term'
+  },
+  'youtube-playlist-grid': {
+    sub: 'Tool · Ideation',
+    body: 'Paste a YouTube playlist URL, browse all videos as a thumbnail grid with filter / sort / tag.',
+    demo: ['Fetching playlist...', '> 48 videos loaded', 'Rendering grid...', '✓ Filter / sort / tag ready'],
+    kind: 'term'
+  },
+  'youtube-stats-sync': {
+    sub: 'Tool · Analytics',
+    body: 'Syncs YouTube Data API + Analytics API stats into Notion. Fuzzy-matches video titles to DB pages.',
+    demo: ['Fetching channel stats...', '> 47 recent videos', 'Fuzzy-matching to Notion...', '> 45 matched (0.95+ score)', '✓ Views / likes / retention synced'],
+    kind: 'term'
+  },
+  'staleness-checker': {
+    sub: 'Tool · Meta',
+    body: 'Detects playbooks and skills that are outdated or have broken path references. Wired into /recap.',
+    demo: ['Scanning 23 playbooks...', '> 3 older than 30 days', 'Checking paths...', '> 2 broken references', '✓ Flagged for review'],
+    kind: 'term'
+  },
+  'ig-saved-reels-2': { sub: 'dupe', body: '', demo: [], kind: 'term' },
+  'Hafu on camera': {
+    sub: 'Still manual',
+    body: 'The part AI can\'t do yet. Me, a camera, and whatever we\'re breaking this week.',
+    demo: null,
+    kind: 'text'
+  },
+  'Human editor': {
+    sub: 'Still partially human',
+    body: 'Main edit is still cut by Blendi / Hotnoob. AI handles dubs, subs, and review only.',
+    demo: null,
+    kind: 'text'
+  },
+  'NeuroBits Scanner': {
+    sub: 'Notion Agent · Ideation',
+    body: 'Daily scan of my notes database for implementation ideas and content signals. Feeds into Voice Analyst.',
+    demo: ['Scanning NeuroBits...', '> 17 new entries', 'Extracting signals...', '✓ 4 fed to Voice Analyst'],
+    kind: 'term'
+  },
+  'Idea Reviewer': {
+    sub: 'Notion Agent · Ideation',
+    body: 'Batch-scores new ideas on quality and viability, attaches critique.',
+    demo: ['Loading 42 new ideas...', 'Scoring each...', '> 12 pass threshold', '> 30 revised', '✓ Taste Profile updated'],
+    kind: 'term'
+  },
+  'Shorts Scripter': {
+    sub: 'Notion Agent · Scripting',
+    body: 'Auto-triggers on idea approval. Generates full script using HafuGo voice profile.',
+    demo: ['Idea approved in Notion...', 'Loading voice profile...', 'Generating 2-column script...', '✓ Draft ready for review'],
+    kind: 'term'
+  },
+  'Voice Analyst': {
+    sub: 'Notion Agent · Scripting',
+    body: 'Daily: maintains the voice identity layer that Shorts Scripter reads from.',
+    demo: ['Reading NeuroBits outputs...', 'Updating voice traits...', '✓ Profile synced'],
+    kind: 'term'
+  },
+  'Logistics Researcher': {
+    sub: 'Notion Agent · Logistics',
+    body: 'Triggered when a script hits "Ready to Film". Sources props with Amazon links + validation videos.',
+    demo: ['Script → Ready to Film', 'Extracting 7 props...', 'Searching Amazon.ca...', '✓ Shopping list + budget attached'],
+    kind: 'term'
+  },
+  'Learning Analyst': {
+    sub: 'Notion Agent · Analytics',
+    body: 'Daily: reads my approve/reject decisions, updates the Taste Profile DB with learned preferences.',
+    demo: ['Reading yesterday\'s decisions...', '> 12 approvals, 8 rejections', 'Updating Taste Profile...', '✓ 3 new preferences learned'],
+    kind: 'term'
+  },
+  'The Delta': {
+    sub: 'Notion Agent · Analytics',
+    body: 'Records every change across content items with attribution. History log for the whole pipeline.',
+    demo: ['Monitoring Video DB...', '> 14 changes today', 'Recording diffs...', '✓ Change log updated'],
+    kind: 'term'
+  },
+  'Human editor': {
+    sub: 'Still partially human',
+    body: 'Main edit is still cut by the human editor. AI handles dubs, subs, and review only.',
+    demo: null,
+    kind: 'text'
+  }
+};
+
+// ===== RENDER STAGES =====
+function renderStages() {
+  const root = document.getElementById('stages');
+  STAGES.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'stage idle' + (s.isHuman ? ' human' : '');
+    el.id = 'stage-' + s.id;
+    el.onclick = () => playStage(s.id);
+    el.innerHTML = `
+      <div class="stage-top">
+        <div class="stage-num">${s.num} / ${s.name.toUpperCase()}</div>
+        <div class="stage-state">${s.isHuman ? 'Human' : 'Idle'}</div>
+      </div>
+      <div class="stage-name">${s.name}</div>
+      <div class="stage-desc">${s.desc}</div>
+      <div class="stage-output" id="out-${s.id}"></div>
+      <div class="chips" id="chips-${s.id}">
+        ${s.chips.map(c => `<button class="chip ${c.c}" onclick="event.stopPropagation(); openToolModal('${c.t}')">${c.t}</button>`).join('')}
+      </div>
+    `;
+    root.appendChild(el);
+  });
+}
+renderStages();
+
+// ===== PIPELINE RUNNER =====
+let pipelineRunning = false;
+
+async function runPipeline() {
+  if (pipelineRunning) return;
+  pipelineRunning = true;
+  const btn = document.getElementById('runBtn');
+  btn.classList.add('running');
+  btn.innerHTML = '<span class="icon">⏳</span><span>Running...<span class="label-sub">do not touch</span></span>';
+
+  // reset stages
+  document.querySelectorAll('.stage').forEach(st => {
+    st.classList.remove('active', 'done');
+    if (!st.classList.contains('human')) st.classList.add('idle');
+    const out = st.querySelector('.stage-output');
+    if (out) out.innerHTML = '';
+  });
+
+  for (const s of STAGES) {
+    await playStage(s.id, true);
+  }
+
+  btn.classList.remove('running');
+  btn.classList.add('done');
+  btn.innerHTML = '<span class="icon">✓</span><span>Pipeline complete<span class="label-sub">tap a stage to replay</span></span>';
+  setTimeout(() => {
+    btn.classList.remove('done');
+    btn.innerHTML = '<span class="icon">▶</span><span>Run it again<span class="label-sub">~30 seconds, 8 stages</span></span>';
+    pipelineRunning = false;
+  }, 4000);
+}
+
+async function playStage(stageId, fromPipeline = false) {
+  const s = STAGES.find(x => x.id === stageId);
+  if (!s) return;
+  const el = document.getElementById('stage-' + s.id);
+  const out = document.getElementById('out-' + s.id);
+  if (!fromPipeline && pipelineRunning) return;
+
+  // mark active
+  document.querySelectorAll('.stage').forEach(st => {
+    if (st.id !== 'stage-' + s.id && !fromPipeline) st.classList.remove('active');
+  });
+  el.classList.remove('idle', 'done');
+  el.classList.add('active');
+  el.querySelector('.stage-state').textContent = s.isHuman ? 'Human · Running' : 'Running';
+
+  // scroll into view if not already
+  if (fromPipeline) {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < 100 || rect.bottom > window.innerHeight - 100) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // fire chips sequentially
+  const chips = document.querySelectorAll('#chips-' + s.id + ' .chip');
+  chips.forEach((chip, i) => {
+    setTimeout(() => {
+      chip.classList.add('firing');
+      setTimeout(() => chip.classList.remove('firing'), 400);
+    }, i * 250);
+  });
+
+  // write output lines
+  out.innerHTML = '';
+  for (const line of s.output) {
+    await wait(line.d);
+    const span = document.createElement('span');
+    span.className = 'line' + (line.c ? ' ' + line.c : '');
+    span.textContent = line.t;
+    out.appendChild(span);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  el.classList.remove('active');
+  el.classList.add('done');
+  el.querySelector('.stage-state').textContent = s.isHuman ? 'Human' : 'Done';
+}
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ===== TOOL MODAL =====
+let currentTool = null;
+
+function openToolModal(toolName) {
+  const data = TOOL_DEMOS[toolName];
+  if (!data) return;
+  currentTool = toolName;
+  document.getElementById('modalTitle').textContent = toolName;
+  document.getElementById('modalSub').textContent = data.sub;
+  document.getElementById('modalBody').textContent = data.body;
+  document.getElementById('modalDemo').textContent = '';
+  document.getElementById('modalDemo').style.display = data.demo === null && data.kind !== 'ring' ? 'none' : 'block';
+  const btn = document.getElementById('modalBtn');
+  if (data.demo === null && data.kind !== 'ring') {
+    btn.style.display = 'none';
+  } else {
+    btn.style.display = 'block';
+    btn.textContent = data.kind === 'ring' ? 'Score this thumbnail' : 'Run demo';
+  }
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  currentTool = null;
+}
+
+async function runToolDemo() {
+  if (!currentTool) return;
+  const data = TOOL_DEMOS[currentTool];
+  const demo = document.getElementById('modalDemo');
+  const btn = document.getElementById('modalBtn');
+  btn.textContent = 'Running...';
+  btn.disabled = true;
+  demo.innerHTML = '';
+  if (data.kind === 'ring') {
+    demo.innerHTML = `
+      <div class="ring-wrap">
+        <div class="ring">
+          <svg width="88" height="88">
+            <circle class="track" cx="44" cy="44" r="36"></circle>
+            <circle class="fill" cx="44" cy="44" r="36"
+              stroke-dasharray="226" stroke-dashoffset="226" id="ringFill"></circle>
+          </svg>
+          <div class="val" id="ringVal">0%</div>
+        </div>
+        <div style="flex:1;">
+          <div id="ringStatus" style="font-size: 12px; color: var(--text-2); line-height: 1.6;">Loading thumbnail...</div>
+        </div>
+      </div>
+    `;
+    await wait(400);
+    document.getElementById('ringStatus').innerHTML = 'Running 28 criteria across 6 categories...';
+    const score = 87;
+    const fill = document.getElementById('ringFill');
+    const val = document.getElementById('ringVal');
+    const offset = 226 - (226 * score / 100);
+    fill.style.strokeDashoffset = offset;
+    let cur = 0;
+    const int = setInterval(() => {
+      cur = Math.min(cur + 2, score);
+      val.textContent = cur + '%';
+      if (cur >= score) {
+        clearInterval(int);
+        document.getElementById('ringStatus').innerHTML = '<strong style="color:#22c55e">PASS</strong><br>Composition 6/6, Realism 5/6, Color 5/6, Simplicity 3/3, Face 4/4, Quality 1/3';
+        btn.textContent = 'Run again';
+        btn.disabled = false;
+      }
+    }, 40);
+    return;
+  }
+  for (const line of data.demo) {
+    await wait(300);
+    const span = document.createElement('div');
+    span.textContent = line;
+    if (line.startsWith('✓')) span.style.color = 'var(--green)';
+    else if (line.startsWith('~')) span.style.color = 'var(--yellow)';
+    else if (line.startsWith('>')) span.style.color = 'var(--text-2)';
+    demo.appendChild(span);
+  }
+  btn.textContent = 'Run again';
+  btn.disabled = false;
+}
+
+// ===== TRY IT =====
+async function runTryIt() {
+  const input = document.getElementById('tryitInput');
+  const topic = input.value.trim() || 'cardboard experiments';
+  const out = document.getElementById('tryitOut');
+  out.classList.add('open');
+  out.innerHTML = '';
+  const seed = topic.toLowerCase();
+  const lines = [
+    'Querying TubeLab for "' + topic + '"...',
+    '> 247 outlier videos found',
+    'Filtering for HafuGo fit...',
+    '> 42 ideas qualified',
+    '',
+    'Top 3 generated ideas:',
+    '',
+    '  1. The $1 ' + topic + ' hack that shouldn\'t work',
+    '  2. I tested 100 ' + topic + ' until one broke physics',
+    '  3. Level 1 to 100: ' + topic + ' edition',
+    '',
+    '✓ Written to Notion Video Ideas DB'
+  ];
+  for (const line of lines) {
+    await wait(180);
+    const div = document.createElement('div');
+    div.textContent = line;
+    if (line.startsWith('✓')) div.style.color = 'var(--green)';
+    else if (line.startsWith('>')) div.style.color = 'var(--text-2)';
+    else if (line.match(/^\s+\d\./)) div.style.color = 'var(--accent-2)';
+    out.appendChild(div);
+  }
+}
+
+// keyboard close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+
+</body>
+</html>
