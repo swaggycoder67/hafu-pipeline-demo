@@ -274,7 +274,8 @@
   .tev-head-dot { width: 10px; height: 10px; border-radius: 50%; }
   .tev-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; font-weight: 500; margin-right: 40px; }
   .tev-body { padding: 14px; }
-  .tev-thumb { width: 100%; height: 160px; border-radius: 6px; background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; color: rgba(0,0,0,0.55); font-weight: 700; margin-bottom: 16px; }
+  .tev-thumb { width: 100%; border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+  .tev-thumb .yt-tb { border-radius: 6px; }
   .tev-score { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
   .tev-ring { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
   .tev-ring svg { transform: rotate(-90deg); }
@@ -313,9 +314,10 @@
   .ig-pill { font-size: 11px; padding: 5px 11px; border-radius: 14px; background: var(--bg-3); color: var(--text-2); border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; font-weight: 500; }
   .ig-pill.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
   .ig-grid { padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .ig-reel { aspect-ratio: 9/16; border-radius: 5px; background: linear-gradient(135deg, var(--c1,#ef4444), var(--c2,#f59e0b)); position: relative; overflow: hidden; opacity: 0; transform: translateY(6px); transition: all 0.35s; }
+  .ig-reel { aspect-ratio: 9/16; border-radius: 5px; position: relative; overflow: hidden; opacity: 0; transform: translateY(6px); transition: all 0.35s; }
   .ig-reel.in { opacity: 1; transform: none; }
-  .ig-reel-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.85)); padding: 6px; }
+  .ig-reel .yt-tb { border-radius: 5px; height: 100%; aspect-ratio: auto; position: absolute; inset: 0; }
+  .ig-reel-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.9) 80%); padding: 6px; z-index: 2; }
   .ig-reel-fmt { font-size: 8px; font-weight: 700; color: #fff; background: rgba(245,158,11,0.9); display: inline-block; padding: 1px 4px; border-radius: 2px; margin-bottom: 2px; letter-spacing: 0.3px; }
   .ig-reel-creator { font-size: 9px; color: #fff; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ig-reel-views { font-size: 8px; color: rgba(255,255,255,0.7); }
@@ -1064,7 +1066,7 @@ R.thumbnailEval = async (root, data) => {
   frame.innerHTML = `
     ${macBar('Thumbnail Evaluator', 'tev')}
     <div class="tev-body">
-      <div class="tev-thumb">${data.thumbnailTitle}</div>
+      <div class="tev-thumb">${renderThumb({title: data.thumbnailTitle.toUpperCase(), tc1: '#ef4444', tc2: '#991b1b', size: 'lg', face: true, vertical: false})}</div>
       <div class="tev-score">
         <div class="tev-ring">
           <svg width="84" height="84">
@@ -1127,9 +1129,8 @@ R.igSavedReels = async (root, data) => {
     await wait(100);
     const el = document.createElement('div');
     el.className = 'ig-reel';
-    el.style.setProperty('--c1', r.c1);
-    el.style.setProperty('--c2', r.c2);
     el.innerHTML = `
+      ${renderThumb({title: r.title || 'TAP TO TEST', tc1: r.c1, tc2: r.c2, size: 'sm', vertical: true, face: true})}
       <div class="ig-reel-overlay">
         <div class="ig-reel-fmt">${r.format}</div>
         <div class="ig-reel-creator">${r.creator}</div>
@@ -1576,15 +1577,15 @@ const TOOLS = [
     totalReels: 630, totalFormats: 82, activeFilter: 'Tap-test',
     formats: [{ name: 'Tap-test', active: true }, { name: 'Tempo-cut' }, { name: 'Hook-flip' }, { name: 'Before/After' }, { name: 'Voiceover-reveal' }, { name: 'Text-first' }],
     reels: [
-      { creator: '@marco.edits', views: '2.4M', format: 'Tap-test', c1: '#ff6b6b', c2: '#ee5a6f' },
-      { creator: '@aisha.tech', views: '1.8M', format: 'Tap-test', c1: '#4ecdc4', c2: '#44b3aa' },
-      { creator: '@creativepov', views: '3.2M', format: 'Tap-test', c1: '#a78bfa', c2: '#9370db' },
-      { creator: '@djmixpro', views: '892K', format: 'Tap-test', c1: '#fbbf24', c2: '#f59e0b' },
-      { creator: '@studio.visual', views: '1.5M', format: 'Tap-test', c1: '#ec4899', c2: '#be185d' },
-      { creator: '@videowizard', views: '2.1M', format: 'Tap-test', c1: '#14b8a6', c2: '#0d9488' },
-      { creator: '@content.lab', views: '945K', format: 'Tap-test', c1: '#06b6d4', c2: '#0891b2' },
-      { creator: '@motion.frames', views: '2.7M', format: 'Tap-test', c1: '#f97316', c2: '#ea580c' },
-      { creator: '@impulse.edit', views: '1.3M', format: 'Tap-test', c1: '#8b5cf6', c2: '#7c3aed' }
+      { title: 'TAP IF IT WORKS', creator: '@marco.edits', views: '2.4M', format: 'Tap-test', c1: '#ff6b6b', c2: '#991b1b' },
+      { title: 'WAIT FOR IT', creator: '@aisha.tech', views: '1.8M', format: 'Tap-test', c1: '#4ecdc4', c2: '#0d4f47' },
+      { title: 'ONLY 1 IS REAL', creator: '@creativepov', views: '3.2M', format: 'Tap-test', c1: '#a78bfa', c2: '#4c1d95' },
+      { title: 'WILL IT BREAK?', creator: '@djmixpro', views: '892K', format: 'Tap-test', c1: '#fbbf24', c2: '#78350f' },
+      { title: 'DOES $1 BEAT $100', creator: '@studio.visual', views: '1.5M', format: 'Tap-test', c1: '#ec4899', c2: '#6b1740' },
+      { title: 'I TESTED 10', creator: '@videowizard', views: '2.1M', format: 'Tap-test', c1: '#14b8a6', c2: '#064e3b' },
+      { title: 'TAP TO REVEAL', creator: '@content.lab', views: '945K', format: 'Tap-test', c1: '#06b6d4', c2: '#0c4a6e' },
+      { title: '5 OF 5 PASSED', creator: '@motion.frames', views: '2.7M', format: 'Tap-test', c1: '#f97316', c2: '#7c2d12' },
+      { title: 'WHICH ONE?', creator: '@impulse.edit', views: '1.3M', format: 'Tap-test', c1: '#8b5cf6', c2: '#3b0764' }
     ]
   }},
   { stage: 'ideation', id: 'lf-niche-research', name: 'lf-niche-research', cat: 'Research', desc: '28 candidate niches analyzed by LF 10M+ count, Shorts 100M+ count, channel diversity, and Hafu fit grade.', renderer: 'lfNicheResearch', data: {
