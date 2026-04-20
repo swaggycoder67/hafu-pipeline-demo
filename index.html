@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
-<title>HafuGo Pipeline</title>
+<title>HafuGo AI Pipeline</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -13,8 +13,7 @@
     --text: #f5f5f5; --text-2: #aaa; --text-3: #666;
     --accent: #f59e0b; --accent-2: #fbbf24;
     --green: #22c55e; --yellow: #eab308; --red: #ef4444;
-    --blue: #60a5fa; --purple: #a78bfa;
-    /* Notion palette */
+    --blue: #60a5fa; --purple: #a78bfa; --pink: #ec4899;
     --n-bg: #191919; --n-bg-2: #202020; --n-bg-3: #252525;
     --n-text: #e6e6e6; --n-text-2: #9b9b9b; --n-border: #2e2e2e;
     --n-tag-red: rgba(255,115,105,0.2); --n-tag-red-t: #ff7369;
@@ -23,7 +22,6 @@
     --n-tag-yellow: rgba(255,197,107,0.2); --n-tag-yellow-t: #ffc56b;
     --n-tag-purple: rgba(183,143,235,0.2); --n-tag-purple-t: #b78feb;
     --n-tag-gray: rgba(151,151,151,0.2); --n-tag-gray-t: #979797;
-    /* Frame.io palette */
     --fio-bg: #141618; --fio-bg-2: #1c1f23; --fio-text: #d4d7dc;
     --fio-blue: #5a7eff; --fio-border: #2a2e33;
   }
@@ -34,158 +32,114 @@
     line-height: 1.5; overflow-x: hidden;
     padding-bottom: env(safe-area-inset-bottom);
   }
-  button { font-family: inherit; cursor: pointer; }
-
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
   .container { width: 100%; max-width: 540px; margin: 0 auto; padding: 0 20px; }
-  section { padding: 56px 0; position: relative; }
-  .eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 12px; }
-  h1, h2 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
-  h1 { font-size: clamp(32px, 9vw, 48px); }
-  h2 { font-size: clamp(24px, 6vw, 32px); margin-bottom: 12px; }
-  p { color: var(--text-2); font-size: 15px; }
 
+  /* HERO */
   .hero {
-    min-height: 92vh; min-height: 92svh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 80px 0 40px;
+    padding: 80px 0 44px;
     background:
-      radial-gradient(ellipse at top, rgba(245,158,11,0.18), transparent 60%),
-      radial-gradient(ellipse at bottom, rgba(168,85,247,0.08), transparent 60%),
+      radial-gradient(ellipse at top, rgba(245,158,11,0.16), transparent 60%),
       var(--bg);
   }
+  .eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 14px; }
   .hero h1 {
-    margin-bottom: 16px;
+    font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+    font-size: clamp(32px, 9vw, 52px); margin-bottom: 18px;
     background: linear-gradient(180deg, #fff 0%, #888 120%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .hero .sub { font-size: 15px; color: var(--text-2); margin-bottom: 32px; max-width: 420px; }
+  .hero p { font-size: 15px; color: var(--text-2); max-width: 420px; margin-bottom: 24px; }
+  .hero-stats { display: flex; gap: 24px; font-size: 12px; color: var(--text-3); }
+  .hero-stats span { color: var(--accent-2); font-weight: 700; font-size: 18px; display: block; letter-spacing: -0.01em; }
 
-  .run-btn {
-    width: 100%; padding: 22px 28px; border-radius: 20px; border: none;
-    background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 60%, #b45309 120%);
-    color: #0a0a0a; font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    box-shadow: 0 10px 40px rgba(245,158,11,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .run-btn:active { transform: scale(0.98); }
-  .run-btn.running { background: var(--bg-2); color: var(--text-2); box-shadow: none; border: 1px solid var(--border-2); }
-  .run-btn.done { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); color: #fff; }
-  .run-btn .icon { font-size: 22px; }
-  .run-btn .label-sub { font-size: 12px; font-weight: 500; opacity: 0.7; display: block; margin-top: 2px; }
-  .run-tips { margin-top: 14px; font-size: 12px; color: var(--text-3); text-align: center; }
-
-  /* STAGES */
-  .pipeline { padding: 40px 0 60px; }
+  /* STAGE SECTIONS */
+  .stages { padding: 40px 0 40px; }
   .stage {
     background: var(--bg-2); border: 1px solid var(--border); border-radius: 20px;
-    padding: 20px; margin-bottom: 14px; position: relative;
-    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+    padding: 22px; margin-bottom: 16px;
   }
-  .stage.idle { opacity: 0.55; }
-  .stage.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(245,158,11,0.15), 0 20px 40px rgba(245,158,11,0.1); opacity: 1; }
-  .stage.done { border-color: rgba(34,197,94,0.5); opacity: 1; }
-  .stage.human { border-color: rgba(239,68,68,0.3); }
-  .stage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .stage-num { font-size: 10px; font-weight: 700; color: var(--text-3); letter-spacing: 1.5px; }
-  .stage-state {
-    font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 12px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    background: var(--bg-3); color: var(--text-3);
-  }
-  .stage.active .stage-state { background: rgba(245,158,11,0.2); color: var(--accent-2); animation: pulse 1.2s ease-in-out infinite; }
-  .stage.done .stage-state { background: rgba(34,197,94,0.15); color: var(--green); }
-  .stage.human .stage-state { background: rgba(239,68,68,0.15); color: var(--red); }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  .stage-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-  .stage-desc { font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+  .stage-head { margin-bottom: 18px; }
+  .stage-num { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1.5px; margin-bottom: 4px; }
+  .stage-name { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .stage-desc { font-size: 13px; color: var(--text-2); }
 
-  .output-wrap {
-    max-height: 0; opacity: 0; overflow: hidden;
-    transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.3s ease;
+  /* TOOL TABS */
+  .tool-tabs {
+    display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px; margin: 0 -22px 14px; padding-left: 22px; padding-right: 22px;
+    scroll-behavior: smooth;
   }
-  .stage.active .output-wrap, .stage.done .output-wrap {
-    max-height: 3000px; opacity: 1; margin-bottom: 14px;
-  }
-
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    font-size: 11px; padding: 5px 10px; border-radius: 14px;
-    background: rgba(96,165,250,0.08); color: var(--blue);
-    border: 1px solid rgba(96,165,250,0.2); font-weight: 500;
+  .tool-tabs::-webkit-scrollbar { display: none; }
+  .tool-tab {
+    font-size: 12px; padding: 7px 13px; border-radius: 16px;
+    background: var(--bg-3); border: 1px solid var(--border);
+    color: var(--text-2); font-weight: 500; white-space: nowrap; flex-shrink: 0;
     transition: all 0.2s ease;
   }
-  .chip.notion { background: rgba(168,85,247,0.08); color: var(--purple); border-color: rgba(168,85,247,0.2); }
-  .chip.human { background: rgba(239,68,68,0.08); color: var(--red); border-color: rgba(239,68,68,0.2); }
-  .chip.firing { background: var(--accent); color: #0a0a0a; border-color: var(--accent); transform: scale(1.06); box-shadow: 0 0 16px rgba(245,158,11,0.6); }
-
-  /* =================== APP FRAMES =================== */
-
-  .app-frame {
-    border-radius: 10px; overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  .tool-tab:active { transform: scale(0.96); }
+  .tool-tab.active {
+    background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700;
   }
-  .app-bar {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 10px; border-bottom: 1px solid;
+  .tool-tab.notion { color: var(--purple); border-color: rgba(168,85,247,0.2); }
+  .tool-tab.human { color: var(--red); border-color: rgba(239,68,68,0.2); }
+  .tool-tab.notion.active, .tool-tab.human.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); }
+
+  /* TOOL INFO PANEL */
+  .tool-info {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px; margin-bottom: 14px;
   }
+  .tool-cat {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+    color: var(--text-3); margin-bottom: 6px;
+  }
+  .tool-name { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  .tool-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 14px; }
+  .run-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #0a0a0a;
+    font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 10px;
+    transition: transform 0.15s ease;
+  }
+  .run-btn:active { transform: scale(0.97); }
+  .run-btn.running { background: var(--bg-3); color: var(--text-2); border: 1px solid var(--border-2); }
+  .run-btn.done { background: var(--green); color: #fff; }
+  .run-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* TOOL OUTPUT */
+  .tool-output { min-height: 40px; }
+  .tool-output:empty { display: none; }
+
+  /* SHARED — mac chrome for app frames */
+  .app-frame { border-radius: 10px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.4); margin-bottom: 4px; }
+  .app-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid; position: relative; }
   .app-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .app-title {
-    flex: 1; font-size: 11px; font-weight: 600;
-    text-align: center; letter-spacing: 0.2px;
-  }
+  .app-title { flex: 1; font-size: 11px; font-weight: 600; text-align: center; letter-spacing: 0.2px; }
 
-  /* -------- NOTION look -------- */
+  /* NOTION look */
   .notion { background: var(--n-bg); color: var(--n-text); }
   .notion .app-bar { background: var(--n-bg-2); border-bottom-color: var(--n-border); }
   .notion .app-title { color: var(--n-text-2); }
   .notion-header { padding: 14px 14px 8px; display: flex; align-items: center; gap: 8px; }
-  .notion-icon {
-    width: 22px; height: 22px; border-radius: 4px;
-    background: linear-gradient(135deg, #f59e0b, #ef4444);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #fff;
-  }
+  .notion-icon { width: 22px; height: 22px; border-radius: 4px; background: linear-gradient(135deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
   .notion-db-title { font-size: 16px; font-weight: 700; color: #fff; }
   .notion-db-meta { font-size: 11px; color: var(--n-text-2); margin-left: auto; }
-
-  /* Notion table view */
-  .n-table {
-    font-size: 12px; width: 100%;
-  }
+  .n-table { font-size: 12px; width: 100%; }
   .n-row {
-    display: grid; grid-template-columns: 22px 1fr auto;
-    gap: 10px; padding: 8px 14px; align-items: center;
+    display: grid; grid-template-columns: 22px 1fr 66px 46px 66px;
+    gap: 8px; padding: 8px 14px; align-items: center;
     border-top: 1px solid var(--n-border);
-    opacity: 0; transform: translateY(4px);
-    transition: all 0.3s;
+    opacity: 0; transform: translateY(4px); transition: all 0.3s;
   }
-  .n-row.header {
-    font-size: 10px; text-transform: uppercase; color: var(--n-text-2);
-    letter-spacing: 0.5px; padding: 8px 14px; opacity: 1; transform: none;
-    background: var(--n-bg-2); font-weight: 600;
-  }
+  .n-row.header { font-size: 10px; text-transform: uppercase; color: var(--n-text-2); letter-spacing: 0.5px; opacity: 1; transform: none; background: var(--n-bg-2); font-weight: 600; }
   .n-row.in { opacity: 1; transform: none; }
-  .n-check {
-    width: 14px; height: 14px; border: 1px solid var(--n-border); border-radius: 3px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: transparent; background: transparent;
-  }
+  .n-check { width: 14px; height: 14px; border: 1px solid var(--n-border); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; background: transparent; }
   .n-check.done { background: var(--n-tag-blue-t); border-color: var(--n-tag-blue-t); color: #fff; }
   .n-title-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .n-page-icon {
-    width: 16px; height: 12px; border-radius: 2px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b));
-  }
-  .n-title {
-    font-size: 13px; color: var(--n-text); line-height: 1.3;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .n-tag {
-    font-size: 10px; padding: 2px 8px; border-radius: 3px;
-    font-weight: 500; white-space: nowrap;
-  }
+  .n-page-icon { width: 16px; height: 12px; border-radius: 2px; flex-shrink: 0; background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b)); }
+  .n-title { font-size: 13px; color: var(--n-text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .n-tag { font-size: 10px; padding: 2px 8px; border-radius: 3px; font-weight: 500; white-space: nowrap; }
   .n-tag.blue { background: var(--n-tag-blue); color: var(--n-tag-blue-t); }
   .n-tag.green { background: var(--n-tag-green); color: var(--n-tag-green-t); }
   .n-tag.yellow { background: var(--n-tag-yellow); color: var(--n-tag-yellow-t); }
@@ -194,655 +148,475 @@
   .n-tag.gray { background: var(--n-tag-gray); color: var(--n-tag-gray-t); }
   .n-views { font-size: 11px; color: var(--n-text-2); }
 
-  /* Notion 2-column script table */
+  /* Notion 2-col script */
   .n-script-wrap { padding: 14px; }
   .n-script-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: #fff; }
   .n-script-sub { font-size: 11px; color: var(--n-text-2); margin-bottom: 12px; }
-  .n-script-tag {
-    display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 3px;
-    background: var(--n-tag-red); color: var(--n-tag-red-t);
-    font-weight: 600; margin-bottom: 14px; letter-spacing: 0.3px;
-  }
-  .intro-frame {
-    background: rgba(255,197,107,0.08); border: 1px solid rgba(255,197,107,0.25);
-    border-radius: 4px; padding: 10px 12px; margin-bottom: 14px;
-  }
-  .intro-frame .head {
-    font-size: 10px; color: var(--n-tag-yellow-t); font-weight: 700;
-    letter-spacing: 0.8px; margin-bottom: 4px;
-  }
+  .n-script-tag { display: inline-block; font-size: 10px; padding: 3px 8px; border-radius: 3px; background: var(--n-tag-red); color: var(--n-tag-red-t); font-weight: 600; margin-bottom: 14px; }
+  .intro-frame { background: rgba(255,197,107,0.08); border: 1px solid rgba(255,197,107,0.25); border-radius: 4px; padding: 10px 12px; margin-bottom: 14px; }
+  .intro-frame .head { font-size: 10px; color: var(--n-tag-yellow-t); font-weight: 700; letter-spacing: 0.8px; margin-bottom: 4px; }
   .intro-frame .body { font-size: 12px; color: var(--n-text); line-height: 1.5; }
-  .script-2col {
-    border: 1px solid var(--n-border); border-radius: 4px; overflow: hidden;
-  }
-  .script-h {
-    display: grid; grid-template-columns: 110px 1fr;
-    font-size: 10px; color: var(--n-text-2); font-weight: 600;
-    background: var(--n-bg-2); letter-spacing: 0.5px;
-  }
+  .script-2col { border: 1px solid var(--n-border); border-radius: 4px; overflow: hidden; }
+  .script-h { display: grid; grid-template-columns: 110px 1fr; font-size: 10px; color: var(--n-text-2); font-weight: 600; background: var(--n-bg-2); letter-spacing: 0.5px; }
   .script-h div { padding: 8px 10px; text-transform: uppercase; }
   .script-h div:first-child { border-right: 1px solid var(--n-border); }
-  .script-r {
-    display: grid; grid-template-columns: 110px 1fr;
-    border-top: 1px solid var(--n-border);
-    font-size: 12px; line-height: 1.5;
-    opacity: 0; transform: translateY(4px);
-    transition: all 0.3s;
-  }
+  .script-r { display: grid; grid-template-columns: 110px 1fr; border-top: 1px solid var(--n-border); font-size: 12px; line-height: 1.5; opacity: 0; transform: translateY(4px); transition: all 0.3s; }
   .script-r.in { opacity: 1; transform: none; }
   .script-r > div { padding: 8px 10px; }
-  .script-r .vis {
-    color: var(--n-text-2); font-style: italic;
-    border-right: 1px solid var(--n-border);
-  }
+  .script-r .vis { color: var(--n-text-2); font-style: italic; border-right: 1px solid var(--n-border); }
   .script-r .hs { color: var(--n-text); }
-  .script-r .hs .lbl {
-    color: var(--n-tag-red-t); font-weight: 700; font-style: normal;
-    margin-right: 4px; font-size: 11px;
-  }
-  .qa-footer {
-    margin-top: 10px; padding: 8px 10px; border-radius: 4px;
-    background: rgba(77,171,154,0.08); border: 1px solid rgba(77,171,154,0.25);
-    font-size: 11px; color: var(--n-tag-green-t); display: flex; justify-content: space-between;
-    opacity: 0; transition: opacity 0.3s;
-  }
+  .script-r .hs .lbl { color: var(--n-tag-red-t); font-weight: 700; font-style: normal; margin-right: 4px; font-size: 11px; }
+  .qa-footer { margin-top: 10px; padding: 8px 10px; border-radius: 4px; background: rgba(77,171,154,0.08); border: 1px solid rgba(77,171,154,0.25); font-size: 11px; color: var(--n-tag-green-t); display: flex; justify-content: space-between; opacity: 0; transition: opacity 0.3s; }
   .qa-footer.in { opacity: 1; }
 
-  /* Notion shopping list (logistics) */
+  /* Notion shopping */
   .shop-wrap { padding: 14px; }
   .shop-h { font-size: 11px; color: var(--n-text-2); font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 10px; }
-  .shop-row {
-    display: grid; grid-template-columns: 1fr 80px 60px;
-    gap: 8px; align-items: center; font-size: 12px;
-    padding: 8px 0; border-top: 1px solid var(--n-border);
-    opacity: 0; transform: translateY(3px); transition: all 0.25s;
-  }
+  .shop-row { display: grid; grid-template-columns: 1fr 80px 60px; gap: 8px; align-items: center; font-size: 12px; padding: 8px 0; border-top: 1px solid var(--n-border); opacity: 0; transform: translateY(3px); transition: all 0.25s; }
   .shop-row.in { opacity: 1; transform: none; }
-  .shop-row.head {
-    font-size: 10px; color: var(--n-text-2); text-transform: uppercase;
-    letter-spacing: 0.5px; font-weight: 600; padding-top: 0; border-top: none;
-    opacity: 1; transform: none;
-  }
+  .shop-row.head { font-size: 10px; color: var(--n-text-2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; padding-top: 0; border-top: none; opacity: 1; transform: none; }
   .shop-item { color: var(--n-text); }
-  .shop-item .prime {
-    font-size: 9px; color: var(--n-tag-blue-t); margin-left: 6px; font-weight: 700;
-    background: var(--n-tag-blue); padding: 1px 5px; border-radius: 2px;
-  }
+  .shop-item .prime { font-size: 9px; color: var(--n-tag-blue-t); margin-left: 6px; font-weight: 700; background: var(--n-tag-blue); padding: 1px 5px; border-radius: 2px; }
   .shop-src { color: var(--n-text-2); font-size: 11px; }
   .shop-price { color: var(--n-tag-green-t); font-weight: 700; text-align: right; }
-  .shop-total {
-    margin-top: 10px; padding: 10px 12px;
-    background: var(--n-tag-green); border-radius: 4px;
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--n-tag-green-t); font-weight: 700;
-    opacity: 0; transition: opacity 0.3s;
-  }
+  .shop-total { margin-top: 10px; padding: 10px 12px; background: var(--n-tag-green); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--n-tag-green-t); font-weight: 700; opacity: 0; transition: opacity 0.3s; }
   .shop-total.in { opacity: 1; }
 
-  /* -------- FRAME.IO look -------- */
+  /* Frame.io */
   .fio { background: var(--fio-bg); color: var(--fio-text); }
   .fio .app-bar { background: var(--fio-bg-2); border-bottom-color: var(--fio-border); }
   .fio .app-title { color: var(--fio-text); }
-  .fio-video {
-    aspect-ratio: 16 / 9; background: #000;
-    background-image:
-      radial-gradient(circle at 40% 55%, rgba(239,68,68,0.5), transparent 30%),
-      linear-gradient(180deg, #1a1a1a 0%, #000 100%);
-    position: relative;
-  }
-  .fio-timebar {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    height: 22px; background: rgba(0,0,0,0.6);
-    display: flex; align-items: center; padding: 0 8px;
-    font-size: 10px; color: #fff; font-variant-numeric: tabular-nums;
-    justify-content: space-between;
-  }
-  .fio-timebar-track {
-    flex: 1; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px;
-    margin: 0 8px; position: relative;
-  }
+  .fio-video { aspect-ratio: 16 / 9; background: #000; background-image: radial-gradient(circle at 40% 55%, rgba(239,68,68,0.5), transparent 30%), linear-gradient(180deg, #1a1a1a 0%, #000 100%); position: relative; }
+  .fio-timebar { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: rgba(0,0,0,0.6); display: flex; align-items: center; padding: 0 8px; font-size: 10px; color: #fff; font-variant-numeric: tabular-nums; justify-content: space-between; }
+  .fio-timebar-track { flex: 1; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 0 8px; position: relative; }
   .fio-timebar-fill { height: 100%; width: 38%; background: var(--fio-blue); border-radius: 2px; }
-  .fio-pin {
-    position: absolute; top: -3px; width: 9px; height: 9px; border-radius: 50%;
-    background: var(--accent); transform: translateX(-50%);
-    box-shadow: 0 0 0 2px var(--fio-bg-2);
-  }
+  .fio-pin { position: absolute; top: -3px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); transform: translateX(-50%); box-shadow: 0 0 0 2px var(--fio-bg-2); }
   .fio-comments { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
-  .fio-comment {
-    display: flex; gap: 10px;
-    opacity: 0; transform: translateY(4px); transition: all 0.3s;
-  }
+  .fio-comment { display: flex; gap: 10px; opacity: 0; transform: translateY(4px); transition: all 0.3s; }
   .fio-comment.in { opacity: 1; transform: none; }
-  .fio-avatar {
-    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--fio-blue), var(--purple));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: #fff; font-weight: 700;
-  }
+  .fio-avatar { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--fio-blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 700; }
   .fio-ai .fio-avatar { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0a0a0a; }
   .fio-body { flex: 1; min-width: 0; }
-  .fio-head {
-    display: flex; align-items: center; gap: 6px; font-size: 10px;
-    color: #6d737d; margin-bottom: 2px;
-  }
+  .fio-head { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #6d737d; margin-bottom: 2px; }
   .fio-name { color: #fff; font-weight: 600; font-size: 11px; }
-  .fio-time {
-    background: rgba(90,126,255,0.2); color: var(--fio-blue);
-    padding: 1px 6px; border-radius: 3px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
+  .fio-time { background: rgba(90,126,255,0.2); color: var(--fio-blue); padding: 1px 6px; border-radius: 3px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .fio-ai .fio-time { background: rgba(245,158,11,0.18); color: var(--accent); }
   .fio-text { font-size: 12px; color: var(--fio-text); line-height: 1.5; }
   .fio-text .warn-pill { color: var(--yellow); font-weight: 600; }
   .fio-text .ok-pill { color: var(--green); font-weight: 600; }
 
-  /* -------- FILMING (shot list) -------- */
+  /* Shot list / Filming */
   .shotlist { padding: 12px; background: var(--n-bg); }
-  .shotlist .tag-row { display: flex; gap: 6px; margin-bottom: 10px; }
-  .shotlist-row {
-    display: grid; grid-template-columns: 18px 40px 1fr 50px;
-    gap: 8px; align-items: center; padding: 6px 0;
-    border-top: 1px solid var(--n-border);
-    font-size: 12px; color: var(--n-text);
-    opacity: 0; transform: translateY(3px); transition: all 0.25s;
-  }
+  .shotlist-row { display: grid; grid-template-columns: 18px 40px 1fr 50px; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--n-border); font-size: 12px; color: var(--n-text); opacity: 0; transform: translateY(3px); transition: all 0.25s; }
   .shotlist-row.in { opacity: 1; transform: none; }
-  .shotlist-check {
-    width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--n-border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: transparent;
-  }
+  .shotlist-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--n-border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
   .shotlist-row.done .shotlist-check { background: var(--green); border-color: var(--green); color: #fff; }
   .shotlist-scene { font-size: 10px; color: var(--n-text-2); font-weight: 700; letter-spacing: 0.5px; }
   .shotlist-title { font-size: 12px; }
   .shotlist-dur { font-size: 11px; color: var(--n-text-2); text-align: right; font-variant-numeric: tabular-nums; }
   .shotlist-row.active { background: rgba(239,68,68,0.06); }
   .shotlist-row.active .shotlist-title { color: var(--red); font-weight: 600; }
-  .shotlist-row.active .film-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: var(--red);
-    display: inline-block; margin-right: 4px;
-    animation: recblink 1.2s ease-in-out infinite;
-  }
+  .film-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); display: inline-block; margin-right: 4px; animation: recblink 1.2s ease-in-out infinite; }
   @keyframes recblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-  .runtime-badge {
-    margin-top: 8px; display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(239,68,68,0.1); color: var(--red);
-    font-size: 11px; padding: 4px 10px; border-radius: 12px;
-    font-variant-numeric: tabular-nums; font-weight: 600;
-  }
+  .runtime-badge { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; background: rgba(239,68,68,0.1); color: var(--red); font-size: 11px; padding: 4px 10px; border-radius: 12px; font-variant-numeric: tabular-nums; font-weight: 600; }
 
-  /* -------- DITTODUB look -------- */
+  /* DittoDub */
   .dd { background: #0d0e10; color: #e6e6e6; }
   .dd .app-bar { background: #14161a; border-bottom-color: #24262a; }
   .dd .app-title { color: #a7aab0; }
   .dd-body { padding: 12px; }
   .dd-meta { font-size: 11px; color: #6d737d; margin-bottom: 10px; display: flex; justify-content: space-between; }
   .dd-meta strong { color: #fff; font-weight: 600; }
-  .dd-track {
-    display: grid; grid-template-columns: 46px 1fr 36px 18px;
-    gap: 10px; align-items: center; padding: 10px 0;
-    border-top: 1px solid #1f2126; font-size: 12px;
-  }
-  .dd-lang {
-    background: #1c1e22; border: 1px solid #2a2d33; border-radius: 4px;
-    padding: 5px 0; text-align: center; font-weight: 700; color: #fff; font-size: 11px;
-    letter-spacing: 0.4px;
-  }
-  .dd-wave {
-    height: 20px; position: relative; display: flex; align-items: center; gap: 1px;
-    overflow: hidden;
-  }
-  .dd-wave .bar {
-    width: 2px; background: #3c424a; border-radius: 1px;
-    transition: background 0.4s;
-  }
+  .dd-track { display: grid; grid-template-columns: 46px 1fr 36px 18px; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid #1f2126; font-size: 12px; }
+  .dd-lang { background: #1c1e22; border: 1px solid #2a2d33; border-radius: 4px; padding: 5px 0; text-align: center; font-weight: 700; color: #fff; font-size: 11px; letter-spacing: 0.4px; }
+  .dd-wave { height: 20px; position: relative; display: flex; align-items: center; gap: 1px; overflow: hidden; }
+  .dd-wave .bar { width: 2px; background: #3c424a; border-radius: 1px; transition: background 0.4s; }
   .dd-track.playing .dd-wave .bar { background: linear-gradient(180deg, var(--fio-blue), var(--green)); }
   .dd-track.done .dd-wave .bar { background: var(--green); }
   .dd-dur { font-size: 10px; color: #6d737d; font-variant-numeric: tabular-nums; text-align: right; }
   .dd-status { font-size: 12px; color: #3c424a; text-align: center; }
   .dd-track.done .dd-status { color: var(--green); }
 
-  /* -------- YT STUDIO look -------- */
+  /* YT Studio */
   .yt { background: #181818; color: #fff; }
   .yt .app-bar { background: #0f0f0f; border-bottom-color: #303030; }
   .yt .app-title { color: #aaa; }
-  .yt-head {
-    padding: 12px 14px 6px; display: flex; justify-content: space-between; align-items: center;
-  }
+  .yt-head { padding: 12px 14px 6px; display: flex; justify-content: space-between; align-items: center; }
   .yt-tabs { display: flex; gap: 16px; padding: 0 14px; border-bottom: 1px solid #303030; margin-bottom: 2px; }
-  .yt-tab { font-size: 11px; color: #aaa; padding: 6px 0; }
-  .yt-tab.active { color: #fff; border-bottom: 2px solid #f00; margin-bottom: -1px; }
-  .yt-row {
-    display: grid; grid-template-columns: 44px 1fr auto;
-    gap: 10px; align-items: center; padding: 10px 14px;
-    border-top: 1px solid #202020; font-size: 12px;
-    opacity: 0; transform: translateY(3px); transition: all 0.3s;
-  }
+  .yt-tab-yt { font-size: 11px; color: #aaa; padding: 6px 0; }
+  .yt-tab-yt.active { color: #fff; border-bottom: 2px solid #f00; margin-bottom: -1px; }
+  .yt-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid #202020; font-size: 12px; opacity: 0; transform: translateY(3px); transition: all 0.3s; }
   .yt-row.in { opacity: 1; transform: none; }
-  .yt-thumb {
-    width: 44px; height: 26px; border-radius: 3px; flex-shrink: 0;
-    background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b));
-    position: relative;
-  }
-  .yt-dur {
-    position: absolute; bottom: 2px; right: 2px;
-    font-size: 8px; background: rgba(0,0,0,0.8); color: #fff;
-    padding: 0 3px; border-radius: 2px; font-variant-numeric: tabular-nums;
-  }
+  .yt-thumb { width: 44px; height: 26px; border-radius: 3px; flex-shrink: 0; background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b)); position: relative; }
+  .yt-dur { position: absolute; bottom: 2px; right: 2px; font-size: 8px; background: rgba(0,0,0,0.8); color: #fff; padding: 0 3px; border-radius: 2px; font-variant-numeric: tabular-nums; }
   .yt-title { font-size: 12px; color: #fff; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .yt-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
-  .yt-status {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 10px; color: #3ea6ff; font-weight: 600;
-  }
+  .yt-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; color: #3ea6ff; font-weight: 600; }
   .yt-status .dot { width: 6px; height: 6px; border-radius: 50%; background: #3ea6ff; }
 
-  /* VistaSocial CSV look (distribution uses multi-app split) */
-  .pipeline-grid { display: flex; flex-direction: column; gap: 10px; }
-  .sub-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-
-  /* -------- ANALYTICS (YT Studio style) -------- */
-  .yt-stat-grid {
-    padding: 12px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-  }
-  .yt-stat {
-    background: #0f0f0f; border: 1px solid #202020; border-radius: 8px;
-    padding: 10px 12px;
-  }
+  /* YT Analytics */
+  .yt-stat-grid { padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .yt-stat { background: #0f0f0f; border: 1px solid #202020; border-radius: 8px; padding: 10px 12px; }
   .yt-stat .l { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; margin-bottom: 4px; }
   .yt-stat .v { font-size: 22px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; line-height: 1; }
   .yt-stat .d { font-size: 11px; margin-top: 4px; font-weight: 600; }
   .yt-stat .d.up { color: #3ea6ff; }
   .yt-stat .d.warm { color: var(--green); }
-  .yt-chart {
-    height: 40px; margin-top: 8px; display: flex; align-items: flex-end; gap: 2px;
-  }
-  .yt-chart .b {
-    flex: 1; background: linear-gradient(180deg, #3ea6ff, rgba(62,166,255,0.2));
-    border-radius: 1px; height: 20%;
-    transition: height 0.8s cubic-bezier(.2,.7,.2,1);
-  }
+  .yt-stat .d.down { color: var(--red); }
+  .yt-chart { height: 40px; margin-top: 8px; display: flex; align-items: flex-end; gap: 2px; }
+  .yt-chart .b { flex: 1; background: linear-gradient(180deg, #3ea6ff, rgba(62,166,255,0.2)); border-radius: 1px; height: 20%; transition: height 0.8s cubic-bezier(.2,.7,.2,1); }
 
-  /* ============ TRY-IT & MODAL & FOOTER ============ */
-  .tryit { padding: 60px 0; background: linear-gradient(180deg, var(--bg) 0%, #0e0e0e 100%); }
-  .tryit-box { background: var(--bg-2); border: 1px solid var(--border); border-radius: 20px; padding: 20px; }
-  .tryit-input { width: 100%; background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 14px; padding: 14px 16px; color: var(--text); font-size: 15px; font-family: inherit; outline: none; margin-bottom: 10px; }
-  .tryit-input:focus { border-color: var(--accent); }
-  .tryit-input::placeholder { color: var(--text-3); }
-  .tryit-btn { width: 100%; background: var(--accent); color: #0a0a0a; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 14px; }
-  .tryit-output { margin-top: 14px; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease; }
-  .tryit-output.open { max-height: 3000px; opacity: 1; margin-top: 14px; }
+  /* Thumbnail Eval (custom) */
+  .tev-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .tev-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 8px; }
+  .tev-head-dots { display: flex; gap: 6px; }
+  .tev-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .tev-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; font-weight: 500; margin-right: 40px; }
+  .tev-body { padding: 14px; }
+  .tev-thumb { width: 100%; height: 160px; border-radius: 6px; background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; color: rgba(0,0,0,0.55); font-weight: 700; margin-bottom: 16px; }
+  .tev-score { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
+  .tev-ring { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
+  .tev-ring svg { transform: rotate(-90deg); }
+  .tev-ring circle { fill: none; stroke-width: 7; }
+  .tev-ring .track { stroke: #1a1a1a; }
+  .tev-ring .fill { stroke: var(--green); stroke-linecap: round; transition: stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1); }
+  .tev-ring .val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; }
+  .tev-verdict { flex: 1; }
+  .tev-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .tev-badge.pass { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tev-badge.fail { background: rgba(239,68,68,0.15); color: var(--red); }
+  .tev-verdict-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .tev-cats { display: flex; flex-direction: column; gap: 6px; }
+  .tev-cat { background: #141414; border: 1px solid #222; border-radius: 6px; overflow: hidden; }
+  .tev-cat-head { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .tev-cat-title { font-size: 12px; color: #fff; font-weight: 600; }
+  .tev-cat-score { font-size: 11px; color: var(--text-3); }
+  .tev-cat-body { padding: 0 12px 10px; display: flex; flex-direction: column; gap: 5px; }
+  .tev-crit { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-2); opacity: 0; transform: translateX(-4px); transition: all 0.25s; }
+  .tev-crit.in { opacity: 1; transform: none; }
+  .tev-ic { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  .tev-crit.pass .tev-ic { background: rgba(34,197,94,0.2); color: var(--green); }
+  .tev-crit.fail .tev-ic { background: rgba(239,68,68,0.2); color: var(--red); }
 
-  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
-  .modal-bg.open { display: flex; }
-  .modal { background: var(--bg-2); border: 1px solid var(--border); border-top-left-radius: 24px; border-top-right-radius: 24px; width: 100%; max-width: 540px; max-height: 85vh; overflow-y: auto; padding: 24px 20px 32px; transform: translateY(100%); transition: transform 0.3s ease; }
-  .modal-bg.open .modal { transform: translateY(0); }
-  .modal-grip { width: 40px; height: 4px; background: var(--border-2); border-radius: 2px; margin: 0 auto 16px; }
-  .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-  .modal-sub { font-size: 13px; color: var(--text-3); margin-bottom: 16px; }
-  .modal-body { font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px; }
-  .modal-demo { margin-bottom: 14px; min-height: 40px; }
-  .modal-close { background: none; border: 1px solid var(--border-2); color: var(--text-2); padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 10px; width: 100%; }
+  /* IG Saved Reels (custom) */
+  .ig-wrap { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .ig-head { padding: 12px 14px; background: #141414; border-bottom: 1px solid #222; }
+  .ig-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .ig-top-dots { display: flex; gap: 6px; }
+  .ig-top-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .ig-top-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; }
+  .ig-summary { font-size: 12px; color: var(--text-2); margin-bottom: 10px; }
+  .ig-summary b { color: var(--accent-2); font-weight: 700; }
+  .ig-pills { display: flex; gap: 6px; overflow-x: auto; scroll-behavior: smooth; }
+  .ig-pills::-webkit-scrollbar { display: none; }
+  .ig-pill { font-size: 11px; padding: 5px 11px; border-radius: 14px; background: var(--bg-3); color: var(--text-2); border: 1px solid var(--border); white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+  .ig-pill.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 700; }
+  .ig-grid { padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ig-reel { aspect-ratio: 9/16; border-radius: 5px; background: linear-gradient(135deg, var(--c1,#ef4444), var(--c2,#f59e0b)); position: relative; overflow: hidden; opacity: 0; transform: translateY(6px); transition: all 0.35s; }
+  .ig-reel.in { opacity: 1; transform: none; }
+  .ig-reel-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.85)); padding: 6px; }
+  .ig-reel-fmt { font-size: 8px; font-weight: 700; color: #fff; background: rgba(245,158,11,0.9); display: inline-block; padding: 1px 4px; border-radius: 2px; margin-bottom: 2px; letter-spacing: 0.3px; }
+  .ig-reel-creator { font-size: 9px; color: #fff; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ig-reel-views { font-size: 8px; color: rgba(255,255,255,0.7); }
 
+  /* LF Niche Research (custom) */
+  .niche-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .niche-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 8px; }
+  .niche-head-dots { display: flex; gap: 6px; }
+  .niche-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .niche-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; font-weight: 500; margin-right: 40px; }
+  .niche-body { padding: 8px 12px 14px; }
+  .niche-thead { display: grid; grid-template-columns: 20px 1fr 42px 42px 38px 42px; gap: 6px; padding: 8px 0; font-size: 9px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  .niche-row-table { display: grid; grid-template-columns: 20px 1fr 42px 42px 38px 42px; gap: 6px; padding: 6px 0; font-size: 11px; color: var(--text-2); border-bottom: 1px solid rgba(34,34,34,0.6); opacity: 0; transform: translateY(3px); transition: all 0.25s; }
+  .niche-row-table.in { opacity: 1; transform: none; }
+  .niche-rank { font-weight: 700; color: var(--accent); font-size: 11px; }
+  .niche-name { color: #fff; font-weight: 500; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .niche-metric { text-align: center; color: var(--blue); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .niche-channels { text-align: center; color: var(--purple); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .niche-fit { text-align: center; font-weight: 700; font-size: 9px; padding: 2px 4px; border-radius: 2px; }
+  .niche-fit.HIGH { background: rgba(34,197,94,0.2); color: var(--green); }
+  .niche-fit.MED { background: rgba(96,165,250,0.2); color: var(--blue); }
+  .niche-fit.LOW { background: rgba(107,114,128,0.2); color: var(--text-2); }
+
+  /* TOC Coach (custom) */
+  .toc-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .toc-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .toc-head-dots { display: flex; gap: 6px; }
+  .toc-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .toc-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .toc-grid { padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .toc-tile { background: #141414; border: 1px solid #222; border-radius: 8px; padding: 10px; opacity: 0; transform: translateY(6px); transition: all 0.35s; }
+  .toc-tile.in { opacity: 1; transform: none; }
+  .toc-tile-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .toc-tile-icon { width: 22px; height: 22px; border-radius: 4px; background: linear-gradient(135deg, var(--accent), #ef4444); display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; font-weight: 800; }
+  .toc-tile-name { flex: 1; font-size: 11px; color: #fff; font-weight: 700; }
+  .toc-tile-status { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .toc-tile-status.stuck { background: var(--red); }
+  .toc-tile-status.resolved { background: var(--blue); }
+  .toc-tile-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .toc-tile-constraint { font-size: 10px; color: var(--text-2); line-height: 1.4; min-height: 28px; }
+  .toc-tile-meta { font-size: 9px; color: var(--text-3); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
+
+  /* Personal Themes (custom) */
+  .themes-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .themes-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .themes-head-dots { display: flex; gap: 6px; }
+  .themes-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .themes-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .themes-grid { padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .themes-card { background: #141414; border: 1px solid #222; border-radius: 8px; padding: 10px; position: relative; overflow: hidden; opacity: 0; transform: translateY(6px); transition: all 0.35s; }
+  .themes-card.in { opacity: 1; transform: none; }
+  .themes-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--tc, var(--accent)); }
+  .themes-name { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; line-height: 1.25; }
+  .themes-desc { font-size: 10px; color: var(--text-2); line-height: 1.4; margin-bottom: 8px; min-height: 28px; }
+  .themes-stats { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-3); padding-top: 6px; border-top: 1px solid var(--border); }
+  .themes-stats .n { color: #fff; font-weight: 700; display: block; font-size: 11px; margin-top: 2px; }
+
+  /* Staleness Checker (custom) */
+  .stale-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .stale-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .stale-head-dots { display: flex; gap: 6px; }
+  .stale-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .stale-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .stale-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .stale-item { background: #141414; border: 1px solid #222; border-radius: 7px; padding: 10px; border-left: 3px solid var(--text-3); opacity: 0; transform: translateY(4px); transition: all 0.3s; }
+  .stale-item.in { opacity: 1; transform: none; }
+  .stale-item.stale { border-left-color: var(--red); }
+  .stale-item.broken { border-left-color: #f97316; }
+  .stale-item.fresh { border-left-color: var(--green); }
+  .stale-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .stale-name { font-size: 12px; color: #fff; font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stale-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.3px; white-space: nowrap; }
+  .stale-item.stale .stale-badge { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .stale-item.broken .stale-badge { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .stale-item.fresh .stale-badge { background: rgba(34,197,94,0.15); color: var(--green); }
+  .stale-meta { font-size: 10px; color: var(--text-3); display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .stale-action { font-size: 10px; color: var(--accent); font-weight: 500; padding-top: 5px; border-top: 1px solid var(--border); }
+
+  /* Scripts QA (custom) */
+  .sqa-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .sqa-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .sqa-head-dots { display: flex; gap: 6px; }
+  .sqa-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .sqa-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .sqa-body { padding: 14px; }
+  .sqa-title { font-size: 15px; color: #fff; font-weight: 700; margin-bottom: 4px; }
+  .sqa-sub { font-size: 11px; color: var(--text-3); margin-bottom: 14px; }
+  .sqa-checks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .sqa-check { display: grid; grid-template-columns: 20px 1fr; gap: 10px; padding: 8px 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 4px; opacity: 0; transform: translateX(-6px); transition: all 0.3s; }
+  .sqa-check.in { opacity: 1; transform: none; }
+  .sqa-check-ic { width: 18px; height: 18px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 700; }
+  .sqa-check.pass .sqa-check-ic { background: var(--green); }
+  .sqa-check.warn .sqa-check-ic { background: var(--yellow); color: #1a1a1a; }
+  .sqa-check.fail .sqa-check-ic { background: var(--red); }
+  .sqa-check-name { font-size: 12px; color: #fff; font-weight: 500; }
+  .sqa-check-detail { font-size: 11px; color: var(--text-2); margin-top: 2px; line-height: 1.35; }
+  .sqa-verdict { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); opacity: 0; transition: opacity 0.3s; }
+  .sqa-verdict.in { opacity: 1; }
+  .sqa-verdict-left { display: flex; align-items: center; gap: 10px; }
+  .sqa-verdict-ic { width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; box-shadow: 0 0 12px rgba(34,197,94,0.3); }
+  .sqa-verdict-lbl { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  .sqa-verdict-status { font-size: 13px; font-weight: 700; color: var(--green); }
+  .sqa-score { font-size: 12px; color: var(--text-2); font-weight: 600; }
+
+  /* Script Versioning (custom) */
+  .sv-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .sv-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .sv-head-dots { display: flex; gap: 6px; }
+  .sv-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .sv-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .sv-body { padding: 14px; }
+  .sv-slug { font-family: 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+  .sv-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 14px; }
+  .sv-timeline { position: relative; padding-left: 18px; }
+  .sv-timeline::before { content: ""; position: absolute; left: 4px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--text-3)); }
+  .sv-ver { position: relative; margin-bottom: 14px; opacity: 0; transform: translateY(6px); transition: all 0.4s; }
+  .sv-ver.in { opacity: 1; transform: none; }
+  .sv-ver::before { content: ""; position: absolute; left: -18px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); border: 2px solid #0a0a0a; box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+  .sv-tag { display: inline-block; font-family: 'SF Mono', monospace; font-size: 10px; font-weight: 700; color: #fff; background: rgba(245,158,11,0.15); border: 1px solid var(--accent); padding: 2px 7px; border-radius: 3px; margin-bottom: 4px; }
+  .sv-meta-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+  .sv-date { color: var(--text-3); font-family: 'SF Mono', monospace; }
+  .sv-qa { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px; border-radius: 3px; font-size: 10px; font-weight: 600; background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); margin-right: 4px; }
+  .sv-qa.warn { background: rgba(234,179,8,0.12); color: var(--yellow); border-color: rgba(234,179,8,0.2); }
+  .sv-note { margin-top: 4px; padding: 6px 9px; background: rgba(255,255,255,0.03); border-left: 2px solid var(--border); font-size: 11px; color: var(--text-2); line-height: 1.4; font-style: italic; border-radius: 2px; }
+
+  /* Snapchat Optimizer (custom) */
+  .snap-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .snap-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .snap-head-dots { display: flex; gap: 6px; }
+  .snap-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .snap-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .snap-body { padding: 12px; }
+  .snap-stats { display: flex; gap: 16px; padding: 10px 12px; background: #141414; border: 1px solid #222; border-radius: 6px; margin-bottom: 12px; }
+  .snap-stat-n { font-size: 18px; font-weight: 800; color: #fffc00; }
+  .snap-stat-l { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-top: 2px; }
+  .snap-tbl { width: 100%; border-collapse: collapse; background: #141414; border: 1px solid #222; border-radius: 6px; overflow: hidden; font-size: 11px; }
+  .snap-tbl thead { background: #0a0a0a; }
+  .snap-tbl th { padding: 8px 10px; text-align: left; color: var(--text-3); font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+  .snap-tbl td { padding: 8px 10px; border-top: 1px solid var(--border); color: var(--text); }
+  .snap-tbl tr { opacity: 0; transform: translateY(-4px); transition: all 0.3s; }
+  .snap-tbl tr.in { opacity: 1; transform: none; }
+  .snap-tbl-thumb { width: 28px; height: 28px; border-radius: 3px; background: linear-gradient(135deg, var(--c1,#ef4444), var(--c2,#f59e0b)); flex-shrink: 0; }
+  .snap-tbl-cell { display: flex; gap: 8px; align-items: center; }
+  .snap-tbl-cell .ttl { font-size: 11px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .snap-time { font-family: 'SF Mono', monospace; color: var(--text-2); font-size: 10px; }
+  .snap-badge { display: inline-block; padding: 2px 7px; background: #fffc00; color: #000; border-radius: 10px; font-size: 8px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; }
+  .snap-ab { margin-top: 12px; padding: 12px; background: #141414; border: 1px solid #222; border-radius: 6px; }
+  .snap-ab-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 10px; }
+  .snap-ab-row { display: flex; gap: 12px; margin-bottom: 10px; }
+  .snap-ab-col { flex: 1; }
+  .snap-ab-col-lbl { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+  .snap-ab-col-v { font-size: 18px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+  .snap-ab-bar-wrap { height: 6px; background: #0a0a0a; border-radius: 3px; overflow: hidden; }
+  .snap-ab-bar { height: 100%; width: 0; background: var(--accent); border-radius: 3px; transition: width 0.9s cubic-bezier(.2,.7,.2,1); }
+  .snap-ab-bar.win { background: var(--green); }
+  .snap-ab-win-badge { display: inline-block; padding: 2px 6px; background: var(--green); color: #000; border-radius: 3px; font-size: 8px; font-weight: 800; text-transform: uppercase; margin-top: 4px; }
+  .snap-ab-result { font-size: 11px; color: var(--green); font-weight: 600; }
+
+  /* Snapchat Story Scraper (custom) */
+  .snscr-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .snscr-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .snscr-head-dots { display: flex; gap: 6px; }
+  .snscr-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .snscr-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .snscr-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .snscr-card { background: #141414; border: 1px solid #222; border-radius: 7px; padding: 10px; display: flex; gap: 10px; opacity: 0; transform: translateY(4px); transition: all 0.3s; }
+  .snscr-card.in { opacity: 1; transform: none; }
+  .snscr-card.exp { flex-direction: column; border-color: var(--accent); }
+  .snscr-top { display: flex; gap: 10px; }
+  .snscr-thumb { width: 56px; height: 80px; border-radius: 4px; background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b)); flex-shrink: 0; }
+  .snscr-meta { flex: 1; }
+  .snscr-title { font-size: 12px; color: #fff; font-weight: 700; margin-bottom: 4px; }
+  .snscr-stats { display: flex; flex-direction: column; gap: 2px; font-size: 10px; }
+  .snscr-stat { display: flex; justify-content: space-between; color: var(--text-2); }
+  .snscr-stat .v { color: #fff; font-weight: 600; }
+  .snscr-dropoff { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .snscr-drop-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 8px; }
+  .snscr-drop-chart { display: flex; align-items: flex-end; gap: 3px; height: 60px; margin-bottom: 6px; }
+  .snscr-drop-bar { flex: 1; background: linear-gradient(to top, var(--accent), var(--accent-2)); border-radius: 2px 2px 0 0; height: 4px; transition: height 0.8s cubic-bezier(.2,.7,.2,1); }
+  .snscr-drop-axis { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-3); }
+
+  /* Shot List Generator (custom) */
+  .sl-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .sl-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .sl-head-dots { display: flex; gap: 6px; }
+  .sl-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .sl-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .sl-body { padding: 12px; }
+  .sl-info { font-size: 11px; color: var(--text-2); margin-bottom: 10px; }
+  .sl-info b { color: #fff; font-weight: 700; }
+  .sl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sl-card { background: #141414; border: 1px solid #222; border-radius: 7px; overflow: hidden; opacity: 0; transform: scale(0.96); transition: all 0.35s; }
+  .sl-card.in { opacity: 1; transform: none; }
+  .sl-card-thumb { aspect-ratio: 3/4; background: linear-gradient(135deg, var(--c1, #3b82f6), var(--c2, #a78bfa)); position: relative; }
+  .sl-card-thumb-lbl { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.75)); font-size: 10px; color: #fff; font-weight: 700; }
+  .sl-info2 { padding: 8px 10px; }
+  .sl-num { font-size: 9px; color: var(--accent); font-weight: 700; letter-spacing: 0.8px; margin-bottom: 3px; }
+  .sl-label { font-size: 11px; color: #fff; font-weight: 700; margin-bottom: 4px; }
+  .sl-action { font-size: 10px; color: var(--text-2); line-height: 1.35; margin-bottom: 5px; min-height: 28px; }
+  .sl-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .sl-tag { font-size: 8px; padding: 2px 5px; border-radius: 2px; background: var(--border); color: var(--text-2); }
+  .sl-tag.cine { color: var(--blue); background: rgba(96,165,250,0.1); }
+  .sl-tag.light { color: var(--purple); background: rgba(168,85,247,0.1); }
+
+  /* Notion Agent Builder (custom) */
+  .nab-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .nab-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .nab-head-dots { display: flex; gap: 6px; }
+  .nab-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .nab-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .nab-body { padding: 14px; }
+  .nab-agent { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); border: 1px solid var(--accent); border-radius: 10px; padding: 14px; box-shadow: 0 0 20px rgba(245,158,11,0.12); }
+  .nab-agent-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #222; }
+  .nab-agent-icon { width: 28px; height: 28px; border-radius: 5px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
+  .nab-agent-name { font-size: 15px; font-weight: 700; color: #fff; }
+  .nab-agent-status { font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 4px; }
+  .nab-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: recblink 2s ease-in-out infinite; }
+  .nab-sec { margin-bottom: 12px; }
+  .nab-sec-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 6px; }
+  .nab-trig { background: #0f172a; border: 1px solid #1e3a8a; border-radius: 5px; padding: 8px 10px; font-size: 11px; color: #fff; display: flex; align-items: center; gap: 8px; }
+  .nab-trig-ic { width: 20px; height: 20px; border-radius: 3px; background: #1e3a8a; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; font-weight: 700; }
+  .nab-trig-ev { color: var(--blue); font-weight: 600; font-size: 11px; }
+  .nab-trig-sub { font-size: 9px; color: var(--text-3); margin-top: 1px; }
+  .nab-inst { background: #0f172a; border-radius: 5px; padding: 10px 12px; border-left: 3px solid var(--accent); }
+  .nab-inst li { list-style: none; font-size: 11px; color: var(--text-2); padding-left: 14px; position: relative; margin-bottom: 4px; line-height: 1.4; opacity: 0; transform: translateX(-4px); transition: all 0.3s; }
+  .nab-inst li.in { opacity: 1; transform: none; }
+  .nab-inst li:last-child { margin-bottom: 0; }
+  .nab-inst li::before { content: "\2022"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+  .nab-dbs { display: flex; flex-direction: column; gap: 5px; }
+  .nab-db { background: var(--bg-3); border: 1px solid var(--border); border-radius: 5px; padding: 7px 10px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: #fff; }
+  .nab-db-ic { width: 18px; height: 18px; border-radius: 3px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: var(--text-2); }
+  .nab-db-n { flex: 1; }
+  .nab-db-a { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+  .nab-db-a.read { color: var(--blue); background: rgba(96,165,250,0.1); }
+  .nab-db-a.edit { color: var(--green); background: rgba(34,197,94,0.1); }
+
+  /* Info card (fallback) */
+  .info-card { background: #141414; border: 1px solid #222; border-radius: 10px; padding: 14px; }
+  .info-card .ic-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .info-card .ic-sub { font-size: 11px; color: var(--text-3); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-card .ic-body { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .info-card .ic-rows { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .info-card .ic-row { display: flex; justify-content: space-between; padding: 6px 10px; background: var(--bg-3); border-radius: 5px; font-size: 11px; opacity: 0; transform: translateY(3px); transition: all 0.25s; }
+  .info-card .ic-row.in { opacity: 1; transform: none; }
+  .info-card .ic-row .l { color: var(--text-2); }
+  .info-card .ic-row .v { color: #fff; font-weight: 600; }
+
+  /* Empty placeholder */
+  .empty-card { padding: 24px; text-align: center; background: #141414; border: 1px dashed var(--border-2); border-radius: 10px; }
+  .empty-card .e-t { font-size: 14px; color: var(--text-2); margin-bottom: 6px; }
+  .empty-card .e-s { font-size: 11px; color: var(--text-3); }
+
+  /* Footer */
   footer { padding: 40px 0 32px; text-align: center; border-top: 1px solid var(--border); }
   footer .fname { font-size: 13px; color: var(--text); font-weight: 600; }
   footer .fsub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 
-  .scroll-cue { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 2px; animation: bob 2s ease-in-out infinite; }
-  @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 6px); } }
-
-  @media (min-width: 768px) { .container { max-width: 640px; } }
+  @media (min-width: 768px) {
+    .container { max-width: 640px; }
+    .themes-grid, .toc-grid, .sl-grid { grid-template-columns: 1fr 1fr; }
+  }
 </style>
 </head>
 <body>
 
 <section class="hero">
   <div class="container">
-    <div class="eyebrow">Pipeline</div>
-    <h1>How a video gets made.</h1>
-    <p class="sub">8 stages from idea to analytics. Each stage builds output in the tool where the work actually lives: Notion, Frame.io, DittoDub, YouTube Studio.</p>
-
-    <button class="run-btn" id="runBtn" onclick="runPipeline()">
-      <span class="icon">&#9654;</span>
-      <span>Watch the pipeline run<span class="label-sub">~40 seconds, 8 real-looking outputs</span></span>
-    </button>
-    <div class="run-tips">Each stage renders the UI you'd actually see when that tool runs.</div>
-  </div>
-  <div class="scroll-cue">Scroll &darr;</div>
-</section>
-
-<section class="pipeline">
-  <div class="container">
-    <div id="stages"></div>
-  </div>
-</section>
-
-<section class="tryit">
-  <div class="container">
-    <div class="eyebrow">Try the ideation stage</div>
-    <h2>Type a topic.</h2>
-    <p style="margin-bottom: 20px;">The ideation agent would scrape viral videos on that topic and insert qualified ones into the Notion Video Ideas DB. Here's what that looks like.</p>
-
-    <div class="tryit-box">
-      <input class="tryit-input" id="tryitInput" placeholder="e.g. cardboard experiments" autocomplete="off">
-      <button class="tryit-btn" onclick="runTryIt()">Generate ideas</button>
-      <div class="tryit-output" id="tryitOut"></div>
+    <div class="eyebrow">HafuGo AI Pipeline</div>
+    <h1>Every tool, every stage.</h1>
+    <p>47 AI tools across 9 stages. Tap any tool to see exactly what it outputs when it runs.</p>
+    <div class="hero-stats">
+      <div><span>47</span>tools</div>
+      <div><span>9</span>stages</div>
+      <div><span>~75%</span>automated</div>
     </div>
   </div>
 </section>
 
+<section class="stages">
+  <div class="container" id="stages-root"></div>
+</section>
+
 <footer>
   <div class="container">
-    <div class="fname">48 tools across 8 stages</div>
-    <div class="fsub">Interactive demo. Output mirrors the real destination tools.</div>
+    <div class="fname">HafuGo AI Production Infrastructure</div>
+    <div class="fsub">Interactive demo. Each tool renders output in the UI where work actually happens.</div>
   </div>
 </footer>
 
-<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-grip"></div>
-    <div class="modal-title" id="modalTitle">Tool</div>
-    <div class="modal-sub" id="modalSub">Category</div>
-    <div class="modal-body" id="modalBody"></div>
-    <div class="modal-demo" id="modalDemo"></div>
-    <button class="modal-close" onclick="closeModal()">Close</button>
-  </div>
-</div>
-
 <script>
-// ============ STAGE DATA ============
-const STAGES = [
-  {
-    id: 'ideation', num: '01', name: 'Ideation',
-    desc: 'Ideas land in the Notion Video Ideas database, scored and tagged.',
-    chips: [
-      { t: 'tubelab-research', c: '' }, { t: 'ig-saved-reels', c: '' },
-      { t: 'lf-niche-research', c: '' },
-      { t: 'NeuroBits Scanner', c: 'notion' }, { t: 'Idea Reviewer', c: 'notion' }
-    ],
-    render: 'notionIdeas',
-    data: {
-      dbName: 'Video Ideas',
-      rows: [
-        { title: 'Cardboard vs 500 lb bowling ball', status: 'Ready', score: 9.2, format: 'YT Short', c1: '#ef4444', c2: '#f59e0b' },
-        { title: 'I built an unbreakable $1 fort', status: 'Ready', score: 8.8, format: 'YT Short', c1: '#3b82f6', c2: '#a78bfa' },
-        { title: 'Testing cardboard against 10,000 psi', status: 'Review', score: 8.6, format: 'YT Short', c1: '#10b981', c2: '#06b6d4' },
-        { title: 'How much weight can cardboard hold?', status: 'Review', score: 8.4, format: 'YT Short', c1: '#ec4899', c2: '#f97316' },
-        { title: 'Cardboard survives nuclear reactor', status: 'Review', score: 8.2, format: 'Long-form', c1: '#8b5cf6', c2: '#ec4899' },
-        { title: 'I stood on a cardboard bridge', status: 'Draft', score: 7.9, format: 'YT Short', c1: '#f59e0b', c2: '#ef4444' }
-      ]
-    }
-  },
-  {
-    id: 'scripting', num: '02', name: 'Scripting',
-    desc: 'Word-for-word script generated in Notion. QA gate runs on submit.',
-    chips: [
-      { t: 'shorts-scriptwriter', c: '' }, { t: 'scripts-qa', c: '' },
-      { t: 'Shorts Scripter', c: 'notion' }, { t: 'Voice Analyst', c: 'notion' }
-    ],
-    render: 'notionScript',
-    data: {
-      title: 'Cardboard vs 500 lb Bowling Ball',
-      format: 'Escalation Ladder',
-      intro: 'Cardboard sheet on two cinder blocks. Bowling ball hovering above.',
-      rows: [
-        { vis: 'Close-up, ball hovering above cardboard sheet', lbl: 'HOOK', txt: 'I dropped a bowling ball on cardboard.' },
-        { vis: 'Wide shot, ball impact, cardboard flexes', lbl: 'TWIST', txt: 'It survived. So I went heavier.' },
-        { vis: 'Cut to 100 lb ball being added', lbl: 'ESCALATION', txt: '100 pounds. Still fine.' },
-        { vis: 'Montage: more weight being stacked', lbl: 'PEAK', txt: 'Five hundred pounds. Still fine.' },
-        { vis: 'Final beat, Hafu deadpan to camera', lbl: 'PAYOFF', txt: 'Today, cardboard beat physics.' }
-      ],
-      words: 87, target: '80-100', qaResult: 'PASS'
-    }
-  },
-  {
-    id: 'logistics', num: '03', name: 'Logistics',
-    desc: 'Shopping list written to the script page with Amazon links + validation.',
-    chips: [ { t: 'shot-list-generator', c: '' }, { t: 'Logistics Researcher', c: 'notion' } ],
-    render: 'notionShopping',
-    data: {
-      items: [
-        { name: 'Heavy cardboard sheets (pack of 10)', src: 'Amazon.ca', price: '$18.99', prime: true },
-        { name: 'Bowling ball, 10 lb', src: 'Amazon.ca', price: '$42.50', prime: true },
-        { name: 'Bowling ball, 16 lb', src: 'Amazon.ca', price: '$58.00', prime: true },
-        { name: 'Cinder blocks (qty 4)', src: 'Home Depot', price: '$27.96', prime: false },
-        { name: 'Safety glasses', src: 'Amazon.ca', price: '$9.99', prime: true },
-        { name: 'Tripod mount adapter', src: 'Amazon.ca', price: '$10.00', prime: true }
-      ],
-      total: '$167.44'
-    }
-  },
-  {
-    id: 'filming', num: '04', name: 'Filming',
-    desc: 'Shot list checked off in studio. The one part AI cannot do.',
-    isHuman: true,
-    chips: [ { t: 'Hafu on camera', c: 'human' } ],
-    render: 'shotlist',
-    data: {
-      shots: [
-        { s: '1A', title: 'Studio setup + intro to camera', dur: '0:30', status: 'done' },
-        { s: '1B', title: 'Establish: cardboard + blocks', dur: '0:45', status: 'done' },
-        { s: '2A', title: 'First drop: 10 lb ball', dur: '1:00', status: 'done' },
-        { s: '2B', title: 'Reaction cut', dur: '0:20', status: 'done' },
-        { s: '3A', title: 'Escalation: 16 lb ball', dur: '1:10', status: 'active' },
-        { s: '3B', title: 'Stack weights montage', dur: '2:00', status: 'idle' },
-        { s: '4A', title: 'Final reveal + payoff', dur: '0:45', status: 'idle' }
-      ],
-      runtime: '00:14:22'
-    }
-  },
-  {
-    id: 'editing', num: '05', name: 'Editing',
-    desc: 'DittoDub generates audio + subtitles for every language.',
-    chips: [
-      { t: 'Human editor', c: 'human' }, { t: 'dittodub-download', c: '' }, { t: 'dittodub-transcript', c: '' }
-    ],
-    render: 'dittodub',
-    data: {
-      projectName: 'Cardboard vs Bowling Ball',
-      duration: '42s',
-      tracks: [
-        { lang: 'EN', label: 'English (original)', status: 'done' },
-        { lang: 'ES', label: 'Spanish', status: 'idle' },
-        { lang: 'PT', label: 'Portuguese', status: 'idle' },
-        { lang: 'FR', label: 'French', status: 'idle' },
-        { lang: 'AR', label: 'Arabic', status: 'idle' },
-        { lang: 'HI', label: 'Hindi', status: 'idle' }
-      ]
-    }
-  },
-  {
-    id: 'review', num: '06', name: 'Review',
-    desc: 'AI reviewer posts comments directly to Frame.io with timestamps.',
-    chips: [
-      { t: 'review-video', c: '' }, { t: 'review-video-shortform', c: '' },
-      { t: 'thumbnail-eval', c: '' }, { t: 'frameio-pull', c: '' }
-    ],
-    render: 'frameio',
-    data: {
-      videoName: 'cardboard-v3-final.mp4',
-      comments: [
-        { ai: true, time: '0:02', text: '<span class="ok-pill">✓ Hook energy:</span> Strong. Opening frame reads clearly.' },
-        { ai: true, time: '0:08', text: '<span class="ok-pill">✓ Subject centered</span> within platform safe zone.' },
-        { ai: true, time: '0:14', text: '<span class="warn-pill">⚠ Camera shake</span> detected. Std dev 4.2 px/frame. Recommend stabilize 0:13–0:16.' },
-        { ai: true, time: '0:27', text: '<span class="ok-pill">✓ CTA placement</span> at 78% mark. On target.' },
-        { ai: true, time: '0:41', text: '<span class="ok-pill">✓ Thumbnail score:</span> 87%. Passes threshold.' }
-      ]
-    }
-  },
-  {
-    id: 'distribution', num: '07', name: 'Distribution',
-    desc: 'Scheduled to every platform. YouTube Studio shown below.',
-    chips: [
-      { t: 'yt-scheduler', c: '' }, { t: 'yt-dubs-posting', c: '' }, { t: 'snapchat-optimizer', c: '' }
-    ],
-    render: 'ytStudio',
-    data: {
-      uploads: [
-        { title: 'Cardboard vs 500 lb Bowling Ball', time: 'Tomorrow 7:00 AM', c1: '#ef4444', c2: '#f59e0b', dur: '0:42' },
-        { title: 'I built an unbreakable $1 fort', time: 'Tomorrow 8:00 AM', c1: '#3b82f6', c2: '#a78bfa', dur: '0:51' },
-        { title: 'Testing cardboard against 10,000 psi', time: 'Tomorrow 9:00 AM', c1: '#10b981', c2: '#06b6d4', dur: '0:38' },
-        { title: 'How much weight can cardboard hold?', time: 'Tomorrow 11:00 AM', c1: '#ec4899', c2: '#f97316', dur: '0:45' },
-        { title: 'Cardboard survives nuclear reactor', time: 'Tomorrow 9:00 PM', c1: '#8b5cf6', c2: '#ec4899', dur: '0:47' }
-      ]
-    }
-  },
-  {
-    id: 'analytics', num: '08', name: 'Analytics',
-    desc: 'Yesterday syncs to Notion. YT Studio view shown below.',
-    chips: [
-      { t: 'snapchat-story-scraper', c: '' }, { t: 'youtube-stats-sync', c: '' },
-      { t: 'Learning Analyst', c: 'notion' }, { t: 'The Delta', c: 'notion' }
-    ],
-    render: 'ytAnalytics',
-    data: {
-      stats: [
-        { l: 'Views (24h)', v: '2.4M', d: '▲ 14%', dcls: 'up', chart: [20,30,45,55,70,85,92] },
-        { l: 'Watch time', v: '398k hrs', d: '▲ 8%', dcls: 'up', chart: [30,40,50,55,60,70,80] },
-        { l: 'Subscribers', v: '+38k', d: '▲ 22%', dcls: 'warm', chart: [10,25,40,55,70,80,100] },
-        { l: 'Est. revenue', v: 'synced', d: '47 videos', dcls: 'up', chart: [40,40,60,70,70,90,90] }
-      ]
-    }
-  }
-];
-
-// ============ TOOL MODAL DATA ============
-const TOOL_DEMOS = {
-  'tubelab-research': { sub: 'Agent · Ideation', body: 'Finds outlier videos via TubeLab, filters with Claude Vision, inserts into Notion.', kind: 'notionIdeas' },
-  'ig-saved-reels': { sub: 'Tool · Ideation', body: '630 saved IG reels categorized by production format. Interactive board for pattern finding.', kind: 'none' },
-  'lf-niche-research': { sub: 'Tool · Ideation', body: '28 TubeLab queries ranked by 10M+ count, shorts virality, and Hafu fit.', kind: 'none' },
-  'shorts-scriptwriter': { sub: 'Skill · Scripting', body: 'Word-for-word HafuGo shorts scripts. Auto-runs QA and comedy pass.', kind: 'notionScript' },
-  'scripts-qa': { sub: 'Tool · Scripting', body: '10-check rubric. Every script passes before reaching the editor.', kind: 'none' },
-  'review-video': { sub: 'Skill · Review', body: 'Detects shorts vs long-form and routes. Posts flagged timestamps to Frame.io.', kind: 'frameio' },
-  'review-video-shortform': { sub: 'Skill · Review', body: '32 rules. FFmpeg + Claude Vision.', kind: 'frameio' },
-  'review-video-longform': { sub: 'Skill · Review', body: '27 rules tuned for 10–20 minute videos. Includes B-roll verification.', kind: 'frameio' },
-  'thumbnail-eval': { sub: 'Tool · Review', body: '28 binary criteria scored by Claude Vision. Threshold 85%.', kind: 'none' },
-  'yt-scheduler': { sub: 'Tool · Distribution', body: 'Playwright opens Chrome and schedules every draft short.', kind: 'ytStudio' },
-  'yt-dubs-posting': { sub: 'Tool · Distribution', body: 'Uploads dubbed audio + subtitles + translated metadata for 6 languages.', kind: 'dittodub' },
-  'snapchat-optimizer': { sub: 'Automation · Distribution', body: 'Revenue brain. A/B tests thumbnails, picks winners, generates VistaSocial CSV.', kind: 'none' },
-  'dittodub-download': { sub: 'Skill · Editing', body: 'Downloads every SRT + MP3 from a DittoDub project.', kind: 'dittodub' },
-  'dittodub-transcript': { sub: 'Skill · Editing', body: 'Spell-check, sentence split, Whisper-tuned timing.', kind: 'none' },
-  'snapchat-story-scraper': { sub: 'Skill · Analytics', body: 'Scrapes story + snap analytics via Snapchat Apollo cache.', kind: 'none' },
-  'snapchat-revenue-scrape': { sub: 'Skill · Analytics', body: 'Daily Creator Rewards via iPhone Mirroring.', kind: 'none' },
-  'frameio-pull': { sub: 'Tool · Review', body: 'Pulls review comments from every Frame.io project via v2 API.', kind: 'frameio' },
-  'shot-list-generator': { sub: 'Tool · Logistics', body: 'Generates cinematic shot cards with AI preview images via Freepik.', kind: 'shotlist' },
-  'personal-themes': { sub: 'Tool · Scripting', body: 'Clusters NeuroBits + voice into themes, generates long-form story spines.', kind: 'none' },
-  'guest-research': { sub: 'Tool · Ideation', body: 'Per-guest markdown dossiers for the future podcast.', kind: 'none' },
-  'youtube-playlist-grid': { sub: 'Tool · Ideation', body: 'Paste a playlist URL, browse videos as a sortable thumbnail grid.', kind: 'none' },
-  'youtube-stats-sync': { sub: 'Tool · Analytics', body: 'Syncs Data API + Analytics API stats into Notion.', kind: 'ytAnalytics' },
-  'staleness-checker': { sub: 'Tool · Meta', body: 'Detects stale playbooks and skills with broken paths.', kind: 'none' },
-  'Hafu on camera': { sub: 'Still manual', body: 'Me, a camera, and whatever is being broken today.', kind: 'none' },
-  'Human editor': { sub: 'Still partially human', body: 'Main edit cut by the human editor. AI handles the rest.', kind: 'none' },
-  'NeuroBits Scanner': { sub: 'Notion Agent · Ideation', body: 'Daily scan of the notes database for signals.', kind: 'none' },
-  'Idea Reviewer': { sub: 'Notion Agent · Ideation', body: 'Batch-scores ideas on quality and viability.', kind: 'notionIdeas' },
-  'Shorts Scripter': { sub: 'Notion Agent · Scripting', body: 'Auto-triggers on idea approval. Generates full script.', kind: 'notionScript' },
-  'Voice Analyst': { sub: 'Notion Agent · Scripting', body: 'Maintains the voice identity the scripter reads from.', kind: 'none' },
-  'Logistics Researcher': { sub: 'Notion Agent · Logistics', body: 'Sources props + validation videos on script status change.', kind: 'notionShopping' },
-  'Learning Analyst': { sub: 'Notion Agent · Analytics', body: 'Reads decisions, updates the Taste Profile DB.', kind: 'none' },
-  'The Delta': { sub: 'Notion Agent · Analytics', body: 'Records every change across content items.', kind: 'none' }
-};
-
-// ============ RENDER STAGE SHELLS ============
-function renderStages() {
-  const root = document.getElementById('stages');
-  STAGES.forEach(s => {
-    const el = document.createElement('div');
-    el.className = 'stage idle' + (s.isHuman ? ' human' : '');
-    el.id = 'stage-' + s.id;
-    el.onclick = () => playStage(s.id);
-    el.innerHTML = `
-      <div class="stage-top">
-        <div class="stage-num">${s.num} / ${s.name.toUpperCase()}</div>
-        <div class="stage-state">${s.isHuman ? 'Human' : 'Idle'}</div>
-      </div>
-      <div class="stage-name">${s.name}</div>
-      <div class="stage-desc">${s.desc}</div>
-      <div class="output-wrap" id="out-${s.id}"></div>
-      <div class="chips">
-        ${s.chips.map(c => `<button class="chip ${c.c}" onclick="event.stopPropagation(); openToolModal('${c.t.replace(/'/g, "\\'")}')">${c.t}</button>`).join('')}
-      </div>
-    `;
-    root.appendChild(el);
-  });
+// ============ HELPER: mac chrome ============
+function macBar(title, ns) {
+  return `<div class="${ns}-head">
+    <div class="${ns}-head-dots">
+      <div class="${ns}-head-dot" style="background:#ff5f57"></div>
+      <div class="${ns}-head-dot" style="background:#febc2e"></div>
+      <div class="${ns}-head-dot" style="background:#28c840"></div>
+    </div>
+    <div class="${ns}-head-title">${title}</div>
+  </div>`;
 }
-renderStages();
-
-// ============ PIPELINE RUNNER ============
-let pipelineRunning = false;
-
-async function runPipeline() {
-  if (pipelineRunning) return;
-  pipelineRunning = true;
-  const btn = document.getElementById('runBtn');
-  btn.classList.add('running');
-  btn.innerHTML = '<span class="icon">&#9203;</span><span>Running now<span class="label-sub">scroll to watch</span></span>';
-
-  const first = document.getElementById('stage-ideation');
-  first.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  document.querySelectorAll('.stage').forEach(st => {
-    st.classList.remove('active', 'done');
-    if (!st.classList.contains('human')) st.classList.add('idle');
-    const out = st.querySelector('.output-wrap');
-    if (out) out.innerHTML = '';
-  });
-
-  await wait(500);
-  for (const s of STAGES) await playStage(s.id, true);
-
-  btn.classList.remove('running');
-  btn.classList.add('done');
-  btn.innerHTML = '<span class="icon">&#10003;</span><span>Complete<span class="label-sub">tap any stage to replay</span></span>';
-  setTimeout(() => {
-    btn.classList.remove('done');
-    btn.innerHTML = '<span class="icon">&#9654;</span><span>Run it again<span class="label-sub">~40 seconds, 8 real-looking outputs</span></span>';
-    pipelineRunning = false;
-  }, 5000);
-}
-
-async function playStage(stageId, fromPipeline = false) {
-  const s = STAGES.find(x => x.id === stageId);
-  if (!s) return;
-  const el = document.getElementById('stage-' + s.id);
-  const out = document.getElementById('out-' + s.id);
-  if (!fromPipeline && pipelineRunning) return;
-
-  document.querySelectorAll('.stage').forEach(st => {
-    if (st.id !== 'stage-' + s.id && !fromPipeline) st.classList.remove('active');
-  });
-  el.classList.remove('idle', 'done');
-  el.classList.add('active');
-  el.querySelector('.stage-state').textContent = s.isHuman ? 'Human · Running' : 'Running';
-
-  if (fromPipeline) {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < 60 || rect.bottom > window.innerHeight - 60) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      await wait(300);
-    }
-  }
-
-  const chips = el.querySelectorAll('.chip');
-  chips.forEach((chip, i) => {
-    setTimeout(() => {
-      chip.classList.add('firing');
-      setTimeout(() => chip.classList.remove('firing'), 400);
-    }, i * 200);
-  });
-
-  out.innerHTML = '';
-  await RENDERERS[s.render](out, s.data);
-
-  el.classList.remove('active');
-  el.classList.add('done');
-  el.querySelector('.stage-state').textContent = s.isHuman ? 'Human' : 'Done';
-  await wait(400);
-}
-
-// ============ HELPERS ============
-function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
-function appBar(title, color) {
+function appBar(title) {
   return `<div class="app-bar">
     <div class="app-dot" style="background:#ff5f57"></div>
     <div class="app-dot" style="background:#febc2e"></div>
@@ -851,381 +625,1309 @@ function appBar(title, color) {
     <div style="width:36px"></div>
   </div>`;
 }
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ============ RENDERERS ============
-const RENDERERS = {
-  // 01 Ideation — Notion database view
-  async notionIdeas(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame notion';
-    frame.innerHTML = `
-      ${appBar('notion.so · Video Ideas')}
-      <div class="notion-header">
-        <div class="notion-icon">I</div>
-        <div class="notion-db-title">${data.dbName}</div>
-        <div class="notion-db-meta">Table view · ${data.rows.length} new</div>
-      </div>
-      <div class="n-table">
-        <div class="n-row header" style="grid-template-columns: 22px 1fr 70px 50px 70px;">
-          <div></div><div>Title</div><div>Status</div><div>Score</div><div>Format</div>
-        </div>
-        <div id="nbody"></div>
-      </div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#nbody');
-    for (const r of data.rows) {
-      await wait(200);
-      const row = document.createElement('div');
-      row.className = 'n-row';
-      row.style.gridTemplateColumns = '22px 1fr 70px 50px 70px';
-      const tagColor = r.status === 'Ready' ? 'green' : r.status === 'Review' ? 'yellow' : 'gray';
-      row.innerHTML = `
-        <div class="n-check done">&check;</div>
-        <div class="n-title-cell">
-          <div class="n-page-icon" style="--c1:${r.c1};--c2:${r.c2}"></div>
-          <div class="n-title">${r.title}</div>
-        </div>
-        <div><span class="n-tag ${tagColor}">${r.status}</span></div>
-        <div class="n-views">${r.score}</div>
-        <div><span class="n-tag ${r.format === 'Long-form' ? 'purple' : 'blue'}">${r.format}</span></div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-  },
+const R = {};
 
-  // 02 Scripting — Notion page with 2-col script table
-  async notionScript(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame notion';
-    frame.innerHTML = `
-      ${appBar('notion.so · Script')}
-      <div class="n-script-wrap">
-        <div class="n-script-title">${data.title}</div>
-        <div class="n-script-sub">Shorts Scripter · Updated just now</div>
-        <div class="n-script-tag">Format · ${data.format}</div>
-        <div class="intro-frame">
-          <div class="head">INTRO FRAME</div>
-          <div class="body">${data.intro}</div>
+R.notionIdeas = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame notion';
+  frame.innerHTML = `
+    ${appBar('notion.so · ' + (data.dbName || 'Database'))}
+    <div class="notion-header">
+      <div class="notion-icon">N</div>
+      <div class="notion-db-title">${data.dbName || 'Database'}</div>
+      <div class="notion-db-meta">Table · ${data.rows.length} rows</div>
+    </div>
+    <div class="n-table">
+      <div class="n-row header"><div></div><div>Title</div><div>Status</div><div>Score</div><div>Format</div></div>
+      <div id="nbody"></div>
+    </div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#nbody');
+  for (const r of data.rows) {
+    await wait(180);
+    const row = document.createElement('div');
+    row.className = 'n-row';
+    const tagColor = r.status === 'Ready' || r.status === 'Approved' || r.status === 'Enriched' || r.status === 'Revised' ? 'green'
+      : r.status === 'Review' || r.status === 'Revise' || r.status === 'New' ? 'yellow'
+      : r.status === 'Rejected' || r.status === 'Avoid' ? 'red'
+      : r.status === 'Draft' ? 'gray' : 'blue';
+    const fmtColor = r.format === 'Long-form' ? 'purple' : r.format === 'TikTok' ? 'gray' : r.format === 'Instagram' ? 'purple' : 'blue';
+    row.innerHTML = `
+      <div class="n-check done">&check;</div>
+      <div class="n-title-cell">
+        <div class="n-page-icon" style="--c1:${r.c1};--c2:${r.c2}"></div>
+        <div class="n-title">${r.title}</div>
+      </div>
+      <div><span class="n-tag ${tagColor}">${r.status}</span></div>
+      <div class="n-views">${r.score}</div>
+      <div><span class="n-tag ${fmtColor}">${r.format}</span></div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+};
+
+R.notionScript = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame notion';
+  frame.innerHTML = `
+    ${appBar('notion.so · Script')}
+    <div class="n-script-wrap">
+      <div class="n-script-title">${data.title}</div>
+      <div class="n-script-sub">Shorts Scripter · Updated just now</div>
+      <div class="n-script-tag">Format &middot; ${data.format}</div>
+      <div class="intro-frame">
+        <div class="head">INTRO FRAME</div>
+        <div class="body">${data.intro}</div>
+      </div>
+      <div class="script-2col">
+        <div class="script-h"><div>VISUAL</div><div>HAFU SAYS</div></div>
+        <div id="script-body"></div>
+      </div>
+      <div class="qa-footer" id="qa-foot">
+        <span>${data.words} words &middot; target ${data.target}</span>
+        <span>&check; QA: ${data.qaResult}</span>
+      </div>
+    </div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#script-body');
+  for (const r of data.rows) {
+    await wait(260);
+    const row = document.createElement('div');
+    row.className = 'script-r';
+    row.innerHTML = `<div class="vis">${r.vis}</div><div class="hs"><span class="lbl">${r.lbl}:</span>${r.txt}</div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+  await wait(300);
+  frame.querySelector('#qa-foot').classList.add('in');
+};
+
+R.notionShopping = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame notion';
+  frame.innerHTML = `
+    ${appBar('notion.so · Logistics')}
+    <div class="shop-wrap">
+      <div class="shop-h">Quick Shopping List</div>
+      <div class="shop-row head"><div>Item</div><div>Source</div><div>Price</div></div>
+      <div id="shop-body"></div>
+      <div class="shop-total" id="shop-total"><span>Shoot budget</span><span>${data.total}</span></div>
+    </div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#shop-body');
+  for (const it of data.items) {
+    await wait(170);
+    const row = document.createElement('div');
+    row.className = 'shop-row';
+    row.innerHTML = `
+      <div class="shop-item">${it.name}${it.prime ? '<span class="prime">PRIME</span>' : ''}</div>
+      <div class="shop-src">${it.src}</div>
+      <div class="shop-price">${it.price}</div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+  await wait(300);
+  frame.querySelector('#shop-total').classList.add('in');
+};
+
+R.shotlist = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame notion';
+  frame.innerHTML = `
+    ${appBar('notion.so · Shoot day')}
+    <div class="shotlist">
+      <div id="shot-body"></div>
+      <div style="margin-top:10px;">
+        <span class="runtime-badge"><span class="film-dot"></span>REC &middot; <span id="rt">00:00:00</span></span>
+      </div>
+    </div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#shot-body');
+  for (const sh of data.shots) {
+    await wait(130);
+    const row = document.createElement('div');
+    row.className = 'shotlist-row ' + sh.status;
+    row.innerHTML = `
+      <div class="shotlist-check">${sh.status === 'done' ? '&check;' : ''}</div>
+      <div class="shotlist-scene">${sh.s}</div>
+      <div class="shotlist-title">${sh.status === 'active' ? '<span class="film-dot"></span>' : ''}${sh.title}</div>
+      <div class="shotlist-dur">${sh.dur}</div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+  const rtEl = frame.querySelector('#rt');
+  const total = 14 * 60 + 22;
+  for (let s = 0; s <= total; s += 47) {
+    const mm = String(Math.floor(s / 60)).padStart(2, '0');
+    const ss = String(s % 60).padStart(2, '0');
+    rtEl.textContent = `00:${mm}:${ss}`;
+    await wait(30);
+  }
+  rtEl.textContent = data.runtime || '00:14:22';
+};
+
+R.dittodub = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame dd';
+  frame.innerHTML = `
+    ${appBar('DittoDub · Project')}
+    <div class="dd-body">
+      <div class="dd-meta"><strong>${data.projectName}</strong><span>Duration ${data.duration} &middot; ${data.tracks.length} tracks</span></div>
+      <div id="dd-tracks"></div>
+    </div>`;
+  root.appendChild(frame);
+  const tracks = frame.querySelector('#dd-tracks');
+  const wave = () => {
+    let s = '';
+    for (let i = 0; i < 42; i++) {
+      const h = 20 + Math.floor(Math.abs(Math.sin(i * 0.7) * 70));
+      s += `<div class="bar" style="height:${h}%"></div>`;
+    }
+    return s;
+  };
+  const rows = [];
+  for (const t of data.tracks) {
+    const row = document.createElement('div');
+    row.className = 'dd-track' + (t.status === 'done' ? ' done' : '');
+    row.innerHTML = `
+      <div class="dd-lang">${t.lang}</div>
+      <div class="dd-wave">${wave()}</div>
+      <div class="dd-dur">0:${Math.floor(Math.random()*10)+40}</div>
+      <div class="dd-status">${t.status === 'done' ? '&check;' : '&middot;'}</div>`;
+    tracks.appendChild(row);
+    rows.push(row);
+  }
+  await wait(250);
+  for (const row of rows) {
+    if (row.classList.contains('done')) continue;
+    row.classList.add('playing');
+    await wait(230);
+    row.classList.remove('playing');
+    row.classList.add('done');
+    row.querySelector('.dd-status').innerHTML = '&check;';
+  }
+};
+
+R.frameio = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame fio';
+  const pins = data.comments.map(c => {
+    const [m, s] = c.time.split(':').map(Number);
+    const pct = (m * 60 + s) / 60 * 100 / 3;
+    return `<div class="fio-pin" style="left:${Math.min(pct, 95)}%"></div>`;
+  }).join('');
+  frame.innerHTML = `
+    ${appBar('Frame.io · ' + data.videoName)}
+    <div class="fio-video">
+      <div class="fio-timebar"><span>0:00</span>
+        <div class="fio-timebar-track"><div class="fio-timebar-fill"></div>${pins}</div>
+        <span>0:42</span>
+      </div>
+    </div>
+    <div class="fio-comments" id="fio-body"></div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#fio-body');
+  for (const c of data.comments) {
+    await wait(270);
+    const row = document.createElement('div');
+    row.className = 'fio-comment' + (c.ai ? ' fio-ai' : '');
+    row.innerHTML = `
+      <div class="fio-avatar">${c.ai ? 'AI' : 'H'}</div>
+      <div class="fio-body">
+        <div class="fio-head">
+          <span class="fio-name">${c.ai ? '[AI Review]' : 'Hafu'}</span>
+          <span class="fio-time">${c.time}</span>
+          <span>&middot; just now</span>
         </div>
-        <div class="script-2col">
-          <div class="script-h"><div>VISUAL</div><div>HAFU SAYS</div></div>
-          <div id="script-body"></div>
+        <div class="fio-text">${c.text}</div>
+      </div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+};
+
+R.ytStudio = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame yt';
+  frame.innerHTML = `
+    ${appBar('YouTube Studio · Content')}
+    <div class="yt-head">
+      <div style="font-size:13px;font-weight:600;color:#fff;">Channel content</div>
+      <div style="font-size:11px;color:#aaa;">${data.uploads.length} scheduled</div>
+    </div>
+    <div class="yt-tabs">
+      <div class="yt-tab-yt">All</div>
+      <div class="yt-tab-yt">Published</div>
+      <div class="yt-tab-yt active">Scheduled</div>
+      <div class="yt-tab-yt">Drafts</div>
+    </div>
+    <div id="yt-body"></div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#yt-body');
+  for (const u of data.uploads) {
+    await wait(200);
+    const row = document.createElement('div');
+    row.className = 'yt-row';
+    row.innerHTML = `
+      <div class="yt-thumb" style="--c1:${u.c1};--c2:${u.c2}"><div class="yt-dur">${u.dur}</div></div>
+      <div>
+        <div class="yt-title">${u.title}</div>
+        <div class="yt-sub">Scheduled &middot; ${u.time}</div>
+      </div>
+      <div class="yt-status"><span class="dot"></span>SCHEDULED</div>`;
+    body.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+};
+
+R.ytAnalytics = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'app-frame yt';
+  frame.innerHTML = `
+    ${appBar('YouTube Studio · Analytics')}
+    <div class="yt-head">
+      <div style="font-size:13px;font-weight:600;color:#fff;">Last 28 days</div>
+      <div style="font-size:11px;color:#aaa;">synced to Notion</div>
+    </div>
+    <div class="yt-stat-grid" id="yt-stats"></div>`;
+  root.appendChild(frame);
+  const grid = frame.querySelector('#yt-stats');
+  const tiles = [];
+  for (const s of data.stats) {
+    const el = document.createElement('div');
+    el.className = 'yt-stat';
+    const bars = (s.chart || []).map(h => `<div class="b" data-h="${h}"></div>`).join('');
+    el.innerHTML = `
+      <div class="l">${s.l}</div>
+      <div class="v">${s.v}</div>
+      <div class="d ${s.dcls}">${s.d}</div>
+      <div class="yt-chart">${bars}</div>`;
+    grid.appendChild(el);
+    tiles.push(el);
+  }
+  await wait(250);
+  for (const tile of tiles) {
+    tile.querySelectorAll('.yt-chart .b').forEach(b => b.style.height = b.dataset.h + '%');
+    await wait(180);
+  }
+};
+
+R.thumbnailEval = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'tev-frame';
+  frame.innerHTML = `
+    ${macBar('Thumbnail Evaluator', 'tev')}
+    <div class="tev-body">
+      <div class="tev-thumb">${data.thumbnailTitle}</div>
+      <div class="tev-score">
+        <div class="tev-ring">
+          <svg width="84" height="84">
+            <circle class="track" cx="42" cy="42" r="34"></circle>
+            <circle class="fill" cx="42" cy="42" r="34" stroke-dasharray="213" stroke-dashoffset="213"></circle>
+          </svg>
+          <div class="val">0%</div>
         </div>
-        <div class="qa-footer" id="qa-foot">
-          <span>${data.words} words · target ${data.target}</span>
-          <span>&check; QA: ${data.qaResult}</span>
+        <div class="tev-verdict">
+          <div class="tev-badge ${data.verdict === 'PASS' ? 'pass' : 'fail'}">${data.verdict}</div>
+          <div class="tev-verdict-text">${data.verdict === 'PASS' ? 'Meets thumbnail quality standards.' : 'Review before publishing.'}</div>
         </div>
       </div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#script-body');
-    for (const r of data.rows) {
-      await wait(280);
-      const row = document.createElement('div');
-      row.className = 'script-r';
-      row.innerHTML = `
-        <div class="vis">${r.vis}</div>
-        <div class="hs"><span class="lbl">${r.lbl}:</span>${r.txt}</div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-    await wait(300);
-    frame.querySelector('#qa-foot').classList.add('in');
-  },
-
-  // 03 Logistics — Notion shopping list
-  async notionShopping(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame notion';
-    frame.innerHTML = `
-      ${appBar('notion.so · Logistics')}
-      <div class="shop-wrap">
-        <div class="shop-h">Quick Shopping List</div>
-        <div class="shop-row head"><div>Item</div><div>Source</div><div>Price</div></div>
-        <div id="shop-body"></div>
-        <div class="shop-total" id="shop-total">
-          <span>Shoot budget</span><span>${data.total}</span>
-        </div>
+      <div class="tev-cats" id="tev-cats"></div>
+    </div>`;
+  root.appendChild(frame);
+  // ring animate
+  const fill = frame.querySelector('.fill');
+  const val = frame.querySelector('.val');
+  const offset = 213 - (213 * data.score / 100);
+  setTimeout(() => fill.style.strokeDashoffset = offset, 100);
+  let cur = 0;
+  const int = setInterval(() => {
+    cur = Math.min(cur + 2, data.score);
+    val.textContent = cur + '%';
+    if (cur >= data.score) clearInterval(int);
+  }, 28);
+  // categories
+  const cats = frame.querySelector('#tev-cats');
+  for (const cat of data.categories) {
+    await wait(180);
+    const el = document.createElement('div');
+    el.className = 'tev-cat';
+    el.innerHTML = `
+      <div class="tev-cat-head">
+        <div class="tev-cat-title">${cat.name}</div>
+        <div class="tev-cat-score">${cat.score}/${cat.maxScore}</div>
       </div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#shop-body');
-    for (const it of data.items) {
-      await wait(180);
-      const row = document.createElement('div');
-      row.className = 'shop-row';
-      row.innerHTML = `
-        <div class="shop-item">${it.name}${it.prime ? '<span class="prime">PRIME</span>' : ''}</div>
-        <div class="shop-src">${it.src}</div>
-        <div class="shop-price">${it.price}</div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-    await wait(300);
-    frame.querySelector('#shop-total').classList.add('in');
-  },
+      <div class="tev-cat-body">${cat.criteria.map(c => `<div class="tev-crit ${c.pass ? 'pass' : 'fail'}"><div class="tev-ic">${c.pass ? '&check;' : '&times;'}</div>${c.name}</div>`).join('')}</div>`;
+    cats.appendChild(el);
+    el.querySelectorAll('.tev-crit').forEach((c, i) => {
+      setTimeout(() => c.classList.add('in'), 50 + i * 40);
+    });
+  }
+};
 
-  // 04 Filming — shot list with recording indicator
-  async shotlist(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame notion';
-    frame.innerHTML = `
-      ${appBar('notion.so · Shoot day')}
-      <div class="shotlist">
-        <div id="shot-body"></div>
-        <div style="margin-top:10px;">
-          <span class="runtime-badge"><span class="film-dot"></span>REC · <span id="rt">00:00:00</span></span>
-        </div>
+R.igSavedReels = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'ig-wrap';
+  frame.innerHTML = `
+    ${macBar('IG Saved Reels · Board', 'ig-top')}
+    <div class="ig-head">
+      <div class="ig-summary"><b>${data.totalReels}</b> reels &middot; <b>${data.totalFormats}</b> formats &middot; filtered: <b>${data.activeFilter}</b></div>
+      <div class="ig-pills">${data.formats.map(f => `<div class="ig-pill${f.active ? ' active' : ''}">${f.name}</div>`).join('')}</div>
+    </div>
+    <div class="ig-grid" id="ig-grid"></div>`;
+  root.appendChild(frame);
+  const grid = frame.querySelector('#ig-grid');
+  for (const r of data.reels) {
+    await wait(100);
+    const el = document.createElement('div');
+    el.className = 'ig-reel';
+    el.style.setProperty('--c1', r.c1);
+    el.style.setProperty('--c2', r.c2);
+    el.innerHTML = `
+      <div class="ig-reel-overlay">
+        <div class="ig-reel-fmt">${r.format}</div>
+        <div class="ig-reel-creator">${r.creator}</div>
+        <div class="ig-reel-views">${r.views}</div>
+      </div>`;
+    grid.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+  }
+};
+
+R.lfNicheResearch = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'niche-frame';
+  frame.innerHTML = `
+    ${macBar('Niche Research Scorecard', 'niche-head')}
+    <div class="niche-body">
+      <div class="niche-thead"><div>#</div><div>Niche</div><div>LF 10M+</div><div>SH 100M+</div><div>Ch</div><div>Fit</div></div>
+      <div id="niche-rows"></div>
+    </div>`;
+  root.appendChild(frame);
+  const rows = frame.querySelector('#niche-rows');
+  for (const r of data.rows) {
+    await wait(90);
+    const row = document.createElement('div');
+    row.className = 'niche-row-table';
+    row.innerHTML = `
+      <div class="niche-rank">${r.rank}</div>
+      <div class="niche-name">${r.niche}</div>
+      <div class="niche-metric">${r.lf10m}</div>
+      <div class="niche-channels">${r.shorts100m}</div>
+      <div class="niche-channels">${r.uniqueChannels}</div>
+      <div class="niche-fit ${r.hafuFit}">${r.hafuFit}</div>`;
+    rows.appendChild(row);
+    requestAnimationFrame(() => row.classList.add('in'));
+  }
+};
+
+R.tocCoach = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'toc-frame';
+  frame.innerHTML = `${macBar('TOC Coach · Dashboard', 'toc-head')}<div class="toc-grid" id="toc-grid"></div>`;
+  root.appendChild(frame);
+  const grid = frame.querySelector('#toc-grid');
+  for (const a of data.areas) {
+    await wait(100);
+    const tile = document.createElement('div');
+    tile.className = 'toc-tile';
+    tile.innerHTML = `
+      <div class="toc-tile-head">
+        <div class="toc-tile-icon">${a.icon}</div>
+        <div class="toc-tile-name">${a.name}</div>
+        <div class="toc-tile-status ${a.status}"></div>
       </div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#shot-body');
-    for (const sh of data.shots) {
-      await wait(140);
-      const row = document.createElement('div');
-      row.className = 'shotlist-row ' + sh.status;
-      row.innerHTML = `
-        <div class="shotlist-check">${sh.status === 'done' ? '&check;' : ''}</div>
-        <div class="shotlist-scene">${sh.s}</div>
-        <div class="shotlist-title">${sh.status === 'active' ? '<span class="film-dot"></span>' : ''}${sh.title}</div>
-        <div class="shotlist-dur">${sh.dur}</div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-    const rtEl = frame.querySelector('#rt');
-    const total = 14 * 60 + 22;
-    for (let s = 0; s <= total; s += 47) {
-      const mm = String(Math.floor(s / 60)).padStart(2, '0');
-      const ss = String(s % 60).padStart(2, '0');
-      rtEl.textContent = `00:${mm}:${ss}`;
-      await wait(40);
-    }
-    rtEl.textContent = data.runtime;
-  },
+      <div class="toc-tile-lbl">Current constraint</div>
+      <div class="toc-tile-constraint">${a.currentConstraint}</div>
+      <div class="toc-tile-meta">${a.lastSession}</div>`;
+    grid.appendChild(tile);
+    requestAnimationFrame(() => tile.classList.add('in'));
+  }
+};
 
-  // 05 Editing — DittoDub multi-track interface
-  async dittodub(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame dd';
-    frame.innerHTML = `
-      ${appBar('DittoDub · Project')}
-      <div class="dd-body">
-        <div class="dd-meta">
-          <strong>${data.projectName}</strong>
-          <span>Duration ${data.duration} · 6 languages</span>
-        </div>
-        <div id="dd-tracks"></div>
+R.personalThemes = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'themes-frame';
+  frame.innerHTML = `${macBar('Personal Themes', 'themes-head')}<div class="themes-grid" id="themes-grid"></div>`;
+  root.appendChild(frame);
+  const grid = frame.querySelector('#themes-grid');
+  for (const t of data.themes) {
+    await wait(100);
+    const el = document.createElement('div');
+    el.className = 'themes-card';
+    el.style.setProperty('--tc', t.color);
+    el.innerHTML = `
+      <div class="themes-name">${t.name}</div>
+      <div class="themes-desc">${t.description}</div>
+      <div class="themes-stats">
+        <div><span class="n">${t.supportingNeurobits}</span>NeuroBits</div>
+        <div><span class="n">${t.spineCount}</span>Spines</div>
+      </div>`;
+    grid.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+  }
+};
+
+R.stalenessChecker = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'stale-frame';
+  frame.innerHTML = `${macBar('Staleness Checker', 'stale-head')}<div class="stale-body" id="stale-body"></div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#stale-body');
+  for (const it of data.items) {
+    await wait(100);
+    const el = document.createElement('div');
+    el.className = 'stale-item ' + it.status;
+    const badge = it.status === 'broken-path' ? 'BROKEN' : it.status.toUpperCase();
+    const action = it.action === 'fix path' ? 'Fix broken path' : it.action === 'review' ? 'Needs review' : 'Up to date';
+    el.innerHTML = `
+      <div class="stale-top">
+        <div class="stale-name">${it.filename}</div>
+        <div class="stale-badge">${badge}</div>
       </div>
-    `;
-    root.appendChild(frame);
-    const tracks = frame.querySelector('#dd-tracks');
-    const wavePattern = () => {
-      const bars = [];
-      for (let i = 0; i < 42; i++) {
-        const h = 20 + Math.floor(Math.abs(Math.sin(i * 0.7) * 70));
-        bars.push(`<div class="bar" style="height:${h}%"></div>`);
-      }
-      return bars.join('');
-    };
-    const rows = [];
-    for (const t of data.tracks) {
-      const row = document.createElement('div');
-      row.className = 'dd-track' + (t.status === 'done' ? ' done' : '');
-      row.innerHTML = `
-        <div class="dd-lang">${t.lang}</div>
-        <div class="dd-wave">${wavePattern()}</div>
-        <div class="dd-dur">0:${Math.floor(Math.random() * 10) + 40}</div>
-        <div class="dd-status">${t.status === 'done' ? '&check;' : '·'}</div>
-      `;
-      tracks.appendChild(row);
-      rows.push(row);
-    }
-    await wait(300);
-    for (const row of rows) {
-      if (row.classList.contains('done')) continue;
-      row.classList.add('playing');
-      await wait(260);
-      row.classList.remove('playing');
-      row.classList.add('done');
-      row.querySelector('.dd-status').innerHTML = '&check;';
-    }
-  },
+      <div class="stale-meta"><span>/${it.folder}</span><span>${it.lastUpdated}</span></div>
+      <div class="stale-action">Action: ${action}</div>`;
+    body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+  }
+};
 
-  // 06 Review — Frame.io comment thread
-  async frameio(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame fio';
-    const pins = data.comments.map((c, i) => {
-      const pct = parseInt(c.time.split(':')[0]) * 25 + parseInt(c.time.split(':')[1]) * 1.5;
-      return `<div class="fio-pin" style="left:${Math.min(pct, 95)}%"></div>`;
-    }).join('');
-    frame.innerHTML = `
-      ${appBar('Frame.io · ' + data.videoName)}
-      <div class="fio-video">
-        <div class="fio-timebar">
-          <span>0:00</span>
-          <div class="fio-timebar-track">
-            <div class="fio-timebar-fill"></div>
-            ${pins}
+R.scriptsQa = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'sqa-frame';
+  frame.innerHTML = `
+    ${macBar('scripts-qa', 'sqa-head')}
+    <div class="sqa-body">
+      <div class="sqa-title">${data.scriptTitle}</div>
+      <div class="sqa-sub">10-check rubric verification</div>
+      <div class="sqa-checks" id="sqa-checks"></div>
+      <div class="sqa-verdict" id="sqa-verdict">
+        <div class="sqa-verdict-left">
+          <div class="sqa-verdict-ic">&check;</div>
+          <div>
+            <div class="sqa-verdict-lbl">Verdict</div>
+            <div class="sqa-verdict-status">${data.verdict}</div>
           </div>
-          <span>0:42</span>
         </div>
+        <div class="sqa-score">${data.score}</div>
       </div>
-      <div class="fio-comments" id="fio-body"></div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#fio-body');
-    for (const c of data.comments) {
-      await wait(280);
-      const row = document.createElement('div');
-      row.className = 'fio-comment' + (c.ai ? ' fio-ai' : '');
-      row.innerHTML = `
-        <div class="fio-avatar">${c.ai ? 'AI' : 'H'}</div>
-        <div class="fio-body">
-          <div class="fio-head">
-            <span class="fio-name">${c.ai ? '[AI Review]' : 'Hafu'}</span>
-            <span class="fio-time">${c.time}</span>
-            <span>· just now</span>
+    </div>`;
+  root.appendChild(frame);
+  const list = frame.querySelector('#sqa-checks');
+  for (const c of data.checks) {
+    await wait(120);
+    const el = document.createElement('div');
+    el.className = 'sqa-check ' + c.status;
+    el.innerHTML = `
+      <div class="sqa-check-ic">${c.status === 'pass' ? '&check;' : c.status === 'warn' ? '!' : '&times;'}</div>
+      <div><div class="sqa-check-name">${c.name}</div><div class="sqa-check-detail">${c.detail}</div></div>`;
+    list.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+  }
+  await wait(300);
+  frame.querySelector('#sqa-verdict').classList.add('in');
+};
+
+R.scriptVersioning = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'sv-frame';
+  frame.innerHTML = `
+    ${macBar('script-versioning', 'sv-head')}
+    <div class="sv-body">
+      <div class="sv-slug">/${data.slug}/</div>
+      <div class="sv-title">${data.title}</div>
+      <div class="sv-timeline" id="sv-tl"></div>
+    </div>`;
+  root.appendChild(frame);
+  const tl = frame.querySelector('#sv-tl');
+  for (const v of data.versions) {
+    await wait(160);
+    const el = document.createElement('div');
+    el.className = 'sv-ver';
+    const qaClass = v.qa.includes('NOTES') ? 'warn' : '';
+    el.innerHTML = `
+      <div class="sv-tag">v${v.num}</div>
+      <div class="sv-meta-row"><span class="sv-date">${v.date}</span><span>${v.words} words</span></div>
+      <div><span class="sv-qa ${qaClass}">&check; ${v.qa}</span></div>
+      ${v.note ? `<div class="sv-note">${v.note}</div>` : ''}`;
+    tl.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+  }
+};
+
+R.snapchatOptimizer = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'snap-frame';
+  const rows = data.stories.map(s => `
+    <tr>
+      <td><div class="snap-tbl-cell"><div class="snap-tbl-thumb" style="--c1:${s.c1};--c2:${s.c2}"></div><div class="ttl">${s.title}</div></div></td>
+      <td class="snap-time">${s.scheduledTime}</td>
+      <td><span class="snap-badge">Snap</span></td>
+    </tr>`).join('');
+  frame.innerHTML = `
+    ${macBar('VistaSocial · Bulk Upload', 'snap-head')}
+    <div class="snap-body">
+      <div class="snap-stats">
+        <div><div class="snap-stat-n">${data.stories.length}</div><div class="snap-stat-l">Stories queued</div></div>
+        <div><div class="snap-stat-n">A/B</div><div class="snap-stat-l">Test active</div></div>
+      </div>
+      <table class="snap-tbl">
+        <thead><tr><th>Story</th><th>Time</th><th>Platform</th></tr></thead>
+        <tbody id="snap-rows">${rows}</tbody>
+      </table>
+      <div class="snap-ab">
+        <div class="snap-ab-lbl">A/B Test Result</div>
+        <div class="snap-ab-row">
+          <div class="snap-ab-col">
+            <div class="snap-ab-col-lbl">Thumb A</div>
+            <div class="snap-ab-col-v">${data.abTest.thumbA.score}x</div>
+            <div class="snap-ab-bar-wrap"><div class="snap-ab-bar" id="barA"></div></div>
           </div>
-          <div class="fio-text">${c.text}</div>
+          <div class="snap-ab-col">
+            <div class="snap-ab-col-lbl">Thumb B</div>
+            <div class="snap-ab-col-v">${data.abTest.thumbB.score}x</div>
+            <div class="snap-ab-bar-wrap"><div class="snap-ab-bar win" id="barB"></div></div>
+            <div class="snap-ab-win-badge">Winner</div>
+          </div>
         </div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-  },
+        <div class="snap-ab-result">Thumb B winning by ${(data.abTest.thumbB.score / data.abTest.thumbA.score).toFixed(1)}x</div>
+      </div>
+    </div>`;
+  root.appendChild(frame);
+  const trs = frame.querySelectorAll('#snap-rows tr');
+  trs.forEach((tr, i) => setTimeout(() => tr.classList.add('in'), i * 90));
+  await wait(trs.length * 90 + 200);
+  const max = Math.max(data.abTest.thumbA.score, data.abTest.thumbB.score);
+  frame.querySelector('#barA').style.width = (data.abTest.thumbA.score / max * 100) + '%';
+  frame.querySelector('#barB').style.width = (data.abTest.thumbB.score / max * 100) + '%';
+};
 
-  // 07 Distribution — YouTube Studio upload queue
-  async ytStudio(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame yt';
-    frame.innerHTML = `
-      ${appBar('YouTube Studio · Content')}
-      <div class="yt-head">
-        <div style="font-size:13px;font-weight:600;color:#fff;">Channel content</div>
-        <div style="font-size:11px;color:#aaa;">${data.uploads.length} scheduled</div>
-      </div>
-      <div class="yt-tabs">
-        <div class="yt-tab">All</div>
-        <div class="yt-tab">Published</div>
-        <div class="yt-tab active">Scheduled</div>
-        <div class="yt-tab">Drafts</div>
-      </div>
-      <div id="yt-body"></div>
-    `;
-    root.appendChild(frame);
-    const body = frame.querySelector('#yt-body');
-    for (const u of data.uploads) {
-      await wait(220);
-      const row = document.createElement('div');
-      row.className = 'yt-row';
-      row.innerHTML = `
-        <div class="yt-thumb" style="--c1:${u.c1};--c2:${u.c2}">
-          <div class="yt-dur">${u.dur}</div>
+R.snapchatStoryScraper = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'snscr-frame';
+  frame.innerHTML = `${macBar('Snapchat Creator · Stories', 'snscr-head')}<div class="snscr-body" id="snscr-body"></div>`;
+  root.appendChild(frame);
+  const body = frame.querySelector('#snscr-body');
+  for (let i = 0; i < data.stories.length; i++) {
+    const s = data.stories[i];
+    await wait(130);
+    const card = document.createElement('div');
+    card.className = 'snscr-card' + (i === 0 ? ' exp' : '');
+    card.innerHTML = `
+      <div class="snscr-top">
+        <div class="snscr-thumb" style="--c1:${s.c1};--c2:${s.c2}"></div>
+        <div class="snscr-meta">
+          <div class="snscr-title">${s.title}</div>
+          <div class="snscr-stats">
+            <div class="snscr-stat"><span>Snaps</span><span class="v">${s.snaps}</span></div>
+            <div class="snscr-stat"><span>Viewers</span><span class="v">${s.viewers}</span></div>
+            <div class="snscr-stat"><span>Avg view time</span><span class="v">${s.avgViewTime}</span></div>
+          </div>
         </div>
-        <div>
-          <div class="yt-title">${u.title}</div>
-          <div class="yt-sub">Scheduled · ${u.time}</div>
-        </div>
-        <div class="yt-status"><span class="dot"></span>SCHEDULED</div>
-      `;
-      body.appendChild(row);
-      requestAnimationFrame(() => row.classList.add('in'));
-    }
-  },
-
-  // 08 Analytics — YouTube Studio analytics tiles
-  async ytAnalytics(root, data) {
-    const frame = document.createElement('div');
-    frame.className = 'app-frame yt';
-    frame.innerHTML = `
-      ${appBar('YouTube Studio · Analytics')}
-      <div class="yt-head">
-        <div style="font-size:13px;font-weight:600;color:#fff;">Last 28 days</div>
-        <div style="font-size:11px;color:#aaa;">synced to Notion</div>
       </div>
-      <div class="yt-stat-grid" id="yt-stats"></div>
-    `;
-    root.appendChild(frame);
-    const grid = frame.querySelector('#yt-stats');
-    const tiles = [];
-    for (const s of data.stats) {
-      const el = document.createElement('div');
-      el.className = 'yt-stat';
-      const bars = s.chart.map(h => `<div class="b" data-h="${h}"></div>`).join('');
-      el.innerHTML = `
-        <div class="l">${s.l}</div>
-        <div class="v">${s.v}</div>
-        <div class="d ${s.dcls}">${s.d}</div>
-        <div class="yt-chart">${bars}</div>
-      `;
-      grid.appendChild(el);
-      tiles.push(el);
-    }
-    await wait(250);
-    for (const tile of tiles) {
-      const bars = tile.querySelectorAll('.yt-chart .b');
-      bars.forEach(b => b.style.height = b.dataset.h + '%');
+      ${i === 0 ? `
+      <div class="snscr-dropoff">
+        <div class="snscr-drop-lbl">Per-snap drop-off</div>
+        <div class="snscr-drop-chart" id="drop-${i}"></div>
+        <div class="snscr-drop-axis"><span>Snap 1 (100%)</span><span>Snap ${data.dropoff.length} (${data.dropoff[data.dropoff.length-1]}%)</span></div>
+      </div>` : ''}`;
+    body.appendChild(card);
+    requestAnimationFrame(() => card.classList.add('in'));
+    if (i === 0) {
+      const chart = card.querySelector('#drop-0');
+      data.dropoff.forEach(h => { const b = document.createElement('div'); b.className = 'snscr-drop-bar'; chart.appendChild(b); });
       await wait(200);
+      chart.querySelectorAll('.snscr-drop-bar').forEach((b, idx) => {
+        setTimeout(() => b.style.height = data.dropoff[idx] + '%', idx * 50);
+      });
     }
   }
 };
 
-// ============ TRY IT ============
-async function runTryIt() {
-  const input = document.getElementById('tryitInput');
-  const topic = (input.value.trim() || 'cardboard experiments');
-  const out = document.getElementById('tryitOut');
-  out.classList.add('open');
-  out.innerHTML = '';
-  const tTitle = topic.charAt(0).toUpperCase() + topic.slice(1);
-  const rows = [
-    { title: `The $1 ${topic} hack that shouldn't work`, status: 'Ready', score: 9.1, format: 'YT Short', c1: '#ef4444', c2: '#f59e0b' },
-    { title: `I tested 100 ${topic} until one broke physics`, status: 'Ready', score: 8.9, format: 'YT Short', c1: '#ec4899', c2: '#f97316' },
-    { title: `Level 1 to 100: ${tTitle}`, status: 'Review', score: 8.6, format: 'YT Short', c1: '#10b981', c2: '#06b6d4' },
-    { title: `${tTitle}, but the hardest possible way`, status: 'Review', score: 8.3, format: 'YT Short', c1: '#3b82f6', c2: '#a78bfa' },
-    { title: `Why ${topic} are secretly rigged`, status: 'Draft', score: 7.8, format: 'Long-form', c1: '#8b5cf6', c2: '#ec4899' }
-  ];
-  await RENDERERS.notionIdeas(out, { dbName: `Video Ideas · ${tTitle}`, rows });
-}
-
-// ============ MODAL ============
-let currentTool = null;
-
-function openToolModal(toolName) {
-  const data = TOOL_DEMOS[toolName];
-  if (!data) return;
-  currentTool = toolName;
-  document.getElementById('modalTitle').textContent = toolName;
-  document.getElementById('modalSub').textContent = data.sub;
-  document.getElementById('modalBody').textContent = data.body;
-  const demoEl = document.getElementById('modalDemo');
-  demoEl.innerHTML = '';
-  renderToolDemo(demoEl, data);
-  document.getElementById('modalBg').classList.add('open');
-}
-
-async function renderToolDemo(root, data) {
-  if (!data.kind || data.kind === 'none') return;
-  // Use a stage's data for mini-demo
-  const match = STAGES.find(s => s.render === data.kind);
-  if (match) {
-    await RENDERERS[data.kind](root, match.data);
+R.shotListGenerator = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'sl-frame';
+  frame.innerHTML = `
+    ${macBar('Shot List Generator', 'sl-head')}
+    <div class="sl-body">
+      <div class="sl-info"><b>${data.shots.length}</b> cinematic shots &middot; AI-generated preview frames</div>
+      <div class="sl-grid" id="sl-grid"></div>
+    </div>`;
+  root.appendChild(frame);
+  const grid = frame.querySelector('#sl-grid');
+  for (const sh of data.shots) {
+    await wait(140);
+    const el = document.createElement('div');
+    el.className = 'sl-card';
+    el.innerHTML = `
+      <div class="sl-card-thumb" style="--c1:${sh.c1};--c2:${sh.c2}"><div class="sl-card-thumb-lbl">${sh.label}</div></div>
+      <div class="sl-info2">
+        <div class="sl-num">${sh.shotNum}</div>
+        <div class="sl-label">${sh.label}</div>
+        <div class="sl-action">${sh.subjectAction}</div>
+        <div class="sl-tags"><div class="sl-tag cine">${sh.cinematic}</div><div class="sl-tag light">${sh.lighting}</div></div>
+      </div>`;
+    grid.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
   }
-}
+};
 
-function closeModal() {
-  document.getElementById('modalBg').classList.remove('open');
-  currentTool = null;
-}
+R.notionAgentBuilder = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'nab-frame';
+  frame.innerHTML = `
+    ${macBar('Notion Agent Builder', 'nab-head')}
+    <div class="nab-body">
+      <div class="nab-agent">
+        <div class="nab-agent-head">
+          <div class="nab-agent-icon">A</div>
+          <div style="flex:1;">
+            <div class="nab-agent-name">${data.agentName}</div>
+            <div class="nab-agent-status"><div class="nab-status-dot"></div>${data.status || 'Active'}</div>
+          </div>
+        </div>
+        <div class="nab-sec">
+          <div class="nab-sec-lbl">Trigger</div>
+          <div class="nab-trig">
+            <div class="nab-trig-ic">&rarr;</div>
+            <div><div class="nab-trig-ev">${data.trigger}</div><div class="nab-trig-sub">in ${data.triggerDb || 'source database'}</div></div>
+          </div>
+        </div>
+        <div class="nab-sec">
+          <div class="nab-sec-lbl">Instructions</div>
+          <ul class="nab-inst" id="nab-inst"></ul>
+        </div>
+        <div class="nab-sec">
+          <div class="nab-sec-lbl">Connected databases</div>
+          <div class="nab-dbs">${data.databases.map(d => `<div class="nab-db"><div class="nab-db-ic">DB</div><div class="nab-db-n">${d.name}</div><div class="nab-db-a ${d.access}">${d.access === 'edit' ? 'Can edit' : 'Read'}</div></div>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  root.appendChild(frame);
+  const inst = frame.querySelector('#nab-inst');
+  for (const i of data.instructions) {
+    await wait(150);
+    const li = document.createElement('li');
+    li.textContent = i;
+    inst.appendChild(li);
+    requestAnimationFrame(() => li.classList.add('in'));
+  }
+};
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+R.infoCard = async (root, data) => {
+  const card = document.createElement('div');
+  card.className = 'info-card';
+  card.innerHTML = `
+    ${data.sub ? `<div class="ic-sub">${data.sub}</div>` : ''}
+    ${data.title ? `<div class="ic-title">${data.title}</div>` : ''}
+    <div class="ic-body">${data.body || ''}</div>
+    ${data.rows ? `<div class="ic-rows" id="ic-rows"></div>` : ''}`;
+  root.appendChild(card);
+  if (data.rows) {
+    const rows = card.querySelector('#ic-rows');
+    for (const r of data.rows) {
+      await wait(130);
+      const el = document.createElement('div');
+      el.className = 'ic-row';
+      el.innerHTML = `<span class="l">${r.l}</span><span class="v">${r.v}</span>`;
+      rows.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('in'));
+    }
+  }
+};
+
+R.emptyCard = async (root, data) => {
+  const el = document.createElement('div');
+  el.className = 'empty-card';
+  el.innerHTML = `<div class="e-t">${data.title || 'Not built yet'}</div><div class="e-s">${data.sub || 'Placeholder'}</div>`;
+  root.appendChild(el);
+};
+
+// ============ TOOL DATA ============
+const STAGES = [
+  { id: 'ideation', num: '01', name: 'Ideation', desc: 'Find viral ideas and filter them for fit.' },
+  { id: 'scripting', num: '02', name: 'Scripting', desc: 'Write word-for-word scripts in HafuGo voice.' },
+  { id: 'logistics', num: '03', name: 'Logistics', desc: 'Source props and plan the shoot.' },
+  { id: 'filming', num: '04', name: 'Filming', desc: 'The part only Hafu can do.' },
+  { id: 'editing', num: '05', name: 'Editing', desc: 'Cut the video and dub every language.' },
+  { id: 'review', num: '06', name: 'Review', desc: 'AI QC every cut before it ships.' },
+  { id: 'distribution', num: '07', name: 'Distribution', desc: 'Publish across every platform.' },
+  { id: 'analytics', num: '08', name: 'Analytics', desc: 'Learn from the numbers and update the brain.' },
+  { id: 'meta', num: '09', name: 'Meta', desc: 'Tools that run the tools.' }
+];
+
+const TOOLS = [
+  // ===== IDEATION =====
+  { stage: 'ideation', id: 'tubelab-research', name: 'tubelab-research', cat: 'Agent', desc: 'Finds viral videos via TubeLab + YouTube APIs, filters for relevance, inserts qualified results into the Notion Research DB.', renderer: 'notionIdeas', data: {
+    dbName: 'Research · Video Discovery',
+    rows: [
+      { title: 'Cardboard beats bowling ball', status: 'Ready', score: 9.2, format: 'YT Short', c1: '#ef4444', c2: '#f59e0b' },
+      { title: 'I Put Liquid Nitrogen on Everyday Objects', status: 'Ready', score: 8.7, format: 'Long-form', c1: '#3b82f6', c2: '#1e40af' },
+      { title: 'Coca-Cola vs Mentos at 1000x Scale', status: 'Ready', score: 9.5, format: 'Long-form', c1: '#e11d48', c2: '#be123c' },
+      { title: 'Magnet vs Metal Blocks - What Happens?', status: 'Ready', score: 8.3, format: 'YT Short', c1: '#8b5cf6', c2: '#7c3aed' },
+      { title: 'Hydraulic Press Destroys Frozen Food', status: 'Ready', score: 7.9, format: 'Long-form', c1: '#f97316', c2: '#ea580c' },
+      { title: 'Fire Chain Reaction - Match House Explosion', status: 'Ready', score: 9.1, format: 'YT Short', c1: '#dc2626', c2: '#991b1b' }
+    ]
+  }},
+  { stage: 'ideation', id: 'ig-saved-reels', name: 'ig-saved-reels', cat: 'Tool', desc: '630 saved Instagram reels categorized by production format (how it\'s made, not what it\'s about). Interactive board + SQLite DB.', renderer: 'igSavedReels', data: {
+    totalReels: 630, totalFormats: 82, activeFilter: 'Tap-test',
+    formats: [{ name: 'Tap-test', active: true }, { name: 'Tempo-cut' }, { name: 'Hook-flip' }, { name: 'Before/After' }, { name: 'Voiceover-reveal' }, { name: 'Text-first' }],
+    reels: [
+      { creator: '@marco.edits', views: '2.4M', format: 'Tap-test', c1: '#ff6b6b', c2: '#ee5a6f' },
+      { creator: '@aisha.tech', views: '1.8M', format: 'Tap-test', c1: '#4ecdc4', c2: '#44b3aa' },
+      { creator: '@creativepov', views: '3.2M', format: 'Tap-test', c1: '#a78bfa', c2: '#9370db' },
+      { creator: '@djmixpro', views: '892K', format: 'Tap-test', c1: '#fbbf24', c2: '#f59e0b' },
+      { creator: '@studio.visual', views: '1.5M', format: 'Tap-test', c1: '#ec4899', c2: '#be185d' },
+      { creator: '@videowizard', views: '2.1M', format: 'Tap-test', c1: '#14b8a6', c2: '#0d9488' },
+      { creator: '@content.lab', views: '945K', format: 'Tap-test', c1: '#06b6d4', c2: '#0891b2' },
+      { creator: '@motion.frames', views: '2.7M', format: 'Tap-test', c1: '#f97316', c2: '#ea580c' },
+      { creator: '@impulse.edit', views: '1.3M', format: 'Tap-test', c1: '#8b5cf6', c2: '#7c3aed' }
+    ]
+  }},
+  { stage: 'ideation', id: 'lf-niche-research', name: 'lf-niche-research', cat: 'Research', desc: '28 candidate niches analyzed by LF 10M+ count, Shorts 100M+ count, channel diversity, and Hafu fit grade.', renderer: 'lfNicheResearch', data: {
+    rows: [
+      { rank: 1, niche: 'Science Experiments', lf10m: 312, shorts100m: 36, uniqueChannels: 14, hafuFit: 'HIGH' },
+      { rank: 2, niche: 'Coca-Cola Mentos', lf10m: 336, shorts100m: 54, uniqueChannels: 15, hafuFit: 'HIGH' },
+      { rank: 3, niche: 'Liquid Nitrogen', lf10m: 307, shorts100m: 53, uniqueChannels: 16, hafuFit: 'HIGH' },
+      { rank: 4, niche: 'Lava vs Experiment', lf10m: 286, shorts100m: 50, uniqueChannels: 18, hafuFit: 'HIGH' },
+      { rank: 5, niche: 'Food Science', lf10m: 265, shorts100m: 45, uniqueChannels: 15, hafuFit: 'HIGH' },
+      { rank: 6, niche: 'Magnet Experiment', lf10m: 233, shorts100m: 51, uniqueChannels: 13, hafuFit: 'HIGH' },
+      { rank: 7, niche: 'Fire Experiment', lf10m: 196, shorts100m: 42, uniqueChannels: 13, hafuFit: 'HIGH' },
+      { rank: 8, niche: 'Freeze-Dried Candy', lf10m: 227, shorts100m: 39, uniqueChannels: 11, hafuFit: 'HIGH' },
+      { rank: 9, niche: 'Physics Trick', lf10m: 153, shorts100m: 72, uniqueChannels: 11, hafuFit: 'HIGH' },
+      { rank: 10, niche: 'Miniature Build', lf10m: 295, shorts100m: 11, uniqueChannels: 12, hafuFit: 'MED' },
+      { rank: 11, niche: 'Lego Machine', lf10m: 354, shorts100m: 18, uniqueChannels: 13, hafuFit: 'MED' },
+      { rank: 12, niche: 'Cardboard Build', lf10m: 259, shorts100m: 21, uniqueChannels: 17, hafuFit: 'MED' }
+    ]
+  }},
+  { stage: 'ideation', id: 'guest-research', name: 'guest-research', cat: 'Tool', desc: 'Generates deep-dive guest briefs for the future podcast. Topic angles, gift ideas, recent life events, psychological profile.', renderer: 'infoCard', data: {
+    sub: 'Brief · Magnus Carlsen', title: 'Latest guest research',
+    body: 'Not the Mozart of chess myth. 35, new father (Sep 2025), 9 months married. Still grieving mother Sigrun. Recently said he felt manipulated by Chess.com on Netflix Untold (April 2026).',
+    rows: [
+      { l: 'Recent moment', v: 'Won Freestyle WC 2026' },
+      { l: 'Hidden layer 1', v: 'Imposter syndrome' },
+      { l: 'Hidden layer 2', v: 'Boredom with classical' },
+      { l: 'Angle (untouched)', v: 'Motherhood grief → fatherhood joy' }
+    ]
+  }},
+  { stage: 'ideation', id: 'youtube-playlist-grid', name: 'youtube-playlist-grid', cat: 'Tool', desc: 'Paste any YouTube playlist URL, browse every video as a sortable, filterable thumbnail grid with custom tagging.', renderer: 'infoCard', data: {
+    sub: 'Output', title: 'Playlist visualizer',
+    body: 'Single-file HTML app. Fetches all videos from a playlist via YT Data API, renders a browsable thumbnail grid.',
+    rows: [
+      { l: 'Filter by', v: 'Duration, views, date' },
+      { l: 'Tags', v: 'localStorage persisted' },
+      { l: 'Export', v: 'CSV' }
+    ]
+  }},
+  { stage: 'ideation', id: 'inspiration-enrichment', name: 'inspiration-enrichment', cat: 'Automation', desc: 'Make.com scenario that watches the Notion Inspiration DB for new entries and auto-enriches with views/likes/captions/transcripts.', renderer: 'notionIdeas', data: {
+    dbName: 'Inspiration · Enriched',
+    rows: [
+      { title: 'Mark Rober - World\'s Largest Jello Pool', status: 'Enriched', score: '211M', format: 'YouTube', c1: '#ef4444', c2: '#dc2626' },
+      { title: 'TikTok: Cardboard ASMR Build', status: 'Enriched', score: '4.2M', format: 'TikTok', c1: '#000000', c2: '#1a1a1a' },
+      { title: 'Freeze-Dried Candy Transformation', status: 'Enriched', score: '892K', format: 'Instagram', c1: '#e1306c', c2: '#833ab4' },
+      { title: 'YT Short: Physics Trick Compilation', status: 'Enriched', score: '18.7M', format: 'YouTube', c1: '#ff0000', c2: '#cc0000' },
+      { title: 'TikTok: Magnet Experiment', status: 'Enriched', score: '2.1M', format: 'TikTok', c1: '#25f4ee', c2: '#000000' }
+    ]
+  }},
+  { stage: 'ideation', id: 'hafugo-shorts-agent', name: 'hafugo-shorts-agent', cat: 'Agent', desc: '5-step pipeline. Scripts approved ideas, revises rejects, generates new ideas from inspiration, updates Taste Profile.', renderer: 'notionIdeas', data: {
+    dbName: 'Video Ideas · Shorts Pipeline',
+    rows: [
+      { title: 'I Put $1 Items in Liquid Nitrogen', status: 'Approved', score: 9.1, format: 'YT Short', c1: '#3b82f6', c2: '#1e40af' },
+      { title: 'Cardboard House vs Hydraulic Press', status: 'Approved', score: 8.6, format: 'YT Short', c1: '#8b5cf6', c2: '#6d28d9' },
+      { title: 'Physics Trick: Magnetic Levitation', status: 'Ready', score: 8.3, format: 'YT Short', c1: '#f59e0b', c2: '#d97706' },
+      { title: 'Fire Chain Reaction (Revised)', status: 'Revised', score: 7.9, format: 'YT Short', c1: '#ef4444', c2: '#dc2626' },
+      { title: 'What if Mentos vs Frozen Coke?', status: 'New', score: 8.8, format: 'YT Short', c1: '#e11d48', c2: '#be123c' }
+    ]
+  }},
+  { stage: 'ideation', id: 'neurobits-scanner', name: 'NeuroBits Scanner', cat: 'Notion Agent', desc: 'Daily scan of the neuroscience/discovery notes database for novel concepts with visual-demonstration potential.', renderer: 'notionIdeas', data: {
+    dbName: 'NeuroInspiration · Signals',
+    rows: [
+      { title: 'Synapse plasticity visualization technique', status: 'New', score: 7.2, format: 'YT Short', c1: '#8b5cf6', c2: '#a78bfa' },
+      { title: 'Color perception anomalies in dichromats', status: 'New', score: 6.8, format: 'YT Short', c1: '#3b82f6', c2: '#93c5fd' },
+      { title: 'Ferrofluid shape control experiment', status: 'Review', score: 8.1, format: 'YT Short', c1: '#10b981', c2: '#06b6d4' }
+    ]
+  }},
+  { stage: 'ideation', id: 'inspiration-transformer', name: 'Inspiration Transformer', cat: 'Notion Agent', desc: 'Transforms raw inspiration entries (clips, videos) into 5 structured video idea pitches with angle, hook, production notes.', renderer: 'notionIdeas', data: {
+    dbName: 'Inspiration → Ideas',
+    rows: [
+      { title: 'Raw: Fire fountain art clip', status: 'Transformed', score: 8.1, format: 'YT Short', c1: '#ef4444', c2: '#f59e0b' },
+      { title: 'Idea: Fire Chain Reaction Dominoes', status: 'Ready', score: 8.4, format: 'YT Short', c1: '#ef4444', c2: '#991b1b' },
+      { title: 'Idea: Can fire burn underwater?', status: 'Ready', score: 8.0, format: 'YT Short', c1: '#f97316', c2: '#dc2626' }
+    ]
+  }},
+  { stage: 'ideation', id: 'idea-reviewer', name: 'Idea Reviewer', cat: 'Notion Agent', desc: 'Batch-scores new ideas against the Taste Profile. Returns Approve / Revise / Reject with critique.', renderer: 'notionIdeas', data: {
+    dbName: 'Idea Review · Batch Today',
+    rows: [
+      { title: 'I Put $1 Items in Liquid Nitrogen', status: 'Approved', score: 9.1, format: 'YT Short', c1: '#10b981', c2: '#059669' },
+      { title: 'EVERY Type of Cardboard Challenge', status: 'Rejected', score: 4.2, format: 'YT Short', c1: '#ef4444', c2: '#7f1d1d' },
+      { title: 'Cardboard House vs Science', status: 'Revise', score: 6.7, format: 'YT Short', c1: '#f59e0b', c2: '#92400e' },
+      { title: 'Magnets vs Water at 1000fps', status: 'Approved', score: 8.8, format: 'YT Short', c1: '#10b981', c2: '#047857' }
+    ]
+  }},
+  { stage: 'ideation', id: 'idea-reviser', name: 'Idea Reviser', cat: 'Notion Agent', desc: 'Takes rejected or "Revise" ideas with feedback and generates improved variants that address the notes.', renderer: 'notionIdeas', data: {
+    dbName: 'Revision Queue',
+    rows: [
+      { title: 'EVERY Type of Cardboard (original)', status: 'Rejected', score: 4.2, format: 'YT Short', c1: '#ef4444', c2: '#7f1d1d' },
+      { title: 'Cardboard Beats Bowling Ball (revised)', status: 'Revised', score: 8.3, format: 'YT Short', c1: '#10b981', c2: '#059669' },
+      { title: 'Fire Chain Reaction (faster cuts)', status: 'Revised', score: 8.5, format: 'YT Short', c1: '#10b981', c2: '#047857' }
+    ]
+  }},
+
+  // ===== SCRIPTING =====
+  { stage: 'scripting', id: 'shorts-scriptwriter', name: 'shorts-scriptwriter', cat: 'Skill', desc: 'Word-for-word HafuGo shorts scripts. Auto-runs the QA gate and comedy pass after every draft.', renderer: 'notionScript', data: {
+    title: 'Which Magnet is the Strongest?', format: 'Escalation Ladder', intro: 'Testing magnets from fridge magnet to industrial super magnet',
+    rows: [
+      { vis: 'Close-up of fridge magnet', lbl: 'LEVEL 1', txt: 'This is the fridge magnet. Not impressive. Just like me in high school.' },
+      { vis: 'Rubber sheet sliding down fridge', lbl: 'LEVEL 2', txt: 'The rubber magnet. It can barely hold itself up.' },
+      { vis: 'Ceramic magnet snapping to steel', lbl: 'LEVEL 3', txt: 'Now we\'re getting somewhere with the ceramic magnet.' },
+      { vis: 'Neodymium pinching finger', lbl: 'LEVEL 4', txt: 'The rare earth. This thing is hard. It pinched my finger.' },
+      { vis: 'Slow-mo of industrial magnet pulling objects', lbl: 'LEVEL 5', txt: 'Subscribe to Hafu Go so we can hit 100M subs by end of summer.' }
+    ],
+    words: 102, target: '95-110', qaResult: 'PASS'
+  }},
+  { stage: 'scripting', id: 'longform-scriptwriter', name: 'longform-scriptwriter', cat: 'Skill', desc: 'Two-phase: generates 3-5 story spines from research, then scripts all 19 segments sequentially.', renderer: 'notionScript', data: {
+    title: 'Can Cardboard Survive a 500 lb Bowling Ball?', format: 'Long-form (19 segments)', intro: 'ACT 1 setup — cardboard from regular to industrial grade',
+    rows: [
+      { vis: 'Cardboard on cinder blocks, ball above', lbl: 'ACT 1', txt: 'I stacked cardboard under cinder blocks. Dumbest or smartest video I\'ve made.' },
+      { vis: 'Ball drops, cardboard crushes', lbl: 'ACT 2A', txt: 'Regular cardboard. Instant pancake. Let\'s go thicker.' },
+      { vis: 'Industrial triple-stack reinforced', lbl: 'ACT 2B', txt: 'Three layers. Ball still sinks, but slower.' },
+      { vis: 'Slow-mo final impact, cardboard intact', lbl: 'ACT 3', txt: 'The cardboard held. I\'m genuinely shocked.' },
+      { vis: 'Hafu deadpan to camera', lbl: 'PAYOFF', txt: 'Today, cardboard beat physics.' }
+    ],
+    words: 128, target: '160-190', qaResult: 'PASS'
+  }},
+  { stage: 'scripting', id: 'scripts-qa', name: 'scripts-qa', cat: 'Tool', desc: 'Deterministic 10-check rubric. Every script passes before it reaches the editor.', renderer: 'scriptsQa', data: {
+    scriptTitle: 'Which Magnet is the Strongest?', verdict: 'PASS', score: '10/10',
+    checks: [
+      { status: 'pass', name: 'Format compliance', detail: 'Valid markdown, no TODO text, no em dashes' },
+      { status: 'pass', name: 'Word count', detail: '102 words (target 95-110)' },
+      { status: 'pass', name: 'Hook check', detail: 'Opens cold: 5-word question' },
+      { status: 'pass', name: 'CTA placement', detail: 'Subscribe line at 75% mark' },
+      { status: 'pass', name: 'Ending', detail: 'Ends on reaction, not summary' },
+      { status: 'pass', name: 'Joke density', detail: '1 joke per 14 words' },
+      { status: 'pass', name: 'Voice drift', detail: 'No corporate phrases' },
+      { status: 'pass', name: 'Structure', detail: 'Escalation Ladder confirmed' },
+      { status: 'pass', name: 'B-roll specificity', detail: '5 marked segments' },
+      { status: 'pass', name: 'Repetition', detail: 'No key words repeated >2x' }
+    ]
+  }},
+  { stage: 'scripting', id: 'script-versioning', name: 'script-versioning', cat: 'Tool', desc: 'Enforces "never overwrite scripts." Every version gets its own file with word count + QA verdict recorded.', renderer: 'scriptVersioning', data: {
+    slug: 'magnet-levels', title: 'Which Magnet is the Strongest?',
+    versions: [
+      { num: 1, date: 'Apr 12, 14:32', words: 92, qa: 'PASS WITH NOTES', note: 'Initial draft. Flagged vague b-roll bullets on lines 3, 7.' },
+      { num: 2, date: 'Apr 14, 09:15', words: 87, qa: 'PASS', note: 'Tightened hook, removed warm-up phrase.' },
+      { num: 3, date: 'Apr 16, 16:42', words: 89, qa: 'PASS', note: 'Hafu feedback: added second escalation, sharper joke timing.' },
+      { num: 4, date: 'Apr 18, 11:08', words: 87, qa: 'PASS', note: 'Final comedy pass. B-roll specificity verified.' }
+    ]
+  }},
+  { stage: 'scripting', id: 'personal-themes', name: 'personal-themes', cat: 'Tool', desc: 'Clusters NeuroBits + Voice Profile into 4-8 emotional themes, then generates themed long-form story spines.', renderer: 'personalThemes', data: {
+    themes: [
+      { name: 'The Observer vs Experience', description: 'Documenting life instead of living it. Camera separates.', supportingNeurobits: 8, spineCount: 4, color: '#f59e0b' },
+      { name: 'Proving Myself Wrong', description: 'Initial assumption fails. Correction is the payoff.', supportingNeurobits: 6, spineCount: 5, color: '#a78bfa' },
+      { name: 'Playing Dumb on Purpose', description: 'Asking naive questions experts should know. Learner persona.', supportingNeurobits: 7, spineCount: 3, color: '#60a5fa' },
+      { name: 'Compulsive Optimization', description: 'Taking something normal and obsessing over making it better.', supportingNeurobits: 9, spineCount: 6, color: '#22c55e' },
+      { name: 'Casual Mastery', description: 'Demonstrating expertise through ease. No effort visible.', supportingNeurobits: 5, spineCount: 4, color: '#ec4899' },
+      { name: 'Building Absurdly', description: 'Constraints removed one by one. Why not bigger?', supportingNeurobits: 8, spineCount: 5, color: '#f97316' },
+      { name: 'Collective Curiosity', description: 'What everyone is wondering about. Speaking for the audience.', supportingNeurobits: 6, spineCount: 7, color: '#06b6d4' },
+      { name: 'Imminent Failure', description: 'Racing against system collapse. Tension rises with each second.', supportingNeurobits: 4, spineCount: 3, color: '#eab308' }
+    ]
+  }},
+  { stage: 'scripting', id: 'scripting-agent', name: 'scripting-agent', cat: 'Automation', desc: 'Empty placeholder folder. Future automation for auto-scripting long-form ideas.', renderer: 'emptyCard', data: { title: 'Not built yet', sub: 'Placeholder for long-form auto-scripting' }},
+  { stage: 'scripting', id: 'shorts-scripter', name: 'Shorts Scripter', cat: 'Notion Agent', desc: 'Notion agent that scripts approved shorts using format templates + voice profile.', renderer: 'notionScript', data: {
+    title: 'Unbreakable vs Breakable Test', format: 'Invincible Mythbuster', intro: 'Testing materials to find what can and cannot be destroyed',
+    rows: [
+      { vis: 'Glass pane on table', lbl: 'MYTH 1', txt: 'Everyone says glass breaks easy. Let\'s test that.' },
+      { vis: 'Glass shattered on impact', lbl: 'RESULT 1', txt: 'Glass is breakable. Myth confirmed.' },
+      { vis: 'Polycarbonate in place of glass', lbl: 'MYTH 2', txt: 'This is polycarbonate. Supposedly unbreakable.' },
+      { vis: 'Ball bounces off, no damage', lbl: 'RESULT 2', txt: 'Subscribe to Hafu Go for more unbreakable tests.' },
+      { vis: 'Final payoff', lbl: 'FINAL', txt: 'Polycarbonate stays unbreakable.' }
+    ],
+    words: 96, target: '95-110', qaResult: 'PASS'
+  }},
+  { stage: 'scripting', id: 'voice-analyst', name: 'Voice Analyst', cat: 'Notion Agent', desc: 'Daily agent that maintains the voice identity layer the Shorts Scripter reads from. Tracks innuendo density, self-deprecation, CTA style.', renderer: 'infoCard', data: {
+    sub: 'Daily Report · 2026-04-20', title: 'Voice consistency',
+    body: 'All voice elements stable or improving. No intervention needed.',
+    rows: [
+      { l: 'Innuendo density', v: '1.3 / script (stable)' },
+      { l: 'Self-deprecation', v: '1.1 / script (up)' },
+      { l: 'Escalation pattern', v: '100% compliant' },
+      { l: 'CTA phrasing', v: '67% anti-cliffhanger (up)' },
+      { l: 'Ending type', v: '100% factual / reactive' }
+    ]
+  }},
+  { stage: 'scripting', id: 'the-synthesizer', name: 'The Synthesizer', cat: 'Notion Agent', desc: 'Synthesizes script edits with full version history. Edit-in-place without losing changes.', renderer: 'infoCard', data: {
+    sub: 'Synthesis report · magnet-levels', title: 'Edits merged → v2',
+    body: 'All edits integrated. Script re-QA\'d and passed. Ready for production.',
+    rows: [
+      { l: 'Edits applied', v: '3' },
+      { l: 'Re-QA', v: 'PASS' },
+      { l: 'Word count change', v: '-5 words' },
+      { l: 'New version', v: 'v2' }
+    ]
+  }},
+
+  // ===== LOGISTICS =====
+  { stage: 'logistics', id: 'shot-list-generator', name: 'shot-list-generator', cat: 'Tool', desc: 'Reads the script, generates cinematic shot cards with AI preview images (Freepik Mystic), uploads to Notion.', renderer: 'shotListGenerator', data: {
+    shots: [
+      { shotNum: 'SHOT 01', label: 'Close-up', subjectAction: 'Hafu reacts in disbelief', cinematic: 'Fincher Grid', lighting: 'Practical + rim', c1: '#f59e0b', c2: '#d97706' },
+      { shotNum: 'SHOT 02', label: 'Wide', subjectAction: 'Studio full reveal, camera pans left', cinematic: 'Villeneuve Immensity', lighting: 'Ambient key + fill', c1: '#06b6d4', c2: '#0e7490' },
+      { shotNum: 'SHOT 03', label: 'POV', subjectAction: 'Viewer perspective, box opens', cinematic: 'Kubrick Corridor', lighting: 'Backlighting diffuse', c1: '#8b5cf6', c2: '#6d28d9' },
+      { shotNum: 'SHOT 04', label: 'Insert', subjectAction: 'Close on product detail, rotating', cinematic: 'Wong Kar-wai Blur', lighting: 'Dramatic side-key', c1: '#ec4899', c2: '#be185d' },
+      { shotNum: 'SHOT 05', label: 'Talking Head', subjectAction: 'Direct to camera, explanation', cinematic: 'Nolan Practical', lighting: '3-point setup', c1: '#10b981', c2: '#047857' },
+      { shotNum: 'SHOT 06', label: 'B-Roll', subjectAction: 'Hands assembling, motion lapse 2x', cinematic: 'Social B-Roll', lighting: 'Overhead + practical', c1: '#eab308', c2: '#ca8a04' }
+    ]
+  }},
+  { stage: 'logistics', id: 'notion-agent-builder', name: 'notion-agent-builder', cat: 'Skill', desc: 'Guided flow for building Notion AI agents. Configures trigger, instructions, and connected databases.', renderer: 'notionAgentBuilder', data: {
+    agentName: 'Shorts Scripter', trigger: 'Status → Approved', triggerDb: 'Video Ideas',
+    instructions: [
+      'Read Video Idea entry for title, hook, and format',
+      'Generate 45-60s script with pacing marks (V: voiceover, B: B-roll)',
+      'Enforce voice profile + joke density targets',
+      'Output to Script Database with Status = "First Draft"'
+    ],
+    databases: [
+      { name: 'Video Ideas', access: 'read' },
+      { name: 'Script Database', access: 'edit' },
+      { name: 'Voice Profile', access: 'read' },
+      { name: 'Taste Profile', access: 'read' }
+    ]
+  }},
+  { stage: 'logistics', id: 'logistics-researcher', name: 'Logistics Researcher', cat: 'Notion Agent', desc: 'Triggers when a script hits "Ready to Film". Sources Amazon links, validates with YouTube proof videos, writes shopping list to Notion.', renderer: 'notionShopping', data: {
+    items: [
+      { name: 'Heavy cardboard sheets (pack of 10)', src: 'Amazon.ca', price: '$18.99', prime: true },
+      { name: 'Bowling ball, 10 lb', src: 'Amazon.ca', price: '$42.50', prime: true },
+      { name: 'Bowling ball, 16 lb', src: 'Amazon.ca', price: '$58.00', prime: true },
+      { name: 'Cinder blocks (qty 4)', src: 'Home Depot', price: '$27.96', prime: false },
+      { name: 'Safety glasses', src: 'Amazon.ca', price: '$9.99', prime: true },
+      { name: 'Tripod mount adapter', src: 'Amazon.ca', price: '$10.00', prime: true }
+    ],
+    total: '$167.44'
+  }},
+
+  // ===== FILMING =====
+  { stage: 'filming', id: 'hafu-on-camera', name: 'Hafu on camera', cat: 'Human', desc: 'The one part AI cannot do. Me, a camera, and whatever we\'re breaking this week.', renderer: 'shotlist', data: {
+    shots: [
+      { s: '1A', title: 'Studio setup + intro to camera', dur: '0:30', status: 'done' },
+      { s: '1B', title: 'Establish: cardboard + blocks', dur: '0:45', status: 'done' },
+      { s: '2A', title: 'First drop: 10 lb ball', dur: '1:00', status: 'done' },
+      { s: '2B', title: 'Reaction cut', dur: '0:20', status: 'done' },
+      { s: '3A', title: 'Escalation: 16 lb ball', dur: '1:10', status: 'active' },
+      { s: '3B', title: 'Stack weights montage', dur: '2:00', status: 'idle' },
+      { s: '4A', title: 'Final reveal + payoff', dur: '0:45', status: 'idle' }
+    ],
+    runtime: '00:14:22'
+  }},
+
+  // ===== EDITING =====
+  { stage: 'editing', id: 'dittodub-download', name: 'dittodub-download', cat: 'Skill', desc: 'Downloads every SRT + MP3 from a DittoDub project in one command. Handles all languages in parallel.', renderer: 'dittodub', data: {
+    projectName: 'Cardboard vs Bowling Ball', duration: '42s',
+    tracks: [{ lang: 'EN', status: 'done' }, { lang: 'ES', status: 'done' }, { lang: 'PT', status: 'done' }, { lang: 'FR', status: 'done' }, { lang: 'AR', status: 'done' }, { lang: 'HI', status: 'done' }]
+  }},
+  { stage: 'editing', id: 'dittodub-transcript', name: 'dittodub-transcript', cat: 'Skill', desc: 'Spell-check, sentence split, Whisper-tuned timing. Automates DittoDub transcript prep.', renderer: 'dittodub', data: {
+    projectName: 'Cardboard vs Bowling Ball', duration: '42s',
+    tracks: [{ lang: 'EN', status: 'done' }, { lang: 'ES', status: 'idle' }, { lang: 'PT', status: 'idle' }, { lang: 'FR', status: 'idle' }, { lang: 'AR', status: 'idle' }, { lang: 'HI', status: 'idle' }]
+  }},
+  { stage: 'editing', id: 'human-editor', name: 'Human editor', cat: 'Human', desc: 'Main edit is still cut by Blendi / Hotnoob in Adobe Premiere. AI handles dubs, subs, and review only.', renderer: 'frameio', data: {
+    videoName: 'cardboard-v3-rough.mp4',
+    comments: [
+      { ai: false, time: '0:02', text: 'Tightened the hook — removed 2s warm-up.' },
+      { ai: false, time: '0:14', text: 'Added B-roll insert here, let me know.' },
+      { ai: false, time: '0:27', text: 'Color temp matches now.' },
+      { ai: false, time: '0:38', text: 'Final cut ready for AI review.' }
+    ]
+  }},
+
+  // ===== REVIEW =====
+  { stage: 'review', id: 'review-video', name: 'review-video', cat: 'Skill', desc: 'Detects long-form vs short-form video and routes to the right reviewer. Posts flagged timestamps to Frame.io.', renderer: 'frameio', data: {
+    videoName: 'cardboard-unboxing-v4.mp4',
+    comments: [
+      { ai: true, time: '0:02', text: '<span class="ok-pill">Detected:</span> aspect ratio 16:9 → long-form review.' },
+      { ai: true, time: '0:08', text: '<span class="ok-pill">Hook energy:</span> strong opening close-up.' },
+      { ai: true, time: '0:14', text: '<span class="warn-pill">Pacing:</span> talking head 14s without cut. Add B-roll.' }
+    ]
+  }},
+  { stage: 'review', id: 'review-video-longform', name: 'review-video-longform', cat: 'Skill', desc: '27 rules for horizontal 16:9 video. Phase 1 FFmpeg + audio + scene analysis. Phase 2 Claude Vision + B-roll verification.', renderer: 'frameio', data: {
+    videoName: 'untangling-cables-pt2-final.mp4',
+    comments: [
+      { ai: true, time: '1:24', text: '<span class="warn-pill">P0 — Audio:</span> music drowning voice (-22 LUFS). Cut music 4 dB.' },
+      { ai: true, time: '3:45', text: '<span class="warn-pill">P1 — Pacing:</span> talking head 14s without cut. Add B-roll or graphics.' },
+      { ai: true, time: '8:12', text: '<span class="warn-pill">P2 — B-roll:</span> mentions "locking mechanism" but visual is talking head. Check raw footage.' },
+      { ai: true, time: '12:30', text: '<span class="ok-pill">B-roll teaser:</span> 3s clean insert before segment. Good.' }
+    ]
+  }},
+  { stage: 'review', id: 'review-video-shortform', name: 'review-video-shortform', cat: 'Skill', desc: '32 rules for vertical 9:16. Audio silence, loudness, aspect, framing, hook energy, caption coverage, Vision pass.', renderer: 'frameio', data: {
+    videoName: 'magnet-levels-shorts.mp4',
+    comments: [
+      { ai: true, time: '0:01', text: '<span class="ok-pill">✓ Aspect ratio</span> 9:16 confirmed.' },
+      { ai: true, time: '0:02', text: '<span class="ok-pill">✓ Hook energy:</span> strong opening frame.' },
+      { ai: true, time: '0:08', text: '<span class="warn-pill">⚠ Single angle</span> held for 8s. Consider a cut.' },
+      { ai: true, time: '0:14', text: '<span class="warn-pill">⚠ Camera shake</span> std dev 4.2 px/frame.' },
+      { ai: true, time: '0:27', text: '<span class="ok-pill">✓ CTA placement</span> at 78% mark. On target.' }
+    ]
+  }},
+  { stage: 'review', id: 'thumbnail-eval', name: 'thumbnail-eval', cat: 'Tool', desc: '28 binary criteria across 6 categories scored by Claude Vision. Pass threshold 85% (24/28).', renderer: 'thumbnailEval', data: {
+    thumbnailTitle: 'Cardboard vs 500 lb Bowling Ball', score: 87, verdict: 'PASS',
+    categories: [
+      { name: 'Composition', score: 6, maxScore: 6, criteria: [
+        { name: 'Rule of thirds applied', pass: true }, { name: 'Subject positioned correctly', pass: true },
+        { name: 'Balance and symmetry', pass: true }, { name: 'Negative space appropriate', pass: true },
+        { name: 'Leading lines guide viewer', pass: true }, { name: 'Depth and layering present', pass: true }
+      ]},
+      { name: 'Realism', score: 5, maxScore: 6, criteria: [
+        { name: 'No artificial filter bloom', pass: true }, { name: 'Shadows cast naturally', pass: true },
+        { name: 'Lighting is consistent', pass: false }, { name: 'Colors appear genuine', pass: true },
+        { name: 'No overly saturated tones', pass: true }, { name: 'Textures accurate', pass: true }
+      ]},
+      { name: 'Color & Contrast', score: 6, maxScore: 6, criteria: [
+        { name: 'High contrast ratio', pass: true }, { name: 'Color harmony', pass: true },
+        { name: 'Subject stands out', pass: true }, { name: 'Color temp consistent', pass: true },
+        { name: 'No washed-out tones', pass: true }, { name: 'Complementary colors', pass: true }
+      ]},
+      { name: 'Simplicity', score: 3, maxScore: 3, criteria: [
+        { name: 'Minimal visual clutter', pass: true }, { name: 'Clear primary focus', pass: true }, { name: 'No distracting background', pass: true }
+      ]},
+      { name: 'Face & Expression', score: 3, maxScore: 4, criteria: [
+        { name: 'Face clearly visible', pass: true }, { name: 'Eyes sharp and engaging', pass: false },
+        { name: 'Emotion authentic', pass: true }, { name: 'Face fills right area', pass: true }
+      ]},
+      { name: 'Image Quality', score: 3, maxScore: 3, criteria: [
+        { name: 'No motion blur', pass: true }, { name: 'Resolution appropriate', pass: true }, { name: 'No compression artifacts', pass: true }
+      ]}
+    ]
+  }},
+  { stage: 'review', id: 'frameio-pull', name: 'frameio-pull', cat: 'Tool', desc: 'Read-only Frame.io v2 API client. Pulls all review comments across projects, categorizes by video duration.', renderer: 'frameio', data: {
+    videoName: 'untangling-cables-pt2-final.mp4',
+    comments: [
+      { ai: false, time: '2:34', text: 'The transition here feels too abrupt. Can we add a fade?' },
+      { ai: false, time: '5:12', text: 'Love the B-roll selection. Adds energy.' },
+      { ai: false, time: '8:45', text: 'Audio dip at 8:45. Can you balance the levels?' }
+    ]
+  }},
+  { stage: 'review', id: 'automated-ab-testing', name: 'automated-ab-testing', cat: 'Automation', desc: 'Placeholder for future thumbnail A/B testing framework across distribution channels.', renderer: 'emptyCard', data: { title: 'Not built yet', sub: 'Will coordinate with snapchat-optimizer' }},
+  { stage: 'review', id: 'the-auditor', name: 'The Auditor', cat: 'Notion Agent', desc: 'Notion agent that audits video review output against production standards and posts consolidated feedback.', renderer: 'frameio', data: {
+    videoName: 'deep-dive-why-robots-fail.mp4',
+    comments: [
+      { ai: true, time: '3:20', text: '<span class="warn-pill">[Auditor] P0</span> — Missing product shots in intro. Spec requires 2-3.' },
+      { ai: true, time: '12:45', text: '<span class="warn-pill">[Auditor] P1</span> — Segment duration 3:12. Over pacing threshold (3:00).' },
+      { ai: true, time: '18:30', text: '<span class="warn-pill">[Auditor] P2</span> — Add motion graphic for stats callout.' }
+    ]
+  }},
+
+  // ===== DISTRIBUTION =====
+  { stage: 'distribution', id: 'yt-scheduler', name: 'yt-scheduler', cat: 'Tool', desc: 'Node.js + Playwright. Batch-schedules draft YouTube Shorts in YT Studio. Configurable dates, times, channels.', renderer: 'ytStudio', data: {
+    uploads: [
+      { title: 'I Tested the LifeStraw', time: 'Tomorrow 7:00 AM', c1: '#ef4444', c2: '#f59e0b', dur: '0:45' },
+      { title: 'At What Height Does a Bowling Ball Break?', time: 'Tomorrow 8:00 AM', c1: '#3b82f6', c2: '#a78bfa', dur: '0:52' },
+      { title: 'How Many Pumps to POP a Basketball?', time: 'Tomorrow 9:00 AM', c1: '#10b981', c2: '#06b6d4', dur: '0:48' },
+      { title: 'Why Is This Balloon Unpoppable?', time: 'Tomorrow 11:00 AM', c1: '#ec4899', c2: '#f97316', dur: '0:55' },
+      { title: 'World\'s Most Dangerous Pencil', time: 'Tomorrow 9:00 PM', c1: '#8b5cf6', c2: '#ec4899', dur: '0:50' }
+    ]
+  }},
+  { stage: 'distribution', id: 'schedule-youtube-shorts', name: 'schedule-youtube-shorts', cat: 'Skill', desc: 'Skill wrapper around yt-scheduler. Natural language trigger, same Playwright automation.', renderer: 'ytStudio', data: {
+    uploads: [
+      { title: 'Which Magnet is the Strongest?', time: 'Tomorrow 7:00 AM', c1: '#f59e0b', c2: '#d97706', dur: '0:42' },
+      { title: 'Can Cardboard Beat Physics?', time: 'Tomorrow 8:00 AM', c1: '#ef4444', c2: '#f59e0b', dur: '0:51' },
+      { title: 'Testing the Strongest Glue', time: 'Tomorrow 9:00 AM', c1: '#06b6d4', c2: '#0e7490', dur: '0:38' }
+    ]
+  }},
+  { stage: 'distribution', id: 'yt-dubs-posting', name: 'yt-dubs-posting', cat: 'Tool', desc: 'Uploads dubbed audio + subtitles + translated metadata to YouTube Studio for 6 languages.', renderer: 'dittodub', data: {
+    projectName: 'I Tested the LifeStraw', duration: '45s',
+    tracks: [{ lang: 'EN', status: 'done' }, { lang: 'ES', status: 'done' }, { lang: 'PT', status: 'done' }, { lang: 'FR', status: 'done' }, { lang: 'AR', status: 'done' }, { lang: 'HI', status: 'done' }]
+  }},
+  { stage: 'distribution', id: 'snapchat-optimizer', name: 'snapchat-optimizer', cat: 'Automation', desc: 'Revenue brain. A/B tests thumbnails, optimizes snap ordering, generates VistaSocial CSV with 90+ clips.', renderer: 'snapchatOptimizer', data: {
+    stories: [
+      { title: 'Cardboard vs Bowling Ball', scheduledTime: '9:30 am', c1: '#ff6b35', c2: '#f7931e' },
+      { title: 'Which Lighter is the Strongest', scheduledTime: '10:00 am', c1: '#f59e0b', c2: '#fbbf24' },
+      { title: 'Who Can Cut the Fastest', scheduledTime: '10:30 am', c1: '#ec4899', c2: '#f43f5e' },
+      { title: 'I Tested the LifeStraw', scheduledTime: '11:00 am', c1: '#3b82f6', c2: '#0ea5e9' },
+      { title: 'At What Height Does a Brick Break', scheduledTime: '11:30 am', c1: '#8b5cf6', c2: '#a855f7' },
+      { title: 'How Many Pumps to POP a Basketball', scheduledTime: '12:00 pm', c1: '#14b8a6', c2: '#06b6d4' },
+      { title: 'World\'s Most Dangerous Pencil', scheduledTime: '12:30 pm', c1: '#ef4444', c2: '#f87171' }
+    ],
+    abTest: { thumbA: { score: 2.1 }, thumbB: { score: 8.7 } }
+  }},
+
+  // ===== ANALYTICS =====
+  { stage: 'analytics', id: 'snapchat-story-scraper', name: 'snapchat-story-scraper', cat: 'Skill', desc: 'Scrapes Snapchat Creator story + per-snap analytics via Apollo cache. Multi-tab parallel. SQLite DB.', renderer: 'snapchatStoryScraper', data: {
+    stories: [
+      { title: 'Cardboard Tests Pt 3', snaps: 28, viewers: '42k', avgViewTime: '12.3s', c1: '#f59e0b', c2: '#d97706' },
+      { title: 'Studio Setup Tour', snaps: 15, viewers: '38k', avgViewTime: '10.8s', c1: '#ec4899', c2: '#be185d' },
+      { title: 'Shorts Brainstorm Sesh', snaps: 42, viewers: '51k', avgViewTime: '14.2s', c1: '#06b6d4', c2: '#0e7490' },
+      { title: 'Audio Gear Unboxing', snaps: 22, viewers: '35k', avgViewTime: '9.5s', c1: '#8b5cf6', c2: '#6d28d9' }
+    ],
+    dropoff: [100, 94, 89, 82, 76, 71, 65, 58, 52, 47, 41, 36, 32, 28, 25]
+  }},
+  { stage: 'analytics', id: 'snapchat-revenue-scrape', name: 'snapchat-revenue-scrape', cat: 'Skill', desc: 'Daily Snapchat Creator Rewards earnings scraped via iPhone Mirroring + Computer Use MCP.', renderer: 'infoCard', data: {
+    sub: 'Creator Rewards Log', title: '109 entries collected',
+    body: 'Parses reward date, content date, Stories vs Spotlight breakdown. Saves to markdown table.',
+    rows: [
+      { l: 'Data range', v: '2025-11-26 to 2026-04-06' },
+      { l: 'Stories entries', v: '94' },
+      { l: 'Spotlight entries', v: '15' },
+      { l: 'Data source', v: 'iPhone Mirroring' }
+    ]
+  }},
+  { stage: 'analytics', id: 'snapchat-auto-scrape', name: 'snapchat-auto-scrape', cat: 'Tool', desc: 'Unattended 3 AM daily scrape via launchd. Connects to Chrome, extracts analytics, imports to SQLite.', renderer: 'infoCard', data: {
+    sub: 'Scheduled · 3:00 AM daily', title: 'Snapchat auto-scrape',
+    body: 'Connects to authenticated Chrome via CDP. Scrapes un-scraped stories, writes REAUTH_NEEDED flag on session expiry.',
+    rows: [
+      { l: 'Status', v: 'Partial (plist not registered)' },
+      { l: 'Last DB import', v: '145 stories / 1,340 snaps' },
+      { l: '24h rule', v: 'Enforced' },
+      { l: 'Session cookies', v: 'Reusable 30-90 days' }
+    ]
+  }},
+  { stage: 'analytics', id: 'snapchat-story-scraper-tool', name: 'snapchat-story-scraper (DB)', cat: 'Tool', desc: 'SQLite database + analysis scripts. Peak detection, algorithm pattern analysis.', renderer: 'infoCard', data: {
+    sub: 'SQLite · data/snapchat.db', title: 'Story analytics database',
+    body: 'Raw scraped data + Python analysis scripts. Story-level and snap-level metrics.',
+    rows: [
+      { l: 'Stories stored', v: '145' },
+      { l: 'Snaps indexed', v: '1,340' },
+      { l: 'Analysis scripts', v: 'peak_analysis, algorithm_analysis' }
+    ]
+  }},
+  { stage: 'analytics', id: 'youtube-stats-sync', name: 'youtube-stats-sync', cat: 'Automation', desc: 'Syncs YouTube Data API + Analytics API stats into Notion via fuzzy title matching (0.90 threshold).', renderer: 'ytAnalytics', data: {
+    stats: [
+      { l: 'Views (YTD)', v: '1.2M', d: '▲ 18%', dcls: 'up', chart: [45, 62, 78, 92, 110, 128, 145] },
+      { l: 'Avg video views', v: '8.2K', d: '▼ 3%', dcls: 'down', chart: [12, 11, 10, 10, 9, 9, 8] },
+      { l: 'Latest upload', v: 'Apr 18', d: '2 days ago', dcls: 'warm', chart: [20, 40, 60, 80, 100, 80, 60] },
+      { l: 'Videos synced', v: '187', d: '45/47 matched', dcls: 'warm', chart: [30, 50, 70, 85, 95, 100, 100] }
+    ]
+  }},
+  { stage: 'analytics', id: 'learning-analyst', name: 'Learning Analyst', cat: 'Notion Agent', desc: 'Daily: reads approval/rejection decisions and updates the Taste Profile DB with learned preferences.', renderer: 'notionIdeas', data: {
+    dbName: 'Taste Profile · Updated Daily',
+    rows: [
+      { title: 'Science explainers + high-engagement shorts', status: 'Approved', score: 9.2, format: 'YT Short', c1: '#10b981', c2: '#059669' },
+      { title: 'Niche deep-dive long-form (1M+ watch time)', status: 'Approved', score: 8.7, format: 'Long-form', c1: '#3b82f6', c2: '#1e40af' },
+      { title: 'Controversy-baiting low-value shorts', status: 'Rejected', score: 2.1, format: 'YT Short', c1: '#ef4444', c2: '#7f1d1d' }
+    ]
+  }},
+  { stage: 'analytics', id: 'the-delta', name: 'The Delta', cat: 'Notion Agent', desc: 'Records every change across content items with attribution. Change log for the whole pipeline.', renderer: 'infoCard', data: {
+    sub: 'Change log · Today', title: '14 changes tracked',
+    body: 'Monitors Video DB, Script DB, Research DB. Records diffs with timestamp + author.',
+    rows: [
+      { l: '14:23', v: 'Taste Profile updated (+1 pattern)' },
+      { l: '09:15', v: '2 scripts approved' },
+      { l: '23:59', v: '5 new ideas generated' },
+      { l: '18:40', v: 'Voice Profile refreshed' }
+    ]
+  }},
+
+  // ===== META =====
+  { stage: 'meta', id: 'schedule', name: 'schedule', cat: 'Skill', desc: 'Create, update, list, and manage scheduled remote Claude agents on a cron schedule.', renderer: 'infoCard', data: {
+    sub: 'Scheduled tasks · 3 active', title: 'Cron tasks',
+    body: 'Framework for recurring Claude Code agents. Morning briefing + daily status + stats sync.',
+    rows: [
+      { l: 'daily-inbox-summary', v: '0 9 * * * · next 9:00 AM' },
+      { l: 'weekly-dep-audit', v: '0 17 * * 5 · next Fri' },
+      { l: 'youtube-stats-sync', v: '0 6 * * * · next 6:00 AM' }
+    ]
+  }},
+  { stage: 'meta', id: 'toc-coach', name: 'toc-coach', cat: 'Skill', desc: 'Theory of Constraints coaching across 6 life areas. Auto-routes on natural language triggers.', renderer: 'tocCoach', data: {
+    areas: [
+      { id: 'money', name: 'Money', icon: 'MON', currentConstraint: 'No revenue model for Hafu Media yet — all spending, no income.', lastSession: '2 days ago', status: 'active' },
+      { id: 'biz', name: 'Business', icon: 'BIZ', currentConstraint: 'Content production speed — single editor capacity.', lastSession: '5 days ago', status: 'stuck' },
+      { id: 'wiz', name: 'Knowledge', icon: 'WIZ', currentConstraint: 'Physics intuition for explaining on camera.', lastSession: '3 weeks ago', status: 'active' },
+      { id: 'phy', name: 'Body', icon: 'PHY', currentConstraint: 'Anterior pelvic tilt at squat depth.', lastSession: '1 week ago', status: 'active' },
+      { id: 'rel', name: 'Relationships', icon: 'REL', currentConstraint: 'Consistency of 1:1 time with core people.', lastSession: '2 weeks ago', status: 'resolved' },
+      { id: 'com', name: 'Community', icon: 'COM', currentConstraint: 'No structured mentorship program yet.', lastSession: '1 month ago', status: 'stuck' }
+    ]
+  }},
+  { stage: 'meta', id: 'staleness-checker', name: 'staleness-checker', cat: 'Tool', desc: 'Detects stale playbooks/skills by frontmatter date + broken paths. Wired into /recap.', renderer: 'stalenessChecker', data: {
+    items: [
+      { filename: 'dittodub-dubbing.md', folder: 'playbooks', lastUpdated: '38 days ago', status: 'stale', action: 'review' },
+      { filename: 'video-review-checklist.md', folder: 'playbooks', lastUpdated: '12 days ago', status: 'fresh', action: 'ok' },
+      { filename: 'frame-export-workflow.md', folder: 'playbooks', lastUpdated: '52 days ago', status: 'stale', action: 'review' },
+      { filename: 'youtube-setup-guide.md', folder: 'playbooks', lastUpdated: '1 month ago', status: 'broken-path', action: 'fix path' },
+      { filename: 'toc-coach', folder: 'skills', lastUpdated: '2 days ago', status: 'fresh', action: 'ok' },
+      { filename: 'shorts-scriptwriter', folder: 'skills', lastUpdated: '64 days ago', status: 'stale', action: 'review' },
+      { filename: 'legacy-yt-scheduler-v1', folder: 'skills', lastUpdated: '127 days ago', status: 'broken-path', action: 'fix path' }
+    ]
+  }},
+  { stage: 'meta', id: 'project-dashboard', name: 'project-dashboard', cat: 'Tool', desc: 'React + Express + WebSocket skeleton. Project tracking dashboard with live reload via Chokidar.', renderer: 'infoCard', data: {
+    sub: 'Status · Stalled', title: 'Likely deprecated',
+    body: 'Built as a project tracker but stalled for weeks. The ai-dashboard in the same workspace has likely replaced it.',
+    rows: [
+      { l: 'Built with', v: 'React + Vite + Express' },
+      { l: 'Last commit', v: '>30 days ago' },
+      { l: 'Status', v: 'Candidate for removal' }
+    ]
+  }}
+];
+
+// ============ RENDER UI ============
+const root = document.getElementById('stages-root');
+
+STAGES.forEach(stage => {
+  const stageTools = TOOLS.filter(t => t.stage === stage.id);
+  if (stageTools.length === 0) return;
+
+  const section = document.createElement('div');
+  section.className = 'stage';
+  section.dataset.stage = stage.id;
+  section.innerHTML = `
+    <div class="stage-head">
+      <div class="stage-num">${stage.num} / ${stage.name.toUpperCase()}</div>
+      <div class="stage-name">${stage.name}</div>
+      <div class="stage-desc">${stage.desc}</div>
+    </div>
+    <div class="tool-tabs">
+      ${stageTools.map((t, i) => `<button class="tool-tab${i === 0 ? ' active' : ''} ${t.cat === 'Notion Agent' ? 'notion' : ''}${t.cat === 'Human' ? 'human' : ''}" data-tool="${t.id}">${t.name}</button>`).join('')}
+    </div>
+    <div class="tool-info" id="info-${stage.id}"></div>
+    <div class="tool-output" id="out-${stage.id}"></div>
+  `;
+  root.appendChild(section);
+
+  // Init first tool
+  selectTool(stage.id, stageTools[0].id);
+
+  // Tab click handlers
+  section.querySelectorAll('.tool-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const toolId = tab.dataset.tool;
+      section.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      selectTool(stage.id, toolId);
+    });
+  });
+});
+
+function selectTool(stageId, toolId) {
+  const tool = TOOLS.find(t => t.id === toolId);
+  if (!tool) return;
+  const info = document.getElementById('info-' + stageId);
+  const out = document.getElementById('out-' + stageId);
+  out.innerHTML = '';
+  info.innerHTML = `
+    <div class="tool-cat">${tool.cat}</div>
+    <div class="tool-name">${tool.name}</div>
+    <div class="tool-desc">${tool.desc}</div>
+    <button class="run-btn" data-run="${toolId}" data-stage="${stageId}">&#9654; Run demo</button>
+  `;
+  info.querySelector('.run-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    if (btn.classList.contains('running')) return;
+    btn.classList.add('running');
+    btn.innerHTML = '&#9203; Running...';
+    out.innerHTML = '';
+    const renderer = R[tool.renderer];
+    if (renderer) {
+      try { await renderer(out, tool.data); }
+      catch (err) { console.error(err); out.innerHTML = '<div class="empty-card"><div class="e-t">Render error</div><div class="e-s">' + err.message + '</div></div>'; }
+    }
+    btn.classList.remove('running');
+    btn.classList.add('done');
+    btn.innerHTML = '&check; Done · tap to rerun';
+    setTimeout(() => {
+      btn.classList.remove('done');
+      btn.innerHTML = '&#9654; Run again';
+    }, 3500);
+  });
+}
 </script>
-
 </body>
 </html>
