@@ -247,7 +247,8 @@
   .yt-tab-yt.active { color: #fff; border-bottom: 2px solid #f00; margin-bottom: -1px; }
   .yt-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid #202020; font-size: 12px; opacity: 0; transform: translateY(3px); transition: all 0.3s; }
   .yt-row.in { opacity: 1; transform: none; }
-  .yt-thumb { width: 44px; height: 26px; border-radius: 3px; flex-shrink: 0; background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b)); position: relative; }
+  .yt-thumb { width: 44px; flex-shrink: 0; border-radius: 3px; overflow: hidden; }
+  .yt-thumb .yt-tb { border-radius: 3px; }
   .yt-dur { position: absolute; bottom: 2px; right: 2px; font-size: 8px; background: rgba(0,0,0,0.8); color: #fff; padding: 0 3px; border-radius: 2px; font-variant-numeric: tabular-nums; }
   .yt-title { font-size: 12px; color: #fff; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .yt-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
@@ -456,7 +457,8 @@
   .snap-tbl td { padding: 8px 10px; border-top: 1px solid var(--border); color: var(--text); }
   .snap-tbl tr { opacity: 0; transform: translateY(-4px); transition: all 0.3s; }
   .snap-tbl tr.in { opacity: 1; transform: none; }
-  .snap-tbl-thumb { width: 28px; height: 28px; border-radius: 3px; background: linear-gradient(135deg, var(--c1,#ef4444), var(--c2,#f59e0b)); flex-shrink: 0; }
+  .snap-tbl-thumb { width: 28px; flex-shrink: 0; border-radius: 3px; overflow: hidden; }
+  .snap-tbl-thumb .yt-tb { border-radius: 3px; aspect-ratio: 9/16; }
   .snap-tbl-cell { display: flex; gap: 8px; align-items: center; }
   .snap-tbl-cell .ttl { font-size: 11px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .snap-time { font-family: 'SF Mono', monospace; color: var(--text-2); font-size: 10px; }
@@ -484,7 +486,8 @@
   .snscr-card.in { opacity: 1; transform: none; }
   .snscr-card.exp { flex-direction: column; border-color: var(--accent); }
   .snscr-top { display: flex; gap: 10px; }
-  .snscr-thumb { width: 56px; height: 80px; border-radius: 4px; background: linear-gradient(135deg, var(--c1, #ef4444), var(--c2, #f59e0b)); flex-shrink: 0; }
+  .snscr-thumb { width: 56px; flex-shrink: 0; border-radius: 4px; overflow: hidden; }
+  .snscr-thumb .yt-tb { border-radius: 4px; aspect-ratio: 9/16; }
   .snscr-meta { flex: 1; }
   .snscr-title { font-size: 12px; color: #fff; font-weight: 700; margin-bottom: 4px; }
   .snscr-stats { display: flex; flex-direction: column; gap: 2px; font-size: 10px; }
@@ -508,7 +511,8 @@
   .sl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .sl-card { background: #141414; border: 1px solid #222; border-radius: 7px; overflow: hidden; opacity: 0; transform: scale(0.96); transition: all 0.35s; }
   .sl-card.in { opacity: 1; transform: none; }
-  .sl-card-thumb { aspect-ratio: 3/4; background: linear-gradient(135deg, var(--c1, #3b82f6), var(--c2, #a78bfa)); position: relative; }
+  .sl-card-thumb { position: relative; }
+  .sl-card-thumb .yt-tb { border-radius: 0; aspect-ratio: 3/4; }
   .sl-card-thumb-lbl { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.75)); font-size: 10px; color: #fff; font-weight: 700; }
   .sl-info2 { padding: 8px 10px; }
   .sl-num { font-size: 9px; color: var(--accent); font-weight: 700; letter-spacing: 0.8px; margin-bottom: 3px; }
@@ -550,6 +554,73 @@
   .nab-db-a { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
   .nab-db-a.read { color: var(--blue); background: rgba(96,165,250,0.1); }
   .nab-db-a.edit { color: var(--green); background: rgba(34,197,94,0.1); }
+
+  /* Real YouTube-style thumbnail */
+  .yt-tb {
+    aspect-ratio: 16/9; background: linear-gradient(135deg, var(--tc1, #ef4444) 0%, var(--tc2, #991b1b) 100%);
+    position: relative; overflow: hidden; border-radius: 4px;
+  }
+  .yt-tb.vert { aspect-ratio: 9/16; }
+  .yt-tb-shape {
+    position: absolute; border-radius: 50%; opacity: 0.35; filter: blur(1px);
+  }
+  .yt-tb-shape.a { width: 65%; aspect-ratio: 1; right: -15%; top: -15%; background: rgba(255,255,255,0.4); }
+  .yt-tb-shape.b { width: 45%; aspect-ratio: 1; left: -10%; bottom: -20%; background: rgba(0,0,0,0.3); }
+  .yt-tb-face {
+    position: absolute; right: 8%; bottom: 8%; width: 32%; aspect-ratio: 1;
+    background: radial-gradient(circle at 50% 40%, #d4a574 0%, #8b6347 60%, transparent 70%);
+    border-radius: 50%; opacity: 0.85;
+  }
+  .yt-tb-face::after {
+    content: ""; position: absolute; left: 50%; top: 55%; transform: translateX(-50%);
+    width: 70%; height: 40%;
+    background: linear-gradient(180deg, transparent 0%, #1a1a1a 30%, #1a1a1a 100%);
+    border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+  }
+  .yt-tb-txt {
+    position: absolute; left: 5%; right: 40%; bottom: 8%;
+    font-family: 'Impact', 'Anton', 'Helvetica Neue', sans-serif; font-weight: 900;
+    color: #fff; line-height: 0.9; letter-spacing: -0.5px; text-transform: uppercase;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 8px rgba(0,0,0,0.6);
+  }
+  .yt-tb-txt.sm { font-size: 11px; }
+  .yt-tb-txt.md { font-size: 14px; }
+  .yt-tb-txt.lg { font-size: 22px; }
+  .yt-tb-txt .hl { color: var(--accent-2); }
+  .yt-tb-dur {
+    position: absolute; right: 4px; bottom: 4px; background: rgba(0,0,0,0.85);
+    color: #fff; padding: 1px 4px; border-radius: 2px; font-size: 8px; font-weight: 600;
+  }
+  .yt-tb.vert .yt-tb-txt { right: 5%; bottom: 14%; text-align: center; }
+  .yt-tb.vert .yt-tb-face { right: 34%; bottom: 45%; width: 36%; }
+
+  /* Thumbnail Generator (custom) */
+  .tg-frame { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
+  .tg-head { background: #141414; padding: 10px 14px; border-bottom: 1px solid #222; display: flex; align-items: center; }
+  .tg-head-dots { display: flex; gap: 6px; }
+  .tg-head-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .tg-head-title { flex: 1; text-align: center; font-size: 12px; color: #aaa; margin-right: 40px; font-weight: 500; }
+  .tg-body { padding: 14px; }
+  .tg-prompt-box { background: #141414; border: 1px solid #222; border-radius: 7px; padding: 10px 12px; margin-bottom: 14px; }
+  .tg-prompt-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 4px; }
+  .tg-prompt-txt { font-size: 11px; color: var(--text); line-height: 1.5; font-family: 'SF Mono', Menlo, monospace; min-height: 14px; }
+  .tg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .tg-card { background: #141414; border: 1px solid #222; border-radius: 7px; overflow: hidden; transition: all 0.3s ease; position: relative; }
+  .tg-card.winner { border-color: var(--green); box-shadow: 0 0 0 2px rgba(34,197,94,0.2), 0 8px 20px rgba(34,197,94,0.15); transform: translateY(-2px); }
+  .tg-card-status { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-3); background: #141414; z-index: 2; transition: opacity 0.3s; }
+  .tg-card.loaded .tg-card-status { opacity: 0; pointer-events: none; }
+  .tg-spinner { width: 18px; height: 18px; border: 2px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: tgspin 0.7s linear infinite; margin-bottom: 6px; }
+  @keyframes tgspin { to { transform: rotate(360deg); } }
+  .tg-card-meta { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); background: #0f0f0f; }
+  .tg-card-label { font-size: 10px; color: var(--text-2); font-weight: 600; }
+  .tg-score { font-size: 11px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  .tg-card.loaded .tg-score { color: var(--accent-2); }
+  .tg-card.winner .tg-score { color: var(--green); }
+  .tg-winner-badge { position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 800; padding: 2px 7px; background: var(--green); color: #000; border-radius: 3px; letter-spacing: 0.3px; z-index: 3; opacity: 0; transition: opacity 0.3s; }
+  .tg-card.winner .tg-winner-badge { opacity: 1; }
+  .tg-summary { font-size: 11px; color: var(--text-2); padding: 10px 12px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 6px; opacity: 0; transition: opacity 0.3s; }
+  .tg-summary.in { opacity: 1; }
+  .tg-summary b { color: var(--green); font-weight: 700; }
 
   /* Info card (fallback) */
   .info-card { background: #141414; border: 1px solid #222; border-radius: 10px; padding: 14px; }
@@ -626,6 +697,78 @@ function appBar(title) {
   </div>`;
 }
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ============ THUMBNAIL BUILDER ============
+// Generates a YouTube-style thumbnail (bold text, face silhouette, gradient, shape overlay).
+// Uses only CSS + inline HTML. Works offline.
+function renderThumb(opts) {
+  const { title = '', tc1 = '#ef4444', tc2 = '#991b1b', size = 'md', vertical = false, face = true, duration = '' } = opts;
+  const face_ = face ? '<div class="yt-tb-face"></div>' : '';
+  const dur = duration ? `<div class="yt-tb-dur">${duration}</div>` : '';
+  // Auto-highlight ONE bold word in the title (first all-caps word or first number-containing word)
+  const titleHtml = String(title).replace(/(\b\d[\d,.$%+x]*\b|\b[A-Z]{2,}\b)/, '<span class="hl">$1</span>');
+  return `<div class="yt-tb${vertical ? ' vert' : ''}" style="--tc1:${tc1};--tc2:${tc2}">
+    <div class="yt-tb-shape a"></div>
+    <div class="yt-tb-shape b"></div>
+    ${face_}
+    <div class="yt-tb-txt ${size}">${titleHtml}</div>
+    ${dur}
+  </div>`;
+}
+
+// ============ DISPLAY NAMES ============
+const DISPLAY_NAMES = {
+  'tubelab-research': 'Viral Video Finder',
+  'ig-saved-reels': 'Reels Format Browser',
+  'lf-niche-research': 'Niche Opportunity Scorecard',
+  'guest-research': 'Guest Brief Generator',
+  'youtube-playlist-grid': 'Playlist Explorer',
+  'inspiration-enrichment': 'Inspiration Auto-Enricher',
+  'hafugo-shorts-agent': 'Shorts Pipeline Agent',
+  'neurobits-scanner': 'NeuroBits Signal Scanner',
+  'inspiration-transformer': 'Inspiration Transformer',
+  'idea-reviewer': 'Idea Quality Reviewer',
+  'idea-reviser': 'Rejected Idea Reviser',
+  'shorts-scriptwriter': 'Shorts Script Generator',
+  'longform-scriptwriter': 'Long-form Story Builder',
+  'scripts-qa': 'Script QA Gate',
+  'script-versioning': 'Script Version Tracker',
+  'personal-themes': 'Theme Cluster Engine',
+  'scripting-agent': 'Auto-Script Agent',
+  'shorts-scripter': 'Shorts Scripter (Notion)',
+  'voice-analyst': 'Voice Profile Analyst',
+  'the-synthesizer': 'Script Edit Synthesizer',
+  'shot-list-generator': 'Cinematic Shot Planner',
+  'notion-agent-builder': 'Notion Agent Builder',
+  'logistics-researcher': 'Shopping List Researcher',
+  'hafu-on-camera': 'Hafu On Camera',
+  'dittodub-download': 'Multi-language Dub Downloader',
+  'dittodub-transcript': 'Transcript Timing Fixer',
+  'human-editor': 'Human Editor (Frame.io)',
+  'review-video': 'Video QC Router',
+  'review-video-longform': 'Long-form AI Reviewer',
+  'review-video-shortform': 'Shorts AI Reviewer',
+  'thumbnail-eval': 'Thumbnail Scorer',
+  'thumbnail-generator': 'Thumbnail Generator',
+  'frameio-pull': 'Frame.io Comment Pull',
+  'automated-ab-testing': 'A/B Test Automation',
+  'the-auditor': 'Final Auditor',
+  'yt-scheduler': 'YouTube Shorts Scheduler',
+  'schedule-youtube-shorts': 'Shorts Scheduler (skill)',
+  'yt-dubs-posting': 'YouTube Dub Uploader',
+  'snapchat-optimizer': 'Snapchat Revenue Optimizer',
+  'snapchat-story-scraper': 'Snap Story Analyzer',
+  'snapchat-revenue-scrape': 'Snap Earnings Tracker',
+  'snapchat-auto-scrape': 'Snap Daily Auto-Scraper',
+  'snapchat-story-scraper-tool': 'Snap Analytics DB',
+  'youtube-stats-sync': 'YouTube Analytics Sync',
+  'learning-analyst': 'Taste Profile Learner',
+  'the-delta': 'Change Log Tracker',
+  'schedule': 'Cron Task Scheduler',
+  'toc-coach': 'TOC Life Coach',
+  'staleness-checker': 'Playbook Staleness Audit',
+  'project-dashboard': 'Project Tracker (legacy)'
+};
 
 // ============ RENDERERS ============
 const R = {};
@@ -872,7 +1015,7 @@ R.ytStudio = async (root, data) => {
     const row = document.createElement('div');
     row.className = 'yt-row';
     row.innerHTML = `
-      <div class="yt-thumb" style="--c1:${u.c1};--c2:${u.c2}"><div class="yt-dur">${u.dur}</div></div>
+      <div class="yt-thumb" style="background:none;padding:0">${renderThumb({title: u.title.slice(0,18), tc1: u.c1, tc2: u.c2, size: 'sm', vertical: true, face: true, duration: u.dur})}</div>
       <div>
         <div class="yt-title">${u.title}</div>
         <div class="yt-sub">Scheduled &middot; ${u.time}</div>
@@ -1163,7 +1306,7 @@ R.snapchatOptimizer = async (root, data) => {
   frame.className = 'snap-frame';
   const rows = data.stories.map(s => `
     <tr>
-      <td><div class="snap-tbl-cell"><div class="snap-tbl-thumb" style="--c1:${s.c1};--c2:${s.c2}"></div><div class="ttl">${s.title}</div></div></td>
+      <td><div class="snap-tbl-cell"><div class="snap-tbl-thumb">${renderThumb({title: s.title.split(' ').slice(0,2).join(' '), tc1: s.c1, tc2: s.c2, size: 'sm', vertical: true, face: true})}</div><div class="ttl">${s.title}</div></div></td>
       <td class="snap-time">${s.scheduledTime}</td>
       <td><span class="snap-badge">Snap</span></td>
     </tr>`).join('');
@@ -1218,7 +1361,7 @@ R.snapchatStoryScraper = async (root, data) => {
     card.className = 'snscr-card' + (i === 0 ? ' exp' : '');
     card.innerHTML = `
       <div class="snscr-top">
-        <div class="snscr-thumb" style="--c1:${s.c1};--c2:${s.c2}"></div>
+        <div class="snscr-thumb">${renderThumb({title: s.title.split(' ').slice(0,2).join(' '), tc1: s.c1, tc2: s.c2, size: 'sm', vertical: true, face: true})}</div>
         <div class="snscr-meta">
           <div class="snscr-title">${s.title}</div>
           <div class="snscr-stats">
@@ -1263,7 +1406,7 @@ R.shotListGenerator = async (root, data) => {
     const el = document.createElement('div');
     el.className = 'sl-card';
     el.innerHTML = `
-      <div class="sl-card-thumb" style="--c1:${sh.c1};--c2:${sh.c2}"><div class="sl-card-thumb-lbl">${sh.label}</div></div>
+      <div class="sl-card-thumb">${renderThumb({title: sh.label, tc1: sh.c1, tc2: sh.c2, size: 'sm', vertical: true, face: sh.label === 'Talking Head' || sh.label === 'Close-up'})}<div class="sl-card-thumb-lbl">${sh.label}</div></div>
       <div class="sl-info2">
         <div class="sl-num">${sh.shotNum}</div>
         <div class="sl-label">${sh.label}</div>
@@ -1315,6 +1458,63 @@ R.notionAgentBuilder = async (root, data) => {
     inst.appendChild(li);
     requestAnimationFrame(() => li.classList.add('in'));
   }
+};
+
+R.thumbGen = async (root, data) => {
+  const frame = document.createElement('div');
+  frame.className = 'tg-frame';
+  frame.innerHTML = `
+    ${macBar('Thumbnail Generator · Freepik Mystic', 'tg-head')}
+    <div class="tg-body">
+      <div class="tg-prompt-box">
+        <div class="tg-prompt-lbl">Prompt</div>
+        <div class="tg-prompt-txt" id="tg-prompt"></div>
+      </div>
+      <div class="tg-grid" id="tg-grid"></div>
+      <div class="tg-summary" id="tg-summary">Winner: <b>Variant ${data.winner}</b> selected (score ${data.variants[data.winner-1].score}%). Uploaded to Notion.</div>
+    </div>`;
+  root.appendChild(frame);
+  // Type the prompt
+  const promptEl = frame.querySelector('#tg-prompt');
+  const fullPrompt = data.prompt;
+  for (let i = 0; i <= fullPrompt.length; i++) {
+    promptEl.textContent = fullPrompt.slice(0, i);
+    await wait(12);
+  }
+  // Render 4 variant cards (placeholder + spinner)
+  const grid = frame.querySelector('#tg-grid');
+  data.variants.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'tg-card';
+    card.dataset.idx = i + 1;
+    card.innerHTML = `
+      <div class="tg-winner-badge">WINNER</div>
+      ${renderThumb({ title: v.title, tc1: v.tc1, tc2: v.tc2, size: 'sm', face: v.face })}
+      <div class="tg-card-status">
+        <div style="text-align:center;">
+          <div class="tg-spinner"></div>
+          <div>Generating...</div>
+        </div>
+      </div>
+      <div class="tg-card-meta">
+        <div class="tg-card-label">Variant ${i + 1}</div>
+        <div class="tg-score">—</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  // Stagger each variant's load (imitating async image gen)
+  const cards = grid.querySelectorAll('.tg-card');
+  for (let i = 0; i < cards.length; i++) {
+    await wait(650);
+    cards[i].classList.add('loaded');
+    cards[i].querySelector('.tg-score').textContent = data.variants[i].score + '%';
+  }
+  await wait(400);
+  // Highlight winner
+  const winner = cards[data.winner - 1];
+  winner.classList.add('winner');
+  await wait(300);
+  frame.querySelector('#tg-summary').classList.add('in');
 };
 
 R.infoCard = async (root, data) => {
@@ -1698,6 +1898,16 @@ const TOOLS = [
       ]}
     ]
   }},
+  { stage: 'review', id: 'thumbnail-generator', name: 'thumbnail-generator', cat: 'Tool', desc: 'Sends script + style directive to Freepik Mystic. Generates 4 thumbnail variants, scores each with thumbnail-eval, picks the winner and uploads to Notion.', renderer: 'thumbGen', data: {
+    prompt: 'Hafu holding a bowling ball above a cardboard sheet, studio lighting, bold YouTube thumbnail style, high contrast, shocked expression, red and yellow color grading, 1280x720',
+    variants: [
+      { title: 'CARDBOARD VS 500 LB', tc1: '#ef4444', tc2: '#991b1b', face: true, score: 76 },
+      { title: 'CAN IT SURVIVE?', tc1: '#f59e0b', tc2: '#b45309', face: true, score: 91 },
+      { title: '500 LB TEST', tc1: '#3b82f6', tc2: '#1e40af', face: true, score: 68 },
+      { title: 'WILL IT BREAK', tc1: '#dc2626', tc2: '#7f1d1d', face: true, score: 84 }
+    ],
+    winner: 2
+  }},
   { stage: 'review', id: 'frameio-pull', name: 'frameio-pull', cat: 'Tool', desc: 'Read-only Frame.io v2 API client. Pulls all review comments across projects, categorizes by video duration.', renderer: 'frameio', data: {
     videoName: 'untangling-cables-pt2-final.mp4',
     comments: [
@@ -1875,7 +2085,7 @@ STAGES.forEach(stage => {
       <div class="stage-desc">${stage.desc}</div>
     </div>
     <div class="tool-tabs">
-      ${stageTools.map((t, i) => `<button class="tool-tab${i === 0 ? ' active' : ''} ${t.cat === 'Notion Agent' ? 'notion' : ''}${t.cat === 'Human' ? 'human' : ''}" data-tool="${t.id}">${t.name}</button>`).join('')}
+      ${stageTools.map((t, i) => `<button class="tool-tab${i === 0 ? ' active' : ''} ${t.cat === 'Notion Agent' ? 'notion' : ''}${t.cat === 'Human' ? 'human' : ''}" data-tool="${t.id}">${DISPLAY_NAMES[t.id] || t.name}</button>`).join('')}
     </div>
     <div class="tool-info" id="info-${stage.id}"></div>
     <div class="tool-output" id="out-${stage.id}"></div>
@@ -1902,9 +2112,10 @@ function selectTool(stageId, toolId) {
   const info = document.getElementById('info-' + stageId);
   const out = document.getElementById('out-' + stageId);
   out.innerHTML = '';
+  const displayName = DISPLAY_NAMES[tool.id] || tool.name;
   info.innerHTML = `
-    <div class="tool-cat">${tool.cat}</div>
-    <div class="tool-name">${tool.name}</div>
+    <div class="tool-cat">${tool.cat} &middot; <span style="color:var(--text-2);font-family:'SF Mono',Menlo,monospace;text-transform:lowercase;letter-spacing:0;">${tool.name}</span></div>
+    <div class="tool-name">${displayName}</div>
     <div class="tool-desc">${tool.desc}</div>
     <button class="run-btn" data-run="${toolId}" data-stage="${stageId}">&#9654; Run demo</button>
   `;
